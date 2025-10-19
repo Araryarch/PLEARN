@@ -1,0 +1,35 @@
+# Dependencies
+node_modules/
+/node_modules
+
+# Build files
+/build
+/dist
+/.next
+
+# Coverage reports
+/coverage
+
+# Environment files
+.env
+.env.*
+
+# Cache directories
+.cache
+.npm
+
+# Log files
+*.log
+
+# IDE specific files
+.idea/
+.vscode/
+*.swp
+*.swo
+
+android/
+ios
+ios/*
+android/*
+.next/
+.next/*
