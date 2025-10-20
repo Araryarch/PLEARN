@@ -33,8 +33,8 @@ export default function Layouts({ children }: LayoutsProps) {
 
   const navigationItems: NavigationItem[] = [
     { id: 'home', icon: Home, label: 'Home', href: '/' },
-    { id: 'health', icon: FileText, label: 'Kesehatan', href: '/health' },
-    { id: 'educations', icon: BookOpen, label: 'Edukasi', href: '/educations' },
+    { id: 'todo', icon: FileText, label: 'To Do List', href: '/todo' },
+    { id: 'chatbot', icon: BookOpen, label: 'Chatbot', href: '/chatbot' },
     { id: 'user', icon: User, label: 'User', href: '/users' },
     { id: 'settings', icon: Settings, label: 'Settings', href: '/settings' },
   ]

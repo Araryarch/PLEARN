@@ -8,12 +8,13 @@ import { Switch } from '@/components/ui/switch'
 interface Settings {
   darkMode: boolean
   notifications: boolean
-  medicationReminders: boolean
-  appointmentAlerts: boolean
-  healthDataSync: boolean
-  biometricLogin: boolean
+  taskReminders: boolean
+  deadlineAlerts: boolean
+  aiSuggestions: boolean
+  aiPrioritization: boolean
+  taskDataSync: boolean
   autoBackup: boolean
-  emergencyContact: boolean
+  biometricLogin: boolean
 }
 
 // Define the type for setting items
@@ -34,12 +35,13 @@ export default function Page() {
   const [settings, setSettings] = useState<Settings>({
     darkMode: false,
     notifications: true,
-    medicationReminders: true,
-    appointmentAlerts: true,
-    healthDataSync: false,
-    biometricLogin: true,
+    taskReminders: true,
+    deadlineAlerts: true,
+    aiSuggestions: true,
+    aiPrioritization: false,
+    taskDataSync: false,
     autoBackup: true,
-    emergencyContact: false,
+    biometricLogin: true,
   })
 
   const handleToggle = (key: keyof Settings) => {
@@ -63,7 +65,7 @@ export default function Page() {
     },
     {
       title: 'Notifikasi & Pengingat',
-      description: 'Kelola notifikasi dan reminder kesehatan Anda',
+      description: 'Kelola notifikasi dan reminder tugas Anda',
       settings: [
         {
           key: 'notifications',
@@ -71,30 +73,46 @@ export default function Page() {
           description: 'Terima notifikasi dari aplikasi',
         },
         {
-          key: 'medicationReminders',
-          label: 'Pengingat Obat',
-          description: 'Reminder untuk minum obat sesuai jadwal',
+          key: 'taskReminders',
+          label: 'Pengingat Tugas',
+          description: 'Reminder untuk menyelesaikan tugas sesuai jadwal',
         },
         {
-          key: 'appointmentAlerts',
-          label: 'Alert Jadwal Dokter',
-          description: 'Notifikasi untuk appointment dengan dokter',
+          key: 'deadlineAlerts',
+          label: 'Alert Deadline',
+          description: 'Notifikasi untuk deadline tugas yang mendekat',
+        },
+      ],
+    },
+    {
+      title: 'Fitur AI',
+      description: 'Kelola fitur AI untuk pengelolaan tugas yang lebih cerdas',
+      settings: [
+        {
+          key: 'aiSuggestions',
+          label: 'Saran Tugas AI',
+          description: 'Dapatkan saran tugas otomatis dari AI',
+        },
+        {
+          key: 'aiPrioritization',
+          label: 'Prioritas AI',
+          description: 'Biarkan AI mengatur prioritas tugas secara otomatis',
         },
       ],
     },
     {
       title: 'Data & Privasi',
-      description: 'Kontrol data kesehatan dan pengaturan privasi',
+      description: 'Kontrol data tugas dan pengaturan privasi',
       settings: [
         {
-          key: 'healthDataSync',
-          label: 'Sinkronisasi Data Kesehatan',
-          description: 'Sinkronkan dengan perangkat kesehatan lain',
+          key: 'taskDataSync',
+          label: 'Sinkronisasi Data Tugas',
+          description: 'Sinkronkan tugas dengan perangkat lain',
         },
         {
           key: 'autoBackup',
           label: 'Backup Otomatis',
-          description: 'Backup data kesehatan secara otomatis',
+          description: 'Backup data tugas secara otomatis',
         },
       ],
     },
@@ -106,11 +124,6 @@ export default function Page() {
           key: 'biometricLogin',
           label: 'Login Biometrik',
           description: 'Gunakan sidik jari atau Face ID untuk login',
-        },
-        {
-          key: 'emergencyContact',
-          label: 'Kontak Darurat',
-          description: 'Izinkan akses data untuk kontak darurat',
         },
       ],
     },
@@ -127,8 +140,8 @@ export default function Page() {
                 Pengaturan Aplikasi
               </h1>
               <p className="text-gray-600 text-sm md:text-base">
-                Kelola preferensi dan pengaturan aplikasi kesehatan Anda untuk
-                pengalaman yang lebih personal.
+                Kelola preferensi dan pengaturan aplikasi ToDo List dengan AI
+                untuk pengalaman yang lebih personal.
               </p>
             </div>
 
@@ -196,10 +209,10 @@ export default function Page() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <button className="w-full bg-gradient-to-r from-blue-50 to-blue-100 text-blue-700 p-4 rounded-xl border border-blue-200/50 hover:from-blue-100 hover:to-blue-150 hover:shadow-md transition-all duration-300 text-left group">
                 <div className="font-medium group-hover:text-blue-800 transition-colors duration-300">
-                  Export Data Kesehatan
+                  Export Data Tugas
                 </div>
                 <div className="text-sm text-blue-600 mt-1 group-hover:text-blue-700 transition-colors duration-300">
-                  Unduh riwayat kesehatan Anda
+                  Unduh daftar tugas Anda
                 </div>
               </button>
 
