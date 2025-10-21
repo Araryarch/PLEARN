@@ -6,17 +6,17 @@
 
 ## ✨ 特徴
 
-* ⚡ **Bun.js** — 超高速ランタイム & バンドラー
-* 🧱 **ShadCN UI** — Tailwind CSS ベースの再利用可能な UI コンポーネント
-* ⚙️ **Next.js** — React フレームワーク
-* 🚀 ビルドと起動の最適化
+- ⚡ **Bun.js** — 超高速ランタイム & バンドラー
+- 🧱 **ShadCN UI** — Tailwind CSS ベースの再利用可能な UI コンポーネント
+- ⚙️ **Next.js** — React フレームワーク
+- 🚀 ビルドと起動の最適化
 
 ## 🔧 前提条件
 
 以下がインストールされていることを確認してください：
 
-* [Node.js](https://nodejs.org/)
-* [Bun.js](https://bun.sh/)
+- [Node.js](https://nodejs.org/)
+- [Bun.js](https://bun.sh/)
 
   ```bash
   curl -fsSL https://bun.sh/install | bash
@@ -35,9 +35,9 @@ bun dev
 
 ## 📚 ドキュメント
 
-* [Next.js ドキュメント](https://nextjs.org/docs)
-* [Bun.js ドキュメント](https://bun.sh/docs)
-* [ShadCN UI ドキュメント](https://shadcn.dev/docs)
+- [Next.js ドキュメント](https://nextjs.org/docs)
+- [Bun.js ドキュメント](https://bun.sh/docs)
+- [ShadCN UI ドキュメント](https://shadcn.dev/docs)
 
 ## 📄 ライセンス
 

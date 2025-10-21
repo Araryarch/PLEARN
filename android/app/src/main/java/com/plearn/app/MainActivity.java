@@ -1,4 +1,4 @@
-package com.patientx.app;
+package com.plearn.app;
 
 import com.getcapacitor.BridgeActivity;
 

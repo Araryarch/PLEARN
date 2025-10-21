@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="NONE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="74fd38a7-a22b-4197-b8f9-7938513898db" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.lintstagedrc.js" beforeDir="false" afterPath="$PROJECT_DIR$/.lintstagedrc.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/capacitor.build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/capacitor.build.gradle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/capacitor.settings.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/android/capacitor.settings.gradle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/capacitor.config.ts" beforeDir="false" afterPath="$PROJECT_DIR$/capacitor.config.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Layouts/Layouts.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/Layouts/Layouts.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/layout.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/layout.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/settings/page.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/users/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/users/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/contents/metadata.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/contents/metadata.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/data/boxes.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/data/educations.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lib/getMetadataItems.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/getMetadataItems.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lib/useApi,ts" beforeDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ClangdSettings">
+    <option name="formatViaClangd" value="false" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
+  "lastFilter": {
+    "state": "OPEN",
+    "assignee": "Araryarch"
+  }
+}]]></component>
+  <component name="GithubPullRequestsUISettings"><![CDATA[{
+  "selectedUrlAndAccountId": {
+    "url": "https://github.com/Araryarch/PLEARN.git",
+    "accountId": "79e6ff32-d8ea-45e9-a3c9-40a40402c210"
+  }
+}]]></component>
+  <component name="ProjectColorInfo"><![CDATA[{
+  "associatedIndex": 2
+}]]></component>
+  <component name="ProjectId" id="34NkHNCu23YxJUZLGiS6AiP4j8k" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.cidr.known.project.marker": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "RunOnceActivity.readMode.enableVisualFormatting": "true",
+    "cf.first.check.clang-format": "false",
+    "cidr.known.project.marker": "true",
+    "git-widget-placeholder": "main",
+    "last_opened_file_path": "C:/Users/ararya/Documents/PLEARN",
+    "settings.editor.selected.configurable": "AndroidSdkUpdater"
+  }
+}]]></component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="74fd38a7-a22b-4197-b8f9-7938513898db" name="Changes" comment="" />
+      <created>1761061328854</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1761061328854</updated>
+    </task>
+    <servers />
+  </component>
+</project>

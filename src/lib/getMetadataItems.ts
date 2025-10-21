@@ -8,10 +8,10 @@ export const getMetadataItems = (
       ? 'https://yourdomain.com/'
       : 'http://localhost:3000'
   const pathname = baseUrl + slug
-  const title = templateTitle ? `${templateTitle} | Patient X` : 'Patient X'
+  const title = templateTitle ? `${templateTitle} | PLEARN` : 'PLEARN'
   const description = templateDescription
-    ? 'Your Description Event or Team'
-    : 'Your Description Event or Team'
+    ? 'Aplikasi TodoList With AI Paling Josjis loh ya cik, wkwkwk'
+    : 'Aplikasi TodoList With AI Paling Josjis loh ya cik, wkwkwk'
   // const ogUrl = new URL(
   //   baseUrl + `/api/og?title=${templateTitle}&description=${description}`,
   // ).href;

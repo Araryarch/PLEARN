@@ -5,12 +5,12 @@ const metadataItems = getMetadataItems()
 export const BASE_METADATA = {
   title: metadataItems.title,
   description: metadataItems.description,
-  creator: 'Patient X 2025 Web Team',
-  publisher: 'Patient X 2025 Web Team',
+  creator: 'PLEARN 2025 Web Team',
+  publisher: 'PLEARN 2025 Web Team',
   keywords: [
-    'Patient X',
-    'Patient X 2025',
-    'Patient X 2025 Web Team',
+    'PLEARN',
+    'PLEARN 2025',
+    'PLEARN 2025 Web Team',
     'Institut Teknologi Sepuluh Nopember',
     'Institut Teknologi Sepuluh Nopember 2025',
   ],
