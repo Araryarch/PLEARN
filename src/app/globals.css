@@ -51,8 +51,8 @@
   --base-ctp: #1e1e2e;
   --surface0-ctp: #313244;
   --surface1-ctp: #45475a;
-  --text-dim-ctp: #a6adc8;
-  --text-bright-ctp: #cdd6f4;
+  --dim-ctp: #a6adc8;
+  --bright-ctp: #cdd6f4;
   --accent-blue-ctp: #89b4fa;
 }
 
@@ -100,8 +100,8 @@
   --base-ctp: #1e1e2e;
   --surface0-ctp: #313244;
   --surface1-ctp: #45475a;
-  --text-dim-ctp: #a6adc8;
-  --text-bright-ctp: #cdd6f4;
+  --dim-ctp: #a6adc8;
+  --bright-ctp: #cdd6f4;
   --accent-blue-ctp: #89b4fa;
 }
 
@@ -142,8 +142,8 @@
   --color-base-ctp: var(--base-ctp);
   --color-surface0-ctp: var(--surface0-ctp);
   --color-surface1-ctp: var(--surface1-ctp);
-  --color-text-dim-ctp: var(--text-dim-ctp);
-  --color-text-bright-ctp: var(--text-bright-ctp);
+  --color-dim-ctp: var(--dim-ctp);
+  --color-bright-ctp: var(--bright-ctp);
   --color-accent-blue-ctp: var(--accent-blue-ctp);
 }
 
