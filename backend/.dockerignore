@@ -1,0 +1,8 @@
+# DEPRECATED: Docker is not used for the backend. This file remains for
+# historical reasons and can be ignored.
+node_modules
+dist
+.env
+*.log
+bun.lock
+package-lock.json
