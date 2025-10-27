@@ -1,96 +1,107 @@
 import Typography from '@/components/Typography'
+import { Button } from '@/components/ui/button'
 import Layouts from '@/Layouts/Layouts'
-import { ArrowRight, CheckCircle, Calendar } from 'lucide-react'
+import { ArrowRight } from 'lucide-react'
+import Image from 'next/image'
+import Link from 'next/link'
 import React from 'react'
 
 export default function page() {
+  // ambil waktu sekarang buat greeting
+  const hour = new Date().getHours()
+  let greeting = 'Selamat Malam'
+  if (hour >= 4 && hour < 11) greeting = 'Selamat Pagi'
+  else if (hour >= 11 && hour < 15) greeting = 'Selamat Siang'
+  else if (hour >= 15 && hour < 18) greeting = 'Selamat Sore'
+
   return (
     <Layouts>
-      <div className="min-h-screen w-full bg-[#1e1e2e] p-6 flex flex-col gap-6 overflow-y-auto">
-        {/* Header */}
-        <div className="flex flex-col gap-1">
-          <Typography
-            className="text-[#cdd6f4] text-2xl"
-            weight="bold"
-            variant="h1"
-          >
-            Selamat Malam, AKA!
-          </Typography>
-          <Typography className="text-[#a6adc8] text-base" weight="light">
-            {new Date().toLocaleDateString('id-ID', {
-              weekday: 'long',
-              day: 'numeric',
-              month: 'long',
-            })}
-          </Typography>
-        </div>
+      <div className="min-h-screen h-screen w-full bg-[#1e1e2e] p-6 flex flex-col gap-6 overflow-y-auto">
+        {/* ucapan */}
+        <Typography className="text-[#cdd6f4] text-xl" weight="bold">
+          {greeting}, Ararya!
+        </Typography>
 
-        {/* Main Progress */}
-        <div className="bg-[#313244] rounded-lg p-6">
-          <Typography
-            as={'h2'}
-            className="text-xl text-[#cdd6f4] mb-4"
-            weight="semibold"
-          >
-            Semangat Yuk Selesaikan Agenda Pertamamu Hari Ini
-          </Typography>
-
-          <div className="grid grid-cols-2 gap-4">
-            <div className="bg-[#45475a] rounded-md p-4 text-center">
-              <Typography className="text-4xl text-[#cdd6f4]" weight="bold">
+        {/* headers */}
+        <div className="w-full h-fit bg-[#313244] py-5 rounded-xl flex flex-col gap-2 relative shadow-lg">
+          <Image
+            src={'/images/raiden-chibi.png'}
+            alt="raiden"
+            width={90}
+            height={120}
+            className="absolute bottom-0 right-0 opacity-80"
+          />
+          <div className="h-1/2 w-full flex justify-center items-center px-5">
+            <Typography className="text-[#cdd6f4]">
+              Semangat!, Yuk Selesaikan Agenda Harian Pertamamu Hari ini!
+            </Typography>
+          </div>
+          <div className="h-1/2 w-[55%] flex px-5 gap-5 justify-between items-center">
+            <div className="flex flex-col items-center">
+              <Typography className="text-2xl text-[#89b4fa]" weight="bold">
                 0/0
               </Typography>
-              <Typography
-                className="text-sm text-[#bac2de] mt-1"
-                weight="medium"
-              >
-                Tugas
-              </Typography>
+              <Typography className="text-xs text-[#a6adc8]">Tugas</Typography>
             </div>
-            <div className="bg-[#45475a] rounded-md p-4 text-center">
-              <Typography className="text-4xl text-[#cdd6f4]" weight="bold">
+            <div className="flex flex-col items-center">
+              <Typography className="text-2xl text-[#f9e2af]" weight="bold">
                 0/0
               </Typography>
-              <Typography
-                className="text-sm text-[#bac2de] mt-1"
-                weight="medium"
-              >
+              <Typography className="text-xs text-[#a6adc8]">
                 Kegiatan
               </Typography>
             </div>
           </div>
         </div>
 
-        {/* Section Header */}
-        <div className="flex justify-between items-center">
-          <Typography className="text-[#cdd6f4] text-lg" weight="semibold">
-            Agenda Hari Ini
-          </Typography>
-          <button className="text-[#89b4fa] flex items-center gap-1 text-sm hover:gap-2 transition-all">
-            Lihat Semua <ArrowRight size={16} />
-          </button>
+        {/* header - activity */}
+        <div className="w-full h-fit flex justify-between">
+          <div>
+            <Typography className="text-[#cdd6f4]">Agenda Hari Ini</Typography>
+          </div>
+          <Link
+            href={'/'}
+            className="text-[#89b4fa] flex items-center gap-2 text-xs hover:text-[#b4befe] transition-colors"
+          >
+            Lihat Semua <ArrowRight size={15} />
+          </Link>
         </div>
 
-        {/* Priority */}
-        <div className="bg-[#313244] rounded-lg p-6 flex flex-col items-center text-center hover:bg-[#3b3d52] transition-colors cursor-pointer">
-          <CheckCircle size={24} className="text-[#a6e3a1] mb-2" />
-          <Typography weight="semibold" className="text-lg text-[#cdd6f4] mb-1">
-            Tidak Ada Agenda Prioritas Tinggi
-          </Typography>
-          <Typography className="text-sm text-[#a6adc8]" weight="light">
-            Semua tugas dan kegiatan sudah selesai!
+        {/* block */}
+        <div className="w-full h-[10%] bg-[#45475a] rounded-md shadow-xl flex justify-center items-center text-center">
+          <Typography className="text-xs text-[#a6adc8]">
+            <b className="text-base text-[#cdd6f4]">
+              Tidak Ada Agenda Hari Ini
+            </b>{' '}
+            <br />
+            Semua Tugas dan Kegiatan Sudah Selesai 🎉
           </Typography>
         </div>
 
-        {/* Activity Log */}
-        <div className="bg-[#313244] rounded-lg p-6 flex flex-col items-center text-center hover:bg-[#3b3d52] transition-colors cursor-pointer">
-          <Calendar size={24} className="text-[#f9e2af] mb-2" />
-          <Typography weight="semibold" className="text-lg text-[#cdd6f4] mb-1">
-            Bagaimana Hari Ini?
-          </Typography>
-          <Typography className="text-sm text-[#a6adc8]" weight="light">
-            Catat kegiatanmu sekarang
-          </Typography>
+        {/* card bawah */}
+        <div className="w-full h-fit py-5 bg-[#313244] rounded-xl flex flex-col gap-2 relative shadow-lg">
+          <Image
+            src={'/images/raiden-chibi.png'}
+            alt="raiden"
+            width={90}
+            height={60}
+            className="absolute right-0 bottom-0 opacity-80"
+          />
+          <div className="h-1/2 w-full flex gap-2 px-5">
+            <div className="flex flex-col items-start justify-center h-full w-full">
+              <Typography weight="bold" className="text-[#cdd6f4]">
+                Bagaimana Hari Ini?
+              </Typography>
+              <Typography className="text-sm text-[#a6adc8]">
+                Catat Kegaiatanmu dan Rencanakan Kegaiatanmu Sekarang!
+              </Typography>
+            </div>
+          </div>
+          <div className="h-1/2 w-full flex justify-start items-center px-5">
+            <Button className="bg-[#89b4fa] hover:bg-[#b4befe] text-[#1e1e2e] cursor-pointer transition-colors">
+              Catat Sekarang <ArrowRight />
+            </Button>
+          </div>
         </div>
       </div>
     </Layouts>
