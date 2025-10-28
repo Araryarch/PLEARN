@@ -31,12 +31,12 @@ export default function page() {
             height={120}
             className="absolute bottom-0 right-0 opacity-80"
           />
-          <div className="h-1/2 w-full flex justify-center items-center px-5">
+          <div className="h-1/2 w-full flex justify-start items-center px-5">
             <Typography className="text-[#cdd6f4]">
               Semangat!, Yuk Selesaikan Agenda Harian Pertamamu Hari ini!
             </Typography>
           </div>
-          <div className="h-1/2 w-[55%] flex px-5 gap-5 justify-between items-center">
+          <div className="h-1/2 w-fit flex px-5 gap-10 justify-between items-center">
             <div className="flex flex-col items-center">
               <Typography className="text-2xl text-[#89b4fa]" weight="bold">
                 0/0

@@ -48,18 +48,18 @@ export default function Page() {
                 label: 'Poin',
                 value: '156',
                 icon: '⚡',
-                color: 'from-[#f9e2af] to-[#fab387]',
+                color: 'from-[#89b4fa] to-[#74c7ec]',
               },
               {
                 label: 'Hari',
                 value: '12',
                 icon: '⏰',
-                color: 'from-[#a6e3a1] to-[#94e2d5]',
+                color: 'from-[#89b4fa] to-[#74c7ec]',
               },
             ].map((item, i) => (
               <div
                 key={i}
-                className={`bg-gradient-to-br ${item.color} rounded-xl p-[1px] transition-transform hover:scale-105`}
+                className={`bg-gradient-to-br ${item.color} rounded-xl p-[1px]`}
               >
                 <div className="bg-[#313244] rounded-xl flex flex-col items-center justify-center py-3">
                   <div className="text-xl mb-1">{item.icon}</div>
