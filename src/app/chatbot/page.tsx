@@ -116,7 +116,7 @@ export default function Chatbot() {
 
   useEffect(() => {
     scrollToBottom()
-  }, [messages, isTyping])
+  }, [messages.length, isTyping])
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -184,15 +184,15 @@ export default function Chatbot() {
 
       if (aiMode === 'list') {
         enhancedPrompt = `Current date: ${currentDate}. Generate a JSON array of todo items with the following structure for each item:
-{
-  "title": "task title",
-  "description": "detailed description",
-  "category": "category name (e.g., belajar, pekerjaan, pribadi, dll)",
-  "priority": "low|medium|high",
-  "deadline": "YYYY-MM-DD format - calculate realistic deadline based on current date and task complexity"
-}
-User request: ${prompt}
-Return ONLY valid JSON array, no additional text.`
+        {
+          "title": "task title",
+          "description": "detailed description",
+          "category": "category name (e.g., belajar, pekerjaan, pribadi, dll)",
+          "priority": "low|medium|high",
+          "deadline": "YYYY-MM-DD format - calculate realistic deadline based on current date and task complexity"
+        }
+        User request: ${prompt}
+        Return ONLY valid JSON array, no additional text.`
       }
 
       const res = await fetch('/api/chat', {
@@ -761,7 +761,7 @@ Return ONLY valid JSON array, no additional text.`
                       AI
                     </div>
                     <div
-                      className="px-4 py-3 rounded-3xl"
+                      className="px-4 py-3 rounded-sm"
                       style={{ backgroundColor: catppuccin.surface1 }}
                     >
                       <div className="w-48 space-y-2.5 animate-pulse">
@@ -785,7 +785,7 @@ Return ONLY valid JSON array, no additional text.`
         </div>
 
         <div
-          className="w-full border-t p-4 pb-24"
+          className="w-full border-t p-4 pb-24 md:pb-4"
           style={{
             borderColor: catppuccin.overlay,
             backgroundColor: catppuccin.base,

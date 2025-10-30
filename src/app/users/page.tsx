@@ -17,7 +17,7 @@ export default function Page() {
     <Layouts>
       <div className="min-h-screen w-full bg-[#1e1e2e] text-[#cdd6f4] flex flex-col gap-4 p-4 pb-16">
         {/* Profile Header */}
-        <div className="bg-[#313244] rounded-xl p-4 flex flex-col items-center gap-2">
+        <div className="bg-[#181825] rounded-xl p-4 flex flex-col items-center gap-2">
           <div className="w-20 h-20 rounded-full bg-[#89b4fa] flex items-center justify-center text-[#1e1e2e]">
             <User size={40} />
           </div>
@@ -61,7 +61,7 @@ export default function Page() {
                 key={i}
                 className={`bg-gradient-to-br ${item.color} rounded-xl p-[1px]`}
               >
-                <div className="bg-[#313244] rounded-xl flex flex-col items-center justify-center py-3">
+                <div className="bg-[#181825] rounded-xl flex flex-col items-center justify-center py-3">
                   <div className="text-xl mb-1">{item.icon}</div>
                   <Typography className="text-[#cdd6f4] text-lg font-bold leading-none">
                     {item.value}
@@ -80,7 +80,7 @@ export default function Page() {
           <Typography className="text-[#cdd6f4] mb-2 font-semibold">
             Informasi Pribadi
           </Typography>
-          <div className="bg-[#313244] rounded-xl divide-y divide-[#45475a]">
+          <div className="bg-[#181825] rounded-xl divide-y divide-[#45475a]">
             {[
               {
                 icon: <Mail size={18} className="text-[#89b4fa]" />,
@@ -118,7 +118,7 @@ export default function Page() {
           <Typography className="text-[#cdd6f4] mb-2 font-semibold">
             Pengaturan
           </Typography>
-          <div className="bg-[#313244] rounded-xl divide-y divide-[#45475a]">
+          <div className="bg-[#181825] rounded-xl divide-y divide-[#45475a]">
             <Link
               href="/settings"
               className="flex items-center justify-between p-3 hover:bg-[#45475a] transition-colors duration-200"

@@ -36,7 +36,7 @@ export async function POST(request: NextRequest) {
 
     const apiKey = process.env.NEXT_PUBLIC_API_KEY
     if (!apiKey) {
-      console.error('[v0] API key not configured')
+      console.error('[Senopati] API key not configured')
       return NextResponse.json(
         { error: 'API key not configured' },
         { status: 500 },
@@ -55,7 +55,7 @@ export async function POST(request: NextRequest) {
       ],
     }
 
-    console.log('[v0] Sending request to AI API from server:', {
+    console.log('[Senopati] Sending request to AI API from server:', {
       url,
       model: body.model,
     })
@@ -76,7 +76,7 @@ export async function POST(request: NextRequest) {
     clearTimeout(timeoutId)
 
     if (!res.ok) {
-      console.error('[v0] API Error:', res.status, res.statusText)
+      console.error('[Senopati] API Error:', res.status, res.statusText)
       return NextResponse.json(
         { error: `HTTP error! status: ${res.status}` },
         { status: res.status },
@@ -84,11 +84,11 @@ export async function POST(request: NextRequest) {
     }
 
     const data: AIResponse = await res.json()
-    console.log('[v0] API Response received from server')
+    console.log('[Senopati] API Response received from server')
 
     return NextResponse.json(data)
   } catch (err: any) {
-    console.error('[v0] Error in chat route:', err)
+    console.error('[Senopati] Error in chat route:', err)
 
     let errorMessage = 'Gagal terhubung ke AI. Silakan coba lagi.'
 
