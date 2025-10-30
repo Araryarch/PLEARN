@@ -201,7 +201,7 @@ export default function Layouts({ children }: LayoutsProps) {
       <div
         className={`${
           isSidebarCollapsed ? 'md:pl-20' : 'md:pl-64'
-        } pb-20 md:pb-0 transition-all duration-300 bg-[#1e1e2e] min-h-screen h-screen text-[#cdd6f4]`}
+        } pb-20 md:pb-0 transition-all duration-300 bg-[#1e1e2e] min-h-screen h-screen text-[#cdd6f4] relative`}
       >
         {children}
       </div>

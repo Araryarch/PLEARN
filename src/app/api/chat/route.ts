@@ -1,0 +1,104 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { type NextRequest, NextResponse } from 'next/server'
+
+interface ChatRequest {
+  prompt: string
+  aiMode: string
+}
+
+interface AIResponse {
+  choices?: {
+    message?: {
+      content?: string
+    }
+  }[]
+}
+
+const systemPromptMap: Record<string, string> = {
+  fluent:
+    'jawablah dengan gaya natural, mengalir, dan mudah dimengerti manusia.',
+  creative: 'jawablah dengan gaya kreatif, penuh imajinasi, dan unik.',
+  precise: 'jawablah dengan gaya formal, sangat akurat, dan terperinci.',
+  balanced: 'jawablah dengan keseimbangan antara natural dan akurat.',
+  list: 'kamu harus SELALU membalas dalam format JSON valid. setiap jawaban wajib berupa array berisi objek dengan properti "title" dan "description" dan title dan deskripsion nya adalah kegiatan yang cocok masuk di todolist jangan sembanrangan. contoh: [{"title":"item1","description":"desc1"},{"title":"item2","description":"desc2"}]. tidak boleh ada teks lain di luar JSON.',
+}
+
+export async function POST(request: NextRequest) {
+  try {
+    const { prompt, aiMode }: ChatRequest = await request.json()
+
+    if (!prompt || !aiMode) {
+      return NextResponse.json(
+        { error: 'Missing prompt or aiMode' },
+        { status: 400 },
+      )
+    }
+
+    const apiKey = process.env.NEXT_PUBLIC_API_KEY
+    if (!apiKey) {
+      console.error('[v0] API key not configured')
+      return NextResponse.json(
+        { error: 'API key not configured' },
+        { status: 500 },
+      )
+    }
+
+    const url = 'https://chat.ragita.net/api/chat/completions'
+    const body = {
+      model: 'qwen2.5:14b',
+      messages: [
+        {
+          role: 'system',
+          content: `kamu adalah AI bernama PLEARN, ${systemPromptMap[aiMode]}`,
+        },
+        { role: 'user', content: prompt },
+      ],
+    }
+
+    console.log('[v0] Sending request to AI API from server:', {
+      url,
+      model: body.model,
+    })
+
+    const controller = new AbortController()
+    const timeoutId = setTimeout(() => controller.abort(), 30000)
+
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: apiKey,
+      },
+      body: JSON.stringify(body),
+      signal: controller.signal,
+    })
+
+    clearTimeout(timeoutId)
+
+    if (!res.ok) {
+      console.error('[v0] API Error:', res.status, res.statusText)
+      return NextResponse.json(
+        { error: `HTTP error! status: ${res.status}` },
+        { status: res.status },
+      )
+    }
+
+    const data: AIResponse = await res.json()
+    console.log('[v0] API Response received from server')
+
+    return NextResponse.json(data)
+  } catch (err: any) {
+    console.error('[v0] Error in chat route:', err)
+
+    let errorMessage = 'Gagal terhubung ke AI. Silakan coba lagi.'
+
+    if (err.name === 'AbortError') {
+      errorMessage =
+        'Permintaan timeout. Server tidak merespons dalam waktu yang ditentukan.'
+    } else if (err instanceof TypeError) {
+      errorMessage = 'Network error. Periksa koneksi internet Anda.'
+    }
+
+    return NextResponse.json({ error: errorMessage }, { status: 500 })
+  }
+}

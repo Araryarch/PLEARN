@@ -7,7 +7,6 @@ import Link from 'next/link'
 import React from 'react'
 
 export default function page() {
-  // ambil waktu sekarang buat greeting
   const hour = new Date().getHours()
   let greeting = 'Selamat Malam'
   if (hour >= 4 && hour < 11) greeting = 'Selamat Pagi'
@@ -23,7 +22,7 @@ export default function page() {
         </Typography>
 
         {/* headers */}
-        <div className="w-full h-fit bg-[#313244] py-5 rounded-xl flex flex-col gap-2 relative shadow-lg">
+        <div className="w-full h-fit bg-[#181825] py-5 rounded-xl flex flex-col gap-2 relative shadow-lg">
           <Image
             src={'/images/raiden-chibi.png'}
             alt="raiden"
@@ -68,7 +67,7 @@ export default function page() {
         </div>
 
         {/* block */}
-        <div className="w-full h-[10%] bg-[#45475a] rounded-md shadow-xl flex justify-center items-center text-center">
+        <div className="w-full h-[10%] bg-[#181825] rounded-md shadow-xl flex justify-center items-center text-center">
           <Typography className="text-xs text-[#a6adc8]">
             <b className="text-base text-[#cdd6f4]">
               Tidak Ada Agenda Hari Ini
@@ -79,7 +78,7 @@ export default function page() {
         </div>
 
         {/* card bawah */}
-        <div className="w-full h-fit py-5 bg-[#313244] rounded-xl flex flex-col gap-2 relative shadow-lg">
+        <div className="w-full h-fit py-5 bg-[#181825] rounded-xl flex flex-col gap-2 relative shadow-lg">
           <Image
             src={'/images/raiden-chibi.png'}
             alt="raiden"
