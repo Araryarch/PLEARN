@@ -5,8 +5,11 @@ const config: CapacitorConfig = {
   appName: 'plearn',
   webDir: '.next',
   server: {
-    url: 'https://plearn-zeta.vercel.app/',
+    url: 'https://plearn-zeta.vercel.app/', // hosted Next.js
     cleartext: true,
+  },
+  plugins: {
+    App: { urlOpen: true }, // supaya app bisa handle deep link
   },
 }
 
