@@ -1,5 +1,6 @@
-import { GalleryVerticalEnd } from 'lucide-react'
+'use client'
 
+import { GalleryVerticalEnd } from 'lucide-react'
 import { LoginForm } from '@/components/login-form'
 import Image from 'next/image'
 import { useSession } from 'next-auth/react'
