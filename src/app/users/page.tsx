@@ -1,32 +1,44 @@
 'use client'
+
 import Layouts from '@/Layouts/Layouts'
 import Typography from '@/components/Typography'
-import {
-  User,
-  Mail,
-  Phone,
-  Calendar,
-  Settings,
-  LogOut,
-  ChevronRight,
-} from 'lucide-react'
-import Link from 'next/link'
+import { Mail, LogOut, ChevronRight } from 'lucide-react'
+import { signOut, useSession } from 'next-auth/react'
+import Image from 'next/image'
+import { useRouter } from 'next/navigation'
+import { useEffect } from 'react'
 
 export default function Page() {
+  const { data: session, status } = useSession()
+  const router = useRouter()
+
+  useEffect(() => {
+    if (status === 'loading') return
+    if (!session) router.push('/login')
+  }, [session, status, router])
+
+  if (status === 'loading') return <p></p>
+  if (!session) return null
+
   return (
     <Layouts>
       <div className="min-h-screen w-full bg-[#1e1e2e] text-[#cdd6f4] flex flex-col gap-4 p-4 pb-16">
         {/* Profile Header */}
         <div className="bg-[#181825] rounded-xl p-4 flex flex-col items-center gap-2">
-          <div className="w-20 h-20 rounded-full bg-[#89b4fa] flex items-center justify-center text-[#1e1e2e]">
-            <User size={40} />
+          <div className="w-20 h-20 rounded-full bg-[#89b4fa] flex items-center justify-center text-[#1e1e2e] overflow-hidden">
+            <Image
+              src={session.user?.image || '/images/default-profile.png'}
+              alt="profile"
+              width={100}
+              height={100}
+            />
           </div>
           <div className="text-center">
             <Typography className="text-[#cdd6f4] text-lg font-semibold">
-              Ararya
+              {session.user?.name}
             </Typography>
             <Typography className="text-[#a6adc8] text-xs">
-              @ararya_dev
+              @{session.user?.name?.split(' ')}
             </Typography>
           </div>
         </div>
@@ -85,17 +97,7 @@ export default function Page() {
               {
                 icon: <Mail size={18} className="text-[#89b4fa]" />,
                 title: 'Email',
-                value: 'ararya@example.com',
-              },
-              {
-                icon: <Phone size={18} className="text-[#89b4fa]" />,
-                title: 'Telepon',
-                value: '+62 812 3456 7890',
-              },
-              {
-                icon: <Calendar size={18} className="text-[#89b4fa]" />,
-                title: 'Bergabung',
-                value: '15 Januari 2024',
+                value: session.user?.email,
               },
             ].map((info, i) => (
               <div key={i} className="flex items-center gap-3 p-3">
@@ -119,20 +121,11 @@ export default function Page() {
             Pengaturan
           </Typography>
           <div className="bg-[#181825] rounded-xl divide-y divide-[#45475a]">
-            <Link
-              href="/settings"
-              className="flex items-center justify-between p-3 hover:bg-[#45475a] transition-colors duration-200"
-            >
-              <div className="flex items-center gap-3">
-                <Settings size={18} className="text-[#cdd6f4]" />
-                <Typography className="text-[#cdd6f4] text-sm">
-                  Pengaturan Akun
-                </Typography>
-              </div>
-              <ChevronRight size={18} className="text-[#a6adc8]" />
-            </Link>
             <button className="w-full flex items-center justify-between p-3 hover:bg-[#45475a] transition-colors duration-200">
-              <div className="flex items-center gap-3">
+              <div
+                onClick={() => signOut()}
+                className="flex items-center gap-3"
+              >
                 <LogOut size={18} className="text-[#f38ba8]" />
                 <Typography className="text-[#f38ba8] text-sm">
                   Keluar

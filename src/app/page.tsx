@@ -1,12 +1,27 @@
+'use client'
+
 import Typography from '@/components/Typography'
 import { Button } from '@/components/ui/button'
 import Layouts from '@/Layouts/Layouts'
 import { ArrowRight } from 'lucide-react'
+import { useSession } from 'next-auth/react'
 import Image from 'next/image'
 import Link from 'next/link'
-import React from 'react'
+import { useRouter } from 'next/navigation'
+import React, { useEffect } from 'react'
 
-export default function page() {
+export default function Page() {
+  const { data: session, status } = useSession()
+  const router = useRouter()
+
+  useEffect(() => {
+    if (status === 'loading') return
+    if (!session) router.push('/login')
+  }, [session, status, router])
+
+  if (status === 'loading') return <p></p>
+  if (!session) return null
+
   const hour = new Date().getHours()
   let greeting = 'Selamat Malam'
   if (hour >= 4 && hour < 11) greeting = 'Selamat Pagi'
@@ -18,7 +33,7 @@ export default function page() {
       <div className="min-h-screen h-screen w-full bg-[#1e1e2e] p-6 flex flex-col gap-6 overflow-y-auto">
         {/* ucapan */}
         <Typography className="text-[#cdd6f4] text-xl" weight="bold">
-          {greeting}, Ararya!
+          {greeting}, {session.user?.name}!
         </Typography>
 
         {/* headers */}

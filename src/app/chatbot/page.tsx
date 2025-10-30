@@ -24,6 +24,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import Layouts from '@/Layouts/Layouts'
+import Swal from 'sweetalert2'
 
 interface TodoItem {
   title: string
@@ -304,20 +305,89 @@ export default function Chatbot() {
   // ------------------------------------------------------------------ //
   // Database stub
   // ------------------------------------------------------------------ //
-  const handleAddToDatabase = (items: TodoItem[]) => {
+  const handleAddToDatabase = async (items: TodoItem[]) => {
     console.log('=== TODO ITEMS TO BE ADDED ===')
     console.log('Total items:', items.length)
     console.log('Items:', JSON.stringify(items, null, 2))
-    items.forEach((item, index) => {
+
+    let successCount = 0
+    let failedCount = 0
+
+    for (const [index, item] of items.entries()) {
       console.log(`\nItem ${index + 1}:`)
       console.log('Title:', item.title)
       console.log('Description:', item.description)
       console.log('Category:', item.category)
       console.log('Priority:', item.priority)
       console.log('Deadline:', item.deadline)
-    })
-  }
 
+      try {
+        const res = await fetch('/api/todo', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            title: item.title,
+            desc: item.description,
+            category: item.category,
+            prioritas: item.priority,
+            deadline: item.deadline,
+          }),
+        })
+
+        if (!res.ok) {
+          failedCount++
+          console.error(`❌ gagal menambah todo ${item.title}`)
+        } else {
+          successCount++
+          console.log(`✅ berhasil tambah todo "${item.title}" ke database`)
+        }
+      } catch (error) {
+        failedCount++
+        console.error(`❌ error saat menambah todo ${item.title}:`, error)
+      }
+    }
+
+    if (successCount > 0 && failedCount === 0) {
+      Swal.fire({
+        title: '✨ berhasil!',
+        text: `${successCount} todo berhasil ditambahkan ke database.`,
+        icon: 'success',
+        background: '#1e1e2e',
+        color: '#cdd6f4',
+        confirmButtonColor: '#b4befe',
+        iconColor: '#a6e3a1',
+        customClass: {
+          popup: 'rounded-2xl shadow-lg border border-[#313244]',
+        },
+      })
+    } else if (successCount > 0 && failedCount > 0) {
+      Swal.fire({
+        title: '⚠️ sebagian berhasil',
+        text: `${successCount} berhasil, ${failedCount} gagal ditambahkan.`,
+        icon: 'warning',
+        background: '#1e1e2e',
+        color: '#cdd6f4',
+        confirmButtonColor: '#f9e2af',
+        iconColor: '#f9e2af',
+        customClass: {
+          popup: 'rounded-2xl shadow-lg border border-[#313244]',
+        },
+      })
+    } else {
+      Swal.fire({
+        title: '❌ gagal!',
+        text: 'semua todo gagal ditambahkan.',
+        icon: 'error',
+        background: '#1e1e2e',
+        color: '#cdd6f4',
+        confirmButtonColor: '#f38ba8', // red
+        iconColor: '#f38ba8',
+        customClass: {
+          popup: 'rounded-2xl shadow-lg border border-[#313244]',
+        },
+      })
+    }
+  }
   // ------------------------------------------------------------------ //
   // UI helpers
   // ------------------------------------------------------------------ //

@@ -17,12 +17,12 @@ export async function GET() {
   }
 }
 
-// POST tambah todo baru
 export async function POST(req: Request) {
   try {
-    const { title, desc, category, prioritas, deadline } = await req.json()
+    const { title, desc, category, prioritas, deadline, userId } =
+      await req.json()
 
-    if (!title || !desc || !category || !prioritas || !deadline) {
+    if (!title || !desc || !category || !prioritas || !deadline || !userId) {
       return NextResponse.json(
         { error: 'Semua field wajib diisi' },
         { status: 400 },
@@ -36,6 +36,9 @@ export async function POST(req: Request) {
         category,
         prioritas,
         deadline: new Date(deadline),
+        user: {
+          connect: { id: userId },
+        },
       },
     })
 

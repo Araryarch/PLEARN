@@ -8,6 +8,7 @@ import {
 import { Toaster } from 'react-hot-toast'
 
 import api from '@/lib/api'
+import { SessionProvider } from 'next-auth/react'
 
 const defaultQueryFn = async ({ queryKey }: QueryOptions) => {
   const { data } = await api.get(`${queryKey?.[0]}`)
@@ -25,7 +26,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
   return (
     <QueryClientProvider client={queryClient}>
       <Toaster position="top-center" />
-      {children}
+      <SessionProvider>{children}</SessionProvider>
     </QueryClientProvider>
   )
 }
