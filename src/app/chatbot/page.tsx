@@ -195,7 +195,7 @@ export default function Chatbot() {
         Return ONLY valid JSON array, no additional text.`
       }
 
-      const res = await fetch('/api/chat', {
+      const res = await fetch(`/api/chat`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ prompt: enhancedPrompt, aiMode }),

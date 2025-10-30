@@ -142,13 +142,6 @@ export default function Page() {
             </button>
           </div>
         </div>
-
-        {/* Version */}
-        <div className="mt-auto text-center">
-          <Typography className="text-[#a6adc8] text-xs">
-            PLEARN v1.0.0
-          </Typography>
-        </div>
       </div>
     </Layouts>
   )
