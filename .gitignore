@@ -48,3 +48,4 @@ generated/
 
 android/
 android/*
+/src/generated/prisma
