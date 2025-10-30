@@ -1,4 +1,5 @@
 'use client'
+
 import {
   useState,
   type ChangeEvent,
@@ -434,9 +435,8 @@ export default function Chatbot() {
           </div>
         </div>
 
-        <div className="flex-1 flex flex-col mt-[73px] overflow-hidden">
-          {/* Messages scroll area */}
-          <ScrollArea className="flex-1 w-full">
+        <div className="flex-1 flex flex-col overflow-y-auto">
+          <ScrollArea className="flex-1 w-full pt-[73px]">
             <div className="p-6 space-y-4">
               {/* Empty state */}
               {messages.length === 0 && !isTyping && (
@@ -668,7 +668,7 @@ export default function Chatbot() {
                       </div>
 
                       {/* Action buttons */}
-                      <div className="flex items-center gap-1 px-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <div className="flex items-center gap-1 px-2">
                         <Button
                           size="sm"
                           variant="ghost"
