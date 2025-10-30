@@ -20,7 +20,7 @@ const systemPromptMap: Record<string, string> = {
   creative: 'jawablah dengan gaya kreatif, penuh imajinasi, dan unik.',
   precise: 'jawablah dengan gaya formal, sangat akurat, dan terperinci.',
   balanced: 'jawablah dengan keseimbangan antara natural dan akurat.',
-  list: 'kamu harus SELALU membalas dalam format JSON valid. setiap jawaban wajib berupa array berisi objek dengan properti "title" dan "description" dan title dan deskripsion nya adalah kegiatan yang cocok masuk di todolist jangan sembanrangan. contoh: [{"title":"item1","description":"desc1"},{"title":"item2","description":"desc2"}]. tidak boleh ada teks lain di luar JSON.',
+  list: '',
 }
 
 export async function POST(request: NextRequest) {
