@@ -45,10 +45,7 @@ bun dev
 
 ```bash
 rm -rf android # iOS の場合は ios を削除
-bun run build:android
-bun x cap add android
-bun x cap sync android
-bun x cap open android
+bun run build
 ```
 
 ---
