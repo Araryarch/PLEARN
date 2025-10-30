@@ -139,14 +139,26 @@ export default function Chatbot() {
   // ------------------------------------------------------------------ //
   // Helpers
   // ------------------------------------------------------------------ //
-  const handleTextToSpeech = (text: string) => {
-    if ('speechSynthesis' in window) {
-      window.speechSynthesis.cancel()
-      const utterance = new SpeechSynthesisUtterance(text)
-      utterance.rate = 1
-      utterance.pitch = 1
-      utterance.volume = 1
-      window.speechSynthesis.speak(utterance)
+  const handleTextToSpeech = async (text: string) => {
+    try {
+      const response = await fetch('/api/tts', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text }),
+      })
+      if (!response.ok) throw new Error('Gagal memproses TTS')
+      const { audio, mimeType } = await response.json()
+      if (!audio) throw new Error('Audio kosong dari server')
+      const audioBytes = Uint8Array.from(atob(audio), (c) => c.charCodeAt(0))
+      const blob = new Blob([audioBytes], { type: mimeType || 'audio/wav' })
+      const url = URL.createObjectURL(blob)
+      const audioElement = new Audio(url)
+      audioElement.play()
+      audioElement.onended = () => URL.revokeObjectURL(url)
+      audioElement.onerror = (e) => console.error('Error playing audio:', e)
+    } catch (error) {
+      console.error('Error:', error)
+      alert('Gagal memproses TTS')
     }
   }
 
@@ -361,20 +373,15 @@ export default function Chatbot() {
       >
         {/* Header */}
         <div
-          className="border-b px-6 py-4 fixed top-0 left-0 right-0 z-50 flex items-center justify-between"
+          className="border-b px-6 md:pr-72 py-4 fixed top-0 w-full z-50 flex items-center justify-between"
           style={{
             borderColor: catppuccin.surface1,
             backgroundColor: catppuccin.surface0,
           }}
         >
-          <div className="flex items-center gap-3">
-            <h1
-              className="text-xl font-bold"
-              style={{ color: catppuccin.text }}
-            >
-              PLEARN AI
-            </h1>
-          </div>
+          <h1 className="text-xl font-bold" style={{ color: catppuccin.text }}>
+            PLEARN AI
+          </h1>
 
           {/* Mode selector */}
           <div className="relative" ref={dropdownRef}>
