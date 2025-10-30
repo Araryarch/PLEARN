@@ -5,11 +5,12 @@
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build",
+    "build:android": "next build && next start",
     "start": "next start",
     "lint": "next lint",
     "lint:strict": "next lint --max-warnings 0",
     "prepare": "husky",
-    "format": "prettier --write . && eslint . --fix && pnpm typecheck && pnpm lint:strict",
+    "format": "prettier --write . && eslint . --fix && bun typecheck && bun lint:strict",
     "format:check": "prettier --check .",
     "format:write": "prettier --write .",
     "typecheck": "tsc --noEmit"
