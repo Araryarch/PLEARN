@@ -9,9 +9,26 @@ datasource db {
 }
 
 model User {
-  id    String  @id @default(uuid())
-  email String  @unique
-  todos Todo[]
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  username  String
+  tagName   String   @unique
+  score     Int      @default(0)
+  startDate DateTime @default(now())
+  avatar    String   @default("/images/hutao-pp.png")
+  todos     Todo[]
+}
+
+enum Status {
+  Aktif
+  Selesai
+}
+
+enum Prioritas {
+  high
+  medium
+  low
 }
 
 model Todo {
@@ -19,9 +36,10 @@ model Todo {
   title      String
   desc       String
   category   String
-  prioritas  String
+  prioritas  Prioritas
   deadline   DateTime
   createdAt  DateTime @default(now())
   userId     String
+  status     Status
   user       User     @relation(fields: [userId], references: [id])
 }

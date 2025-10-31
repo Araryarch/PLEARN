@@ -25,6 +25,8 @@ import { Input } from '@/components/ui/input'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import Layouts from '@/Layouts/Layouts'
 import Swal from 'sweetalert2'
+import { useSession } from 'next-auth/react'
+import { ExtendedSession } from '@/lib/authOptions'
 
 interface TodoItem {
   title: string
@@ -83,6 +85,9 @@ export default function Chatbot() {
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const dropdownRef = useRef<HTMLDivElement>(null)
   const buttonRef = useRef<HTMLButtonElement>(null)
+
+  const { data: session } = useSession()
+  const extended = session as ExtendedSession
 
   const aiModes: { value: AIMode; label: string; description: string }[] = [
     {
@@ -331,6 +336,7 @@ export default function Chatbot() {
             category: item.category,
             prioritas: item.priority,
             deadline: item.deadline,
+            userId: extended.user.id,
           }),
         })
 

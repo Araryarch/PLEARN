@@ -1,6 +1,8 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { useSession } from 'next-auth/react'
+import Layouts from '@/Layouts/Layouts'
 import {
   Search,
   Filter,
@@ -13,71 +15,31 @@ import {
   X,
   Trash2,
   Edit2,
+  CalendarIcon,
 } from 'lucide-react'
-import Layouts from '@/Layouts/Layouts'
+import type { ExtendedSession } from '@/lib/authOptions'
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover'
+import { Calendar } from '@/components/ui/calendar'
 
 interface Task {
   id: number
   title: string
-  description: string
+  desc: string
   category: string
-  priority: 'high' | 'medium' | 'low'
-  dueDate: string
-  completed: boolean
+  prioritas: 'high' | 'medium' | 'low'
+  deadline: string
+  status: 'Aktif' | 'Selesai'
 }
-
 type FilterType = 'all' | 'pending' | 'completed'
 type PriorityFilter = 'all' | 'high' | 'medium' | 'low'
-
 export default function DailyTasksPage() {
-  const [tasks, setTasks] = useState<Task[]>([
-    {
-      id: 1,
-      title: 'Menyelesaikan laporan proyek',
-      description: 'Buat laporan lengkap untuk proyek Q1',
-      category: 'Pekerjaan',
-      priority: 'high',
-      dueDate: '2024-03-20',
-      completed: false,
-    },
-    {
-      id: 2,
-      title: 'Belanja kebutuhan rumah',
-      description: 'Beli sayuran dan buah-buahan',
-      category: 'Pribadi',
-      priority: 'medium',
-      dueDate: '2024-03-21',
-      completed: false,
-    },
-    {
-      id: 3,
-      title: 'Meeting dengan tim',
-      description: 'Diskusi progress proyek mingguan',
-      category: 'Pekerjaan',
-      priority: 'high',
-      dueDate: '2024-03-20',
-      completed: true,
-    },
-    {
-      id: 4,
-      title: 'Olahraga sore',
-      description: 'Jogging 30 menit di taman',
-      category: 'Kesehatan',
-      priority: 'low',
-      dueDate: '2024-03-22',
-      completed: false,
-    },
-    {
-      id: 5,
-      title: 'Review kode program',
-      description: 'Review PR dari anggota tim',
-      category: 'Pekerjaan',
-      priority: 'medium',
-      dueDate: '2024-03-21',
-      completed: true,
-    },
-  ])
-
+  const { data: session } = useSession()
+  const [tasks, setTasks] = useState<Task[]>([])
+  const [loading, setLoading] = useState(true)
   const [searchQuery, setSearchQuery] = useState('')
   const [activeFilter, setActiveFilter] = useState<FilterType>('pending')
   const [priorityFilter, setPriorityFilter] = useState<PriorityFilter>('all')
@@ -85,54 +47,102 @@ export default function DailyTasksPage() {
   const [showTaskMenu, setShowTaskMenu] = useState<number | null>(null)
   const [editingTask, setEditingTask] = useState<Task | null>(null)
   const [showAddModal, setShowAddModal] = useState(false)
-
-  const toggleTaskCompletion = (taskId: number) => {
-    setTasks(
-      tasks.map((task) =>
-        task.id === taskId ? { ...task, completed: !task.completed } : task,
-      ),
-    )
-  }
-
-  const deleteTask = (taskId: number) => {
-    setTasks(tasks.filter((task) => task.id !== taskId))
-    setShowTaskMenu(null)
-  }
-
-  const saveTask = (updatedTask: Task) => {
-    setTasks(
-      tasks.map((task) => (task.id === updatedTask.id ? updatedTask : task)),
-    )
-    setEditingTask(null)
-  }
-
-  const addNewTask = (newTask: Omit<Task, 'id'>) => {
-    const task: Task = {
-      ...newTask,
-      id: Date.now(),
+  const extended = session as ExtendedSession
+  useEffect(() => {
+    if (!extended?.user?.id) return
+    const fetchTasks = async () => {
+      try {
+        const res = await fetch(`/api/todo?userId=${extended.user.id}`)
+        if (!res.ok) throw new Error('Gagal fetch tugas')
+        const data: Task[] = await res.json()
+        setTasks(data)
+      } catch (err) {
+        console.error(err)
+      } finally {
+        setLoading(false)
+      }
     }
-    setTasks([...tasks, task])
-    setShowAddModal(false)
-  }
+    fetchTasks()
+  }, [extended?.user?.id])
 
+  const addNewTask = async (task: Omit<Task, 'id'>) => {
+    if (!extended?.user?.id) return
+    try {
+      const res = await fetch('/api/todo', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...task, userId: extended.user.id }),
+      })
+      if (!res.ok) throw new Error('Gagal tambah tugas')
+      const newTask: Task = await res.json()
+      setTasks((prev) => [newTask, ...prev])
+      setShowAddModal(false)
+    } catch (err) {
+      console.error(err)
+    }
+  }
+  const saveTask = async (task: Task | null) => {
+    if (!task) return
+    try {
+      const res = await fetch(`/api/todo/${task.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(task),
+      })
+      if (!res.ok) throw new Error('Gagal update tugas')
+      const updatedTask: Task = await res.json()
+      setTasks((prev) =>
+        prev.map((t) => (t.id === updatedTask.id ? updatedTask : t)),
+      )
+      setEditingTask(null)
+    } catch (err) {
+      console.error(err)
+    }
+  }
+  const deleteTask = async (taskId: number) => {
+    try {
+      const res = await fetch(`/api/todo/${taskId}`, { method: 'DELETE' })
+      if (!res.ok) throw new Error('Gagal hapus tugas')
+      setTasks((prev) => prev.filter((t) => t.id !== taskId))
+    } catch (err) {
+      console.error(err)
+    }
+  }
+  const toggleTaskCompletion = async (taskId: number) => {
+    const task = tasks.find((t) => t.id === taskId)
+    if (!task) return
+    const newStatus = task.status === 'Aktif' ? 'Selesai' : 'Aktif'
+    try {
+      const res = await fetch(`/api/todo/${taskId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...task, status: newStatus }),
+      })
+      if (!res.ok) throw new Error('Gagal update status tugas')
+      const updatedTask: Task = await res.json()
+      setTasks((prev) =>
+        prev.map((t) => (t.id === updatedTask.id ? updatedTask : t)),
+      )
+    } catch (err) {
+      console.error(err)
+    }
+  }
   const filteredTasks = tasks.filter((task) => {
     const matchesSearch =
       task.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      task.description.toLowerCase().includes(searchQuery.toLowerCase())
+      task.desc.toLowerCase().includes(searchQuery.toLowerCase())
     const matchesFilter =
       activeFilter === 'all' ||
-      (activeFilter === 'pending' && !task.completed) ||
-      (activeFilter === 'completed' && task.completed)
+      (activeFilter === 'pending' && task.status === 'Aktif') ||
+      (activeFilter === 'completed' && task.status === 'Selesai')
     const matchesPriority =
-      priorityFilter === 'all' || task.priority === priorityFilter
+      priorityFilter === 'all' || task.prioritas === priorityFilter
     return matchesSearch && matchesFilter && matchesPriority
   })
-
-  const completedCount = tasks.filter((task) => task.completed).length
+  const completedCount = tasks.filter((t) => t.status === 'Selesai').length
   const totalCount = tasks.length
-
-  const getPriorityColor = (priority: string) => {
-    switch (priority) {
+  const getPriorityColor = (prioritas: string) => {
+    switch (prioritas) {
       case 'high':
         return 'bg-[#f38ba8]/10 text-[#f38ba8]'
       case 'medium':
@@ -143,9 +153,8 @@ export default function DailyTasksPage() {
         return 'bg-[#313244] text-[#a6adc8]'
     }
   }
-
-  const getPriorityLabel = (priority: string) => {
-    switch (priority) {
+  const getPriorityLabel = (prioritas: string) => {
+    switch (prioritas) {
       case 'high':
         return 'Tinggi'
       case 'medium':
@@ -153,10 +162,17 @@ export default function DailyTasksPage() {
       case 'low':
         return 'Rendah'
       default:
-        return priority
+        return prioritas
     }
   }
-
+  if (loading)
+    return (
+      <Layouts>
+        <div className="flex items-center justify-center h-full text-[#cdd6f4]">
+          Loading...
+        </div>
+      </Layouts>
+    )
   return (
     <Layouts>
       <div className="h-full w-full bg-[#1e1e2e] text-[#cdd6f4]">
@@ -169,7 +185,7 @@ export default function DailyTasksPage() {
               Kelola tugas harianmu dengan mudah
             </p>
           </div>
-
+          {/* summary bar */}
           <div className="mb-6 rounded-xl bg-[#181825] border border-[#313244] p-4 shadow-sm">
             <div className="flex items-center justify-between">
               <div>
@@ -194,7 +210,7 @@ export default function DailyTasksPage() {
               />
             </div>
           </div>
-
+          {/* search & filter */}
           <div className="mb-4 flex gap-2">
             <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[#a6adc8]" />
@@ -244,57 +260,40 @@ export default function DailyTasksPage() {
               )}
             </div>
           </div>
-
+          {/* status filter */}
           <div className="mb-6 flex gap-2 rounded-lg bg-[#313244] p-1">
-            <button
-              onClick={() => setActiveFilter('all')}
-              className={`flex-1 rounded-sm px-4 py-2 text-sm font-medium transition-colors ${
-                activeFilter === 'all'
-                  ? 'bg-[#1e1e2e] text-[#cdd6f4] shadow-sm'
-                  : 'text-[#a6adc8] hover:text-[#cdd6f4]'
-              }`}
-            >
-              Semua
-            </button>
-            <button
-              onClick={() => setActiveFilter('pending')}
-              className={`flex-1 rounded-sm px-4 py-2 text-sm font-medium transition-colors ${
-                activeFilter === 'pending'
-                  ? 'bg-[#1e1e2e] text-[#cdd6f4] shadow-sm'
-                  : 'text-[#a6adc8] hover:text-[#cdd6f4]'
-              }`}
-            >
-              Aktif
-            </button>
-            <button
-              onClick={() => setActiveFilter('completed')}
-              className={`flex-1 rounded-sm px-4 py-2 text-sm font-medium transition-colors ${
-                activeFilter === 'completed'
-                  ? 'bg-[#1e1e2e] text-[#cdd6f4] shadow-sm'
-                  : 'text-[#a6adc8] hover:text-[#cdd6f4]'
-              }`}
-            >
-              Selesai
-            </button>
+            {(['all', 'pending', 'completed'] as FilterType[]).map((filter) => (
+              <button
+                key={filter}
+                onClick={() => setActiveFilter(filter)}
+                className={`flex-1 rounded-sm px-4 py-2 text-sm font-medium transition-colors ${
+                  activeFilter === filter
+                    ? 'bg-[#1e1e2e] text-[#cdd6f4] shadow-sm'
+                    : 'text-[#a6adc8] hover:text-[#cdd6f4]'
+                }`}
+              >
+                {filter === 'all'
+                  ? 'Semua'
+                  : filter === 'pending'
+                    ? 'Aktif'
+                    : 'Selesai'}
+              </button>
+            ))}
           </div>
-
+          {/* tasks */}
           <div className="space-y-3">
             {filteredTasks.length > 0 ? (
               filteredTasks.map((task) => (
                 <div
                   key={task.id}
-                  className={`rounded-xl border bg-[#181825] p-4 shadow-sm transition-all hover:shadow-md ${
-                    task.completed
-                      ? 'border-[#313244] opacity-60'
-                      : 'border-[#313244]'
-                  }`}
+                  className={`rounded-xl border bg-[#181825] p-4 shadow-sm transition-all hover:shadow-md ${task.status === 'Selesai' ? 'border-[#313244] opacity-60' : 'border-[#313244]'}`}
                 >
                   <div className="flex items-start gap-3">
                     <button
                       onClick={() => toggleTaskCompletion(task.id)}
                       className="mt-0.5 text-[#7f849c] hover:text-[#cdd6f4] transition-colors"
                     >
-                      {task.completed ? (
+                      {task.status === 'Selesai' ? (
                         <CheckCircle2 className="h-5 w-5 text-[#89b4fa]" />
                       ) : (
                         <Circle className="h-5 w-5" />
@@ -302,32 +301,22 @@ export default function DailyTasksPage() {
                     </button>
                     <div className="flex-1 min-w-0">
                       <h3
-                        className={`font-medium mb-1 ${
-                          task.completed
-                            ? 'text-[#7f849c] line-through'
-                            : 'text-[#cdd6f4]'
-                        }`}
+                        className={`font-medium mb-1 ${task.status === 'Selesai' ? 'text-[#7f849c] line-through' : 'text-[#cdd6f4]'}`}
                       >
                         {task.title}
                       </h3>
-                      <p className="text-xs text-[#a6adc8] mb-2">
-                        {task.description}
-                      </p>
+                      <p className="text-xs text-[#a6adc8] mb-2">{task.desc}</p>
                       <div className="flex flex-wrap items-center gap-2 text-xs">
                         <span
-                          className={`inline-flex items-center gap-1 rounded-md px-2 py-1 font-medium ${getPriorityColor(
-                            task.priority,
-                          )}`}
+                          className={`inline-flex items-center gap-1 rounded-md px-2 py-1 font-medium ${getPriorityColor(task.prioritas)}`}
                         >
-                          {getPriorityLabel(task.priority)}
+                          {getPriorityLabel(task.prioritas)}
                         </span>
                         <span className="inline-flex items-center gap-1 text-[#a6adc8]">
-                          <Tag className="h-3 w-3" />
-                          {task.category}
+                          <Tag className="h-3 w-3" /> {task.category}
                         </span>
                         <span className="inline-flex items-center gap-1 text-[#a6adc8]">
-                          <Clock className="h-3 w-3" />
-                          {task.dueDate}
+                          <Clock className="h-3 w-3" /> {task.deadline}
                         </span>
                       </div>
                     </div>
@@ -344,7 +333,7 @@ export default function DailyTasksPage() {
                       </button>
                       {showTaskMenu === task.id && (
                         <div className="absolute right-0 mt-1 w-32 rounded-md border border-[#313244] bg-[#181825] shadow-lg z-10">
-                          {!task.completed && (
+                          {task.status !== 'Selesai' && (
                             <button
                               onClick={() => {
                                 setEditingTask(task)
@@ -352,18 +341,14 @@ export default function DailyTasksPage() {
                               }}
                               className="w-full flex items-center gap-2 px-3 py-2 text-sm text-[#cdd6f4] hover:bg-[#45475a] transition-colors rounded-t-sm"
                             >
-                              <Edit2 className="h-3 w-3" />
-                              Edit
+                              <Edit2 className="h-3 w-3" /> Edit
                             </button>
                           )}
                           <button
                             onClick={() => deleteTask(task.id)}
-                            className={`w-full flex items-center gap-2 px-3 py-2 text-sm text-[#f38ba8] hover:bg-[#f38ba8]/10 transition-colors ${
-                              task.completed ? 'rounded-md' : 'rounded-b-sm'
-                            }`}
+                            className={`w-full flex items-center gap-2 px-3 py-2 text-sm text-[#f38ba8] hover:bg-[#f38ba8]/10 transition-colors ${task.status === 'Selesai' ? 'rounded-md' : 'rounded-b-sm'}`}
                           >
-                            <Trash2 className="h-3 w-3" />
-                            Hapus
+                            <Trash2 className="h-3 w-3" /> Hapus
                           </button>
                         </div>
                       )}
@@ -385,7 +370,7 @@ export default function DailyTasksPage() {
               </div>
             )}
           </div>
-
+          {/* add task button */}
           <button
             onClick={() => setShowAddModal(true)}
             className="fixed bottom-24 right-6 rounded-md bg-[#89b4fa] p-2 text-[#1e1e2e] shadow-sm cursor-pointer"
@@ -393,239 +378,215 @@ export default function DailyTasksPage() {
             <Plus className="h-6 w-6" />
           </button>
         </div>
-
+        {/* edit modal */}
         {editingTask && (
           <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
             <div className="bg-[#181825] rounded-md border border-[#313244] shadow-xl max-w-md w-full p-6">
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-lg font-bold text-[#cdd6f4]">Edit Tugas</h2>
+              <div className="flex justify-between items-center mb-4">
+                <h3 className="text-lg font-medium text-[#cdd6f4]">
+                  Edit Tugas
+                </h3>
                 <button
                   onClick={() => setEditingTask(null)}
-                  className="text-[#a6adc8] hover:text-[#cdd6f4] transition-colors"
+                  className="text-[#f38ba8]"
                 >
                   <X className="h-5 w-5" />
                 </button>
               </div>
-              <form
-                onSubmit={(e) => {
-                  e.preventDefault()
-                  saveTask(editingTask)
-                }}
-                className="space-y-4"
-              >
-                <div>
-                  <label className="block text-sm font-medium text-[#cdd6f4] mb-1">
-                    Judul
-                  </label>
-                  <input
-                    type="text"
-                    value={editingTask.title}
-                    onChange={(e) =>
-                      setEditingTask({ ...editingTask, title: e.target.value })
-                    }
-                    className="w-full rounded-md border border-[#313244] bg-[#1e1e2e] px-3 py-2 text-sm text-[#cdd6f4] focus:outline-none focus:ring-2 focus:ring-[#89b4fa]"
-                    required
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-[#cdd6f4] mb-1">
-                    Deskripsi
-                  </label>
-                  <textarea
-                    value={editingTask.description}
-                    onChange={(e) =>
-                      setEditingTask({
-                        ...editingTask,
-                        description: e.target.value,
-                      })
-                    }
-                    className="w-full rounded-md border border-[#313244] bg-[#1e1e2e] px-3 py-2 text-sm text-[#cdd6f4] focus:outline-none focus:ring-2 focus:ring-[#89b4fa]"
-                    rows={3}
-                    required
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-[#cdd6f4] mb-1">
-                    Kategori
-                  </label>
-                  <input
-                    type="text"
-                    value={editingTask.category}
-                    onChange={(e) =>
-                      setEditingTask({
-                        ...editingTask,
-                        category: e.target.value,
-                      })
-                    }
-                    className="w-full rounded-md border border-[#313244] bg-[#1e1e2e] px-3 py-2 text-sm text-[#cdd6f4] focus:outline-none focus:ring-2 focus:ring-[#89b4fa]"
-                    required
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-[#cdd6f4] mb-1">
-                    Prioritas
-                  </label>
-                  <select
-                    value={editingTask.priority}
-                    onChange={(e) =>
-                      setEditingTask({
-                        ...editingTask,
-                        priority: e.target.value as Task['priority'],
-                      })
-                    }
-                    className="w-full rounded-md border border-[#313244] bg-[#1e1e2e] px-3 py-2 text-sm text-[#cdd6f4] focus:outline-none focus:ring-2 focus:ring-[#89b4fa]"
-                  >
-                    <option value="low">Rendah</option>
-                    <option value="medium">Sedang</option>
-                    <option value="high">Tinggi</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-[#cdd6f4] mb-1">
-                    Tanggal
-                  </label>
-                  <input
-                    type="date"
-                    value={editingTask.dueDate}
-                    onChange={(e) =>
-                      setEditingTask({
-                        ...editingTask,
-                        dueDate: e.target.value,
-                      })
-                    }
-                    className="w-full rounded-md border border-[#313244] bg-[#1e1e2e] px-3 py-2 text-sm text-[#cdd6f4] focus:outline-none focus:ring-2 focus:ring-[#89b4fa]"
-                    required
-                  />
-                </div>
-                <div className="flex gap-2 pt-2">
-                  <button
-                    type="button"
-                    onClick={() => setEditingTask(null)}
-                    className="flex-1 rounded-md border border-[#313244] bg-[#1e1e2e] px-4 py-2 text-sm font-medium text-[#cdd6f4] hover:bg-[#45475a] transition-colors"
-                  >
-                    Batal
-                  </button>
-                  <button
-                    type="submit"
-                    className="flex-1 rounded-md bg-[#89b4fa] px-4 py-2 text-sm font-medium text-[#1e1e2e] hover:bg-[#89b4fa]/90 transition-colors"
-                  >
-                    Simpan
-                  </button>
-                </div>
-              </form>
+              <div className="flex flex-col gap-3">
+                <input
+                  value={editingTask.title}
+                  onChange={(e) =>
+                    setEditingTask({ ...editingTask, title: e.target.value })
+                  }
+                  className="w-full rounded-md border border-[#313244] bg-[#1e1e2e] px-3 py-2 text-sm text-[#cdd6f4]"
+                  placeholder="Judul"
+                />
+                <textarea
+                  value={editingTask.desc}
+                  onChange={(e) =>
+                    setEditingTask({ ...editingTask, desc: e.target.value })
+                  }
+                  className="w-full rounded-md border border-[#313244] bg-[#1e1e2e] px-3 py-2 text-sm text-[#cdd6f4]"
+                  placeholder="Deskripsi"
+                />
+                <input
+                  value={editingTask.category}
+                  onChange={(e) =>
+                    setEditingTask({ ...editingTask, category: e.target.value })
+                  }
+                  className="w-full rounded-md border border-[#313244] bg-[#1e1e2e] px-3 py-2 text-sm text-[#cdd6f4]"
+                  placeholder="Kategori"
+                />
+                <select
+                  value={editingTask.prioritas}
+                  onChange={(e) =>
+                    setEditingTask({
+                      ...editingTask,
+                      prioritas: e.target.value as 'high' | 'medium' | 'low',
+                    })
+                  }
+                  className="w-full rounded-md border border-[#313244] bg-[#1e1e2e] px-3 py-2 text-sm text-[#cdd6f4]"
+                >
+                  <option value="high">Tinggi</option>
+                  <option value="medium">Sedang</option>
+                  <option value="low">Rendah</option>
+                </select>
+                <input
+                  type="date"
+                  value={editingTask.deadline}
+                  onChange={(e) =>
+                    setEditingTask({ ...editingTask, deadline: e.target.value })
+                  }
+                  className="w-full rounded-md border border-[#313244] bg-[#1e1e2e] px-3 py-2 text-sm text-[#cdd6f4]"
+                />
+                <select
+                  value={editingTask.status}
+                  onChange={(e) =>
+                    setEditingTask({
+                      ...editingTask,
+                      status: e.target.value as 'Aktif' | 'Selesai',
+                    })
+                  }
+                  className="w-full rounded-md border border-[#313244] bg-[#1e1e2e] px-3 py-2 text-sm text-[#cdd6f4]"
+                >
+                  <option value="Aktif">Aktif</option>
+                  <option value="Selesai">Selesai</option>
+                </select>
+                <button
+                  onClick={() => saveTask(editingTask)}
+                  className="mt-2 rounded-md bg-[#89b4fa] py-2 text-[#1e1e2e] font-medium"
+                >
+                  Simpan
+                </button>
+              </div>
             </div>
           </div>
         )}
 
+        {/* add modal */}
         {showAddModal && (
           <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-            <div className="bg-[#181825] rounded-md border border-[#313244] shadow-xl max-w-md w-full p-6">
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-lg font-bold text-[#cdd6f4]">
-                  Tambah Tugas Baru
-                </h2>
-                <button
-                  onClick={() => setShowAddModal(false)}
-                  className="text-[#a6adc8] hover:text-[#cdd6f4] transition-colors"
-                >
-                  <X className="h-5 w-5" />
-                </button>
-              </div>
-              <form
-                onSubmit={(e) => {
-                  e.preventDefault()
-                  const formData = new FormData(e.currentTarget)
-                  addNewTask({
-                    title: formData.get('title') as string,
-                    description: formData.get('description') as string,
-                    category: formData.get('category') as string,
-                    priority: formData.get('priority') as Task['priority'],
-                    dueDate: formData.get('dueDate') as string,
-                    completed: false,
-                  })
-                }}
-                className="space-y-4"
-              >
-                <div>
-                  <label className="block text-sm font-medium text-[#cdd6f4] mb-1">
-                    Judul
-                  </label>
-                  <input
-                    type="text"
-                    name="title"
-                    placeholder="Masukkan judul tugas"
-                    className="w-full rounded-md border border-[#313244] bg-[#1e1e2e] px-3 py-2 text-sm text-[#cdd6f4] placeholder:text-[#7f849c] focus:outline-none focus:ring-2 focus:ring-[#89b4fa]"
-                    required
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-[#cdd6f4] mb-1">
-                    Deskripsi
-                  </label>
-                  <textarea
-                    name="description"
-                    placeholder="Masukkan deskripsi tugas"
-                    className="w-full rounded-md border border-[#313244] bg-[#1e1e2e] px-3 py-2 text-sm text-[#cdd6f4] placeholder:text-[#7f849c] focus:outline-none focus:ring-2 focus:ring-[#89b4fa]"
-                    rows={3}
-                    required
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-[#cdd6f4] mb-1">
-                    Kategori
-                  </label>
-                  <input
-                    type="text"
-                    name="category"
-                    placeholder="Contoh: Pekerjaan, Pribadi"
-                    className="w-full rounded-md border border-[#313244] bg-[#1e1e2e] px-3 py-2 text-sm text-[#cdd6f4] placeholder:text-[#7f849c] focus:outline-none focus:ring-2 focus:ring-[#89b4fa]"
-                    required
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-[#cdd6f4] mb-1">
-                    Prioritas
-                  </label>
-                  <select
-                    name="priority"
-                    className="w-full rounded-md border border-[#313244] bg-[#1e1e2e] px-3 py-2 text-sm text-[#cdd6f4] focus:outline-none focus:ring-2 focus:ring-[#89b4fa]"
-                  >
-                    <option value="low">Rendah</option>
-                    <option value="medium">Sedang</option>
-                    <option value="high">Tinggi</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-[#cdd6f4] mb-1">
-                    Tanggal
-                  </label>
-                  <input
-                    type="date"
-                    name="dueDate"
-                    className="w-full rounded-md border border-[#313244] bg-[#1e1e2e] px-3 py-2 text-sm text-[#cdd6f4] focus:outline-none focus:ring-2 focus:ring-[#89b4fa]"
-                    required
-                  />
-                </div>
-                <div className="flex gap-2 pt-2">
-                  <button
-                    type="button"
-                    onClick={() => setShowAddModal(false)}
-                    className="flex-1 rounded-md border border-[#313244] bg-[#1e1e2e] px-4 py-2 text-sm font-medium text-[#cdd6f4] hover:bg-[#45475a] transition-colors"
-                  >
-                    Batal
-                  </button>
-                  <button
-                    type="submit"
-                    className="flex-1 rounded-md bg-[#89b4fa] px-4 py-2 text-sm font-medium text-[#1e1e2e] hover:bg-[#89b4fa]/90 transition-colors"
-                  >
-                    Tambah
-                  </button>
-                </div>
-              </form>
-            </div>
+            <AddTaskForm
+              onSave={addNewTask}
+              onCancel={() => setShowAddModal(false)}
+            />
           </div>
         )}
       </div>
     </Layouts>
+  )
+}
+
+function AddTaskForm({
+  onSave,
+  onCancel,
+}: {
+  onSave: (task: Omit<Task, 'id'>) => void
+  onCancel: () => void
+}) {
+  const [title, setTitle] = useState('')
+  const [desc, setDesc] = useState('')
+  const [category, setCategory] = useState('')
+  const [prioritas, setPrioritas] = useState<'high' | 'medium' | 'low'>(
+    'medium',
+  )
+  const [deadline, setDeadline] = useState('')
+
+  const [calendarOpen, setCalendarOpen] = useState(false)
+  const deadlineDate = deadline ? new Date(deadline) : undefined
+
+  const handleSubmit = () => {
+    if (!title) return
+    onSave({
+      title,
+      desc,
+      category,
+      prioritas,
+      deadline,
+      status: 'Aktif',
+    })
+  }
+
+  return (
+    <div className="bg-[#181825] rounded-md border border-[#313244] shadow-xl max-w-md w-full p-6">
+      <div className="flex justify-between items-center mb-4">
+        <h3 className="text-lg font-medium text-[#cdd6f4]">Tambah Tugas</h3>
+        <button onClick={onCancel} className="text-[#f38ba8]">
+          <X className="h-5 w-5" />
+        </button>
+      </div>
+      <div className="flex flex-col gap-3">
+        <input
+          placeholder="Judul"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          className="w-full rounded-md border border-[#313244] bg-[#1e1e2e] px-3 py-2 text-sm text-[#cdd6f4]"
+        />
+        <textarea
+          placeholder="Deskripsi"
+          value={desc}
+          onChange={(e) => setDesc(e.target.value)}
+          className="w-full rounded-md border border-[#313244] bg-[#1e1e2e] px-3 py-2 text-sm text-[#cdd6f4]"
+        />
+        <input
+          placeholder="Kategori"
+          value={category}
+          onChange={(e) => setCategory(e.target.value)}
+          className="w-full rounded-md border border-[#313244] bg-[#1e1e2e] px-3 py-2 text-sm text-[#cdd6f4]"
+        />
+        <select
+          value={prioritas}
+          onChange={(e) =>
+            setPrioritas(e.target.value as 'high' | 'medium' | 'low')
+          }
+          className="w-full rounded-md border border-[#313244] bg-[#1e1e2e] px-3 py-2 text-sm text-[#cdd6f4]"
+        >
+          <option value="high">high</option>
+          <option value="medium">medium</option>
+          <option value="low">low</option>
+        </select>
+
+        <Popover open={calendarOpen} onOpenChange={setCalendarOpen}>
+          <PopoverTrigger asChild>
+            <button
+              type="button"
+              className="w-full rounded-md border border-[#313244] bg-[#1e1e2e] px-3 py-2 text-sm text-[#cdd6f4] flex items-center gap-2 hover:bg-[#45475a] transition-colors"
+            >
+              <CalendarIcon className="h-4 w-4" />
+              {deadline
+                ? new Date(deadline).toLocaleDateString('id-ID')
+                : 'Pilih deadline'}
+            </button>
+          </PopoverTrigger>
+          <PopoverContent
+            align="start"
+            className="w-auto p-0 border-[#313244] bg-[#181825] shadow-xl"
+          >
+            <Calendar
+              mode="single"
+              selected={deadlineDate}
+              onSelect={(date) => {
+                if (date) {
+                  setDeadline(date.toISOString().split('T')[0])
+                  setCalendarOpen(false)
+                }
+              }}
+              disabled={(date) =>
+                date < new Date(new Date().setHours(0, 0, 0, 0))
+              }
+              className="p-3"
+            />
+          </PopoverContent>
+        </Popover>
+
+        <button
+          onClick={handleSubmit}
+          className="mt-2 rounded-md bg-[#89b4fa] py-2 text-[#1e1e2e] font-medium"
+        >
+          Tambah
+        </button>
+      </div>
+    </div>
   )
 }

@@ -3,6 +3,7 @@
 import Typography from '@/components/Typography'
 import { Button } from '@/components/ui/button'
 import Layouts from '@/Layouts/Layouts'
+import { ExtendedSession } from '@/lib/authOptions'
 import { ArrowRight } from 'lucide-react'
 import { useSession } from 'next-auth/react'
 import Image from 'next/image'
@@ -22,7 +23,10 @@ export default function Page() {
   if (status === 'loading') return <p></p>
   if (!session) return null
 
+  const extended = session as ExtendedSession
+
   const hour = new Date().getHours()
+
   let greeting = 'Selamat Malam'
   if (hour >= 4 && hour < 11) greeting = 'Selamat Pagi'
   else if (hour >= 11 && hour < 15) greeting = 'Selamat Siang'
@@ -33,7 +37,7 @@ export default function Page() {
       <div className="min-h-screen h-screen w-full bg-[#1e1e2e] p-6 flex flex-col gap-6 overflow-y-auto">
         {/* ucapan */}
         <Typography className="text-[#cdd6f4] text-xl" weight="bold">
-          {greeting}, {session.user?.name}!
+          {greeting}, {extended.user.username}!
         </Typography>
 
         {/* headers */}
@@ -68,7 +72,6 @@ export default function Page() {
           </div>
         </div>
 
-        {/* header - activity */}
         <div className="w-full h-fit flex justify-between">
           <div>
             <Typography className="text-[#cdd6f4]">Agenda Hari Ini</Typography>
@@ -81,7 +84,6 @@ export default function Page() {
           </Link>
         </div>
 
-        {/* block */}
         <div className="w-full h-[10%] bg-[#181825] rounded-md shadow-xl flex justify-center items-center text-center">
           <Typography className="text-xs text-[#a6adc8]">
             <b className="text-base text-[#cdd6f4]">
@@ -92,7 +94,6 @@ export default function Page() {
           </Typography>
         </div>
 
-        {/* card bawah */}
         <div className="w-full h-fit py-5 bg-[#181825] rounded-xl flex flex-col gap-2 relative shadow-lg">
           <Image
             src={'/images/raiden-chibi.png'}
