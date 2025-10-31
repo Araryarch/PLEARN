@@ -17,21 +17,18 @@ async function generateUniqueTagName(username: string): Promise<string> {
 
 export async function POST(req: NextRequest) {
   const { username, email, password, confirmPassword } = await req.json()
-
   if (!username || !email || !password || !confirmPassword) {
     return NextResponse.json(
       { message: 'All fields are required' },
       { status: 400 },
     )
   }
-
   if (password !== confirmPassword) {
     return NextResponse.json(
       { message: 'Passwords do not match' },
       { status: 400 },
     )
   }
-
   try {
     const existingEmail = await prisma.user.findUnique({ where: { email } })
     if (existingEmail)
@@ -39,14 +36,11 @@ export async function POST(req: NextRequest) {
         { message: 'Email already exists' },
         { status: 400 },
       )
-
     const tagName = await generateUniqueTagName(username)
     const hashedPassword = await hash(password, 10)
-
     const user = await prisma.user.create({
       data: { username, tagName, email, password: hashedPassword, score: 0 },
     })
-
     return NextResponse.json(
       { message: 'User registered successfully', tagName: user.tagName },
       { status: 201 },
