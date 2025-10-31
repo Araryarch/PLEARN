@@ -24,6 +24,7 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover'
 import { Calendar } from '@/components/ui/calendar'
+import { parseISOToString } from '@/lib/dateParser'
 
 interface Task {
   id: number
@@ -365,7 +366,8 @@ export default function DailyTasksPage() {
                           <Tag className="h-3 w-3" /> {task.category}
                         </span>
                         <span className="inline-flex items-center gap-1 text-[#a6adc8]">
-                          <Clock className="h-3 w-3" /> {task.deadline}
+                          <Clock className="h-3 w-3" />{' '}
+                          {parseISOToString(task.deadline)}
                         </span>
                       </div>
                     </div>

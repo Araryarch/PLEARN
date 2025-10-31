@@ -3,6 +3,7 @@
 import Layouts from '@/Layouts/Layouts'
 import Typography from '@/components/Typography'
 import { ExtendedSession } from '@/lib/authOptions'
+import { parseISOToString } from '@/lib/dateParser'
 import { Mail, LogOut, ChevronRight, Calendar } from 'lucide-react'
 import { signOut, useSession } from 'next-auth/react'
 import Image from 'next/image'
@@ -197,7 +198,7 @@ export default function Page() {
               {
                 icon: <Calendar size={18} className="text-[#89b4fa]" />,
                 title: 'Join at',
-                value: extended.user.startDate,
+                value: parseISOToString(extended.user.startDate),
               },
             ].map((info, i) => (
               <div key={i} className="flex items-center gap-3 p-3">

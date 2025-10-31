@@ -10,6 +10,7 @@ import { useRouter } from 'next/navigation'
 import Image from 'next/image'
 import React, { useEffect, useState } from 'react'
 import Link from 'next/link'
+import { parseISOToString } from '@/lib/dateParser'
 
 interface Task {
   id: number
@@ -216,7 +217,8 @@ export default function Page() {
                         <Tag className="h-3 w-3" /> {task.category}
                       </span>
                       <span className="inline-flex items-center gap-1 text-[#a6adc8]">
-                        <Clock className="h-3 w-3" /> {task.deadline}
+                        <Clock className="h-3 w-3" />{' '}
+                        {parseISOToString(task.deadline)}
                       </span>
                     </div>
                   </div>
