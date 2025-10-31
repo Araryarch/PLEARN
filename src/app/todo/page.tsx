@@ -36,6 +36,57 @@ interface Task {
 }
 type FilterType = 'all' | 'pending' | 'completed'
 type PriorityFilter = 'all' | 'high' | 'medium' | 'low'
+
+// Skeleton Loading Component
+const SkeletonLoading = () => (
+  <div className="min-h-screen h-screen w-full bg-[#1e1e2e] p-6 flex flex-col gap-6 overflow-y-auto">
+    {/* Greeting Skeleton */}
+    <div className="h-6 bg-[#313244] rounded animate-pulse"></div>
+
+    {/* Main Card Skeleton */}
+    <div className="w-full h-fit bg-[#181825] border-1 border-[#313244] py-5 rounded-xl flex flex-col gap-2 relative shadow-lg">
+      <div className="h-20 bg-[#313244] rounded animate-pulse absolute bottom-0 right-0 w-20"></div>
+      <div className="h-1/2 w-full flex justify-start items-center px-5">
+        <div className="h-4 bg-[#313244] rounded animate-pulse w-3/4"></div>
+      </div>
+      <div className="h-1/2 w-fit flex px-5 gap-10 justify-between items-center">
+        <div className="flex flex-col items-center gap-2">
+          <div className="h-8 w-12 bg-[#313244] rounded animate-pulse"></div>
+          <div className="h-3 w-8 bg-[#313244] rounded animate-pulse"></div>
+        </div>
+      </div>
+    </div>
+
+    {/* Agenda Header Skeleton */}
+    <div className="w-full h-fit flex justify-between">
+      <div className="h-4 bg-[#313244] rounded animate-pulse w-20"></div>
+      <div className="h-4 bg-[#313244] rounded animate-pulse w-24"></div>
+    </div>
+
+    {/* Tasks List Skeleton */}
+    <div className="w-full flex flex-col gap-3">
+      {Array.from({ length: 3 }).map((_, index) => (
+        <div
+          key={index}
+          className="rounded-xl border bg-[#181825] p-4 shadow-sm border-[#313244] animate-pulse"
+        >
+          <div className="flex items-start gap-3">
+            <div className="flex-1 min-w-0">
+              <div className="h-5 bg-[#313244] rounded mb-2 w-3/4"></div>
+              <div className="h-3 bg-[#313244] rounded mb-2 w-full"></div>
+              <div className="flex flex-wrap items-center gap-2">
+                <div className="h-6 w-16 bg-[#313244] rounded"></div>
+                <div className="h-6 w-20 bg-[#313244] rounded"></div>
+                <div className="h-6 w-24 bg-[#313244] rounded"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+)
+
 export default function DailyTasksPage() {
   const { data: session } = useSession()
   const [tasks, setTasks] = useState<Task[]>([])
@@ -168,9 +219,7 @@ export default function DailyTasksPage() {
   if (loading)
     return (
       <Layouts>
-        <div className="flex items-center justify-center h-full text-[#cdd6f4]">
-          Loading...
-        </div>
+        <SkeletonLoading />
       </Layouts>
     )
   return (
