@@ -14,7 +14,7 @@ import { StatusBar, Style } from '@capacitor/status-bar'
 
 if (Capacitor.getPlatform() !== 'web') {
   await StatusBar.setStyle({ style: Style.Dark })
-  await StatusBar.setOverlaysWebView({ overlay: true })
+  await StatusBar.setOverlaysWebView({ overlay: false })
   await StatusBar.hide()
 }
 
