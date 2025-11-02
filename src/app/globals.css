@@ -161,8 +161,20 @@
 }
 
 .safe-area {
+  position: relative;
   padding-top: env(safe-area-inset-top);
   padding-bottom: env(safe-area-inset-bottom);
   min-height: 100vh;
-  background-color: #0f0f1a;
+  background-color: #0f0f1a; /* warna utama content */
+}
+
+.safe-area::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  top: 0;
+  z-index: 999999999;
+  background-color: #1e1e2e;
 }
