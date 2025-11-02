@@ -33,3 +33,4 @@ ios/*
 android/*
 .next/
 .next/*
+.android/
