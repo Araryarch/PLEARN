@@ -99,6 +99,11 @@ export default function DailyTasksPage() {
   const [showTaskMenu, setShowTaskMenu] = useState<number | null>(null)
   const [editingTask, setEditingTask] = useState<Task | null>(null)
   const [showAddModal, setShowAddModal] = useState(false)
+  const editingDeadlineDate = editingTask?.deadline
+    ? new Date(editingTask.deadline)
+    : undefined
+  const [editCalendarOpen, setEditCalendarOpen] = useState(false)
+
   const extended = session as ExtendedSession
   useEffect(() => {
     if (!extended?.user?.id) return
@@ -483,14 +488,47 @@ export default function DailyTasksPage() {
                   <option value="medium">Sedang</option>
                   <option value="low">Rendah</option>
                 </select>
-                <input
-                  type="date"
-                  value={editingTask.deadline}
-                  onChange={(e) =>
-                    setEditingTask({ ...editingTask, deadline: e.target.value })
-                  }
-                  className="w-full rounded-md border border-[#313244] bg-[#1e1e2e] px-3 py-2 text-sm text-[#cdd6f4]"
-                />
+
+                <Popover
+                  open={editCalendarOpen}
+                  onOpenChange={setEditCalendarOpen}
+                >
+                  <PopoverTrigger asChild>
+                    <button
+                      type="button"
+                      className="w-full rounded-md border border-[#313244] bg-[#1e1e2e] px-3 py-2 text-sm text-[#cdd6f4] flex items-center gap-2 hover:bg-[#45475a] transition-colors"
+                    >
+                      <CalendarIcon className="h-4 w-4" />
+                      {editingTask.deadline
+                        ? new Date(editingTask.deadline).toLocaleDateString(
+                            'id-ID',
+                          )
+                        : 'Pilih deadline'}
+                    </button>
+                  </PopoverTrigger>
+                  <PopoverContent
+                    align="start"
+                    className="w-auto p-0 border-[#313244] bg-[#181825] shadow-xl"
+                  >
+                    <Calendar
+                      mode="single"
+                      selected={editingDeadlineDate}
+                      onSelect={(date) => {
+                        if (date) {
+                          setEditingTask({
+                            ...editingTask,
+                            deadline: date.toISOString().split('T')[0],
+                          })
+                          setEditCalendarOpen(false)
+                        }
+                      }}
+                      disabled={(date) =>
+                        date < new Date(new Date().setHours(0, 0, 0, 0))
+                      }
+                      className="p-3"
+                    />
+                  </PopoverContent>
+                </Popover>
                 <select
                   value={editingTask.status}
                   onChange={(e) =>
