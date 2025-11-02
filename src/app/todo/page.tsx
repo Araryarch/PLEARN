@@ -424,7 +424,7 @@ export default function DailyTasksPage() {
           {/* add task button */}
           <button
             onClick={() => setShowAddModal(true)}
-            className="fixed bottom-24 right-6 rounded-md bg-[#89b4fa] p-2 text-[#1e1e2e] shadow-sm cursor-pointer"
+            className="fixed bottom-36 right-6 rounded-md bg-[#89b4fa] p-2 text-[#1e1e2e] shadow-sm cursor-pointer"
           >
             <Plus className="h-6 w-6" />
           </button>
