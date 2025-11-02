@@ -868,7 +868,7 @@ export default function Chatbot() {
         </div>
 
         <div
-          className="w-full border-t p-4 pb-[calc(env(safe-area-inset-top)_+_6rem)] md:pb-4"
+          className="w-full border-t p-4 pb-[calc(env(safe-area-inset-bottom)_+_6rem)] md:pb-4"
           style={{
             borderColor: catppuccin.overlay,
             backgroundColor: catppuccin.base,
