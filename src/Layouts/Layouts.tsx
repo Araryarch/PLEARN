@@ -134,7 +134,7 @@ export default function Layouts({
       {/* Mobile Navigation */}
       <>
         <div
-          className={`md:hidden fixed bottom-0 left-0 right-0 z-50 ${isInputFocused ? 'pb-0' : 'pb-[env(safe-area-inset-bottom)] bg-[#1e1e2e]s'} `}
+          className={`md:hidden fixed bottom-0 left-0 right-0 z-50 ${isInputFocused ? 'pb-0' : 'pb-[env(safe-area-inset-bottom)] bg-[#1e1e2e]'} `}
         >
           {topBotBar}
           <div className="bg-[#1e1e2e] border-t border-b border-[#313244] px-2 py-2">
