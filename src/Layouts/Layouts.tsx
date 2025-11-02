@@ -127,7 +127,7 @@ export default function Layouts({ children }: LayoutsProps) {
 
       {/* Mobile Navigation */}
       <div className="md:hidden fixed bottom-0 left-0 right-0 z-50 pb-[env(safe-area-inset-bottom)]">
-        <div className="bg-[#1e1e2e] border-t border-[#313244] px-2 py-2">
+        <div className="bg-[#1e1e2e] border-t border-b border-[#313244] px-2 py-2">
           <div className="flex justify-around items-center max-w-md mx-auto">
             {navigationItems.map((item) => {
               const Icon = item.icon
