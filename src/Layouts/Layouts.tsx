@@ -23,9 +23,10 @@ interface NavigationItem {
 
 interface LayoutsProps {
   children: React.ReactNode
+  topBotBar?: React.ReactNode
 }
 
-export default function Layouts({ children }: LayoutsProps) {
+export default function Layouts({ children, topBotBar }: LayoutsProps) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false)
   const pathname = usePathname()
@@ -126,37 +127,40 @@ export default function Layouts({ children }: LayoutsProps) {
       </div>
 
       {/* Mobile Navigation */}
-      <div className="md:hidden fixed bottom-0 left-0 right-0 z-50 pb-[env(safe-area-inset-bottom)]">
-        <div className="bg-[#1e1e2e] border-t border-b border-[#313244] px-2 py-2">
-          <div className="flex justify-around items-center max-w-md mx-auto">
-            {navigationItems.map((item) => {
-              const Icon = item.icon
-              const isActive = pathname === item.href
-              return (
-                <Link
-                  key={item.id}
-                  href={item.href}
-                  onClick={handleItemClick}
-                  className="flex flex-col items-center justify-center p-2 transition-all duration-200 rounded-lg hover:bg-[#313244]"
-                >
-                  <Icon
-                    className={`h-6 w-6 ${
-                      isActive ? 'text-[#89b4fa]' : 'text-[#a6adc8]'
-                    }`}
-                  />
-                  <span
-                    className={`text-xs mt-1 font-medium ${
-                      isActive ? 'text-[#89b4fa]' : 'text-[#a6adc8]'
-                    }`}
+      <>
+        <div className="md:hidden fixed bottom-0 left-0 right-0 z-50 pb-[env(safe-area-inset-bottom)]">
+          {topBotBar}
+          <div className="bg-[#1e1e2e] border-t border-b border-[#313244] px-2 py-2">
+            <div className="flex justify-around items-center max-w-md mx-auto">
+              {navigationItems.map((item) => {
+                const Icon = item.icon
+                const isActive = pathname === item.href
+                return (
+                  <Link
+                    key={item.id}
+                    href={item.href}
+                    onClick={handleItemClick}
+                    className="flex flex-col items-center justify-center p-2 transition-all duration-200 rounded-lg hover:bg-[#313244]"
                   >
-                    {item.label}
-                  </span>
-                </Link>
-              )
-            })}
+                    <Icon
+                      className={`h-6 w-6 ${
+                        isActive ? 'text-[#89b4fa]' : 'text-[#a6adc8]'
+                      }`}
+                    />
+                    <span
+                      className={`text-xs mt-1 font-medium ${
+                        isActive ? 'text-[#89b4fa]' : 'text-[#a6adc8]'
+                      }`}
+                    >
+                      {item.label}
+                    </span>
+                  </Link>
+                )
+              })}
+            </div>
           </div>
         </div>
-      </div>
+      </>
 
       {/* Mobile Overlay */}
       {isMobileMenuOpen && (

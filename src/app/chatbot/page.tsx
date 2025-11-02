@@ -442,7 +442,44 @@ export default function Chatbot() {
   // Main UI
   // ------------------------------------------------------------------ //
   return (
-    <Layouts>
+    <Layouts
+      topBotBar={
+        <div
+          className="w-full border-t p-4 max-h-fit md:pb-4"
+          style={{
+            borderColor: catppuccin.overlay,
+            backgroundColor: catppuccin.base,
+          }}
+        >
+          <div className="flex items-center gap-3">
+            <Input
+              type="text"
+              value={input}
+              onChange={handleInputChange}
+              onKeyPress={handleKeyPress}
+              placeholder="Type your message..."
+              className="flex-1 rounded-sm py-5"
+              style={{
+                borderColor: catppuccin.overlay,
+                backgroundColor: catppuccin.surface1,
+                color: catppuccin.text,
+              }}
+            />
+            <Button
+              onClick={handleSend}
+              disabled={!input.trim() || isTyping}
+              style={{
+                backgroundColor: catppuccin.blue,
+                color: catppuccin.base,
+                opacity: !input.trim() || isTyping ? 0.5 : 1,
+              }}
+            >
+              <Send size={20} />
+            </Button>
+          </div>
+        </div>
+      }
+    >
       <div
         className="h-screen w-full flex flex-col pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)]"
         style={{ backgroundColor: catppuccin.base, color: catppuccin.text }}
@@ -865,41 +902,6 @@ export default function Chatbot() {
               <div ref={messagesEndRef} />
             </div>
           </ScrollArea>
-        </div>
-
-        <div
-          className="w-full border-t p-4 pb-[calc(env(safe-area-inset-bottom)] max-h-fit md:pb-4"
-          style={{
-            borderColor: catppuccin.overlay,
-            backgroundColor: catppuccin.base,
-          }}
-        >
-          <div className="flex items-center gap-3">
-            <Input
-              type="text"
-              value={input}
-              onChange={handleInputChange}
-              onKeyPress={handleKeyPress}
-              placeholder="Type your message..."
-              className="flex-1 rounded-sm py-5"
-              style={{
-                borderColor: catppuccin.overlay,
-                backgroundColor: catppuccin.surface1,
-                color: catppuccin.text,
-              }}
-            />
-            <Button
-              onClick={handleSend}
-              disabled={!input.trim() || isTyping}
-              style={{
-                backgroundColor: catppuccin.blue,
-                color: catppuccin.base,
-                opacity: !input.trim() || isTyping ? 0.5 : 1,
-              }}
-            >
-              <Send size={20} />
-            </Button>
-          </div>
         </div>
       </div>
     </Layouts>
