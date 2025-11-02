@@ -18,8 +18,16 @@ export default function Page() {
 
   const [showAvatarModal, setShowAvatarModal] = useState(false)
   const [showEditModal, setShowEditModal] = useState(false)
-  const [selectedAvatar, setSelectedAvatar] = useState(extended.user.avatar)
+  const [selectedAvatar, setSelectedAvatar] = useState<string | null>(null)
   const [username, setUsername] = useState('')
+
+  useEffect(() => {
+    if (status === 'authenticated' && session) {
+      const extended = session as ExtendedSession
+      setSelectedAvatar(extended.user.avatar)
+      setUsername(extended.user.username)
+    }
+  }, [status, session])
 
   const avatars = [
     '/images/hutao-pp.png',
@@ -114,7 +122,7 @@ export default function Page() {
             className="w-16 h-16 rounded-full flex items-center justify-center text-[#1e1e2e] overflow-hidden cursor-pointer hover:opacity-80 transition-opacity relative group"
           >
             <Image
-              src={selectedAvatar}
+              src={selectedAvatar!}
               alt="profile"
               width={500}
               height={500}
