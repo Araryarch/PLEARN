@@ -27,7 +27,7 @@ export default function RootLayout({
           type="image/x-icon"
         />
       </head>
-      <body className={cn(Inter.variable, 'dark safe-area')}>
+      <body className={cn(Inter.variable, 'dark')}>
         <Providers>{children}</Providers>
         <GoogleAnalytics gaId="" />
       </body>
