@@ -868,7 +868,7 @@ export default function Chatbot() {
         </div>
 
         <div
-          className="w-full border-t p-4 pb-[calc(env(safe-area-inset-bottom)_+_6rem)] md:pb-4"
+          className="w-full border-t p-4 pb-[calc(env(safe-area-inset-bottom)] max-h-fit md:pb-4"
           style={{
             borderColor: catppuccin.overlay,
             backgroundColor: catppuccin.base,
@@ -881,7 +881,7 @@ export default function Chatbot() {
               onChange={handleInputChange}
               onKeyPress={handleKeyPress}
               placeholder="Type your message..."
-              className="flex-1 rounded-sm"
+              className="flex-1 rounded-sm py-5"
               style={{
                 borderColor: catppuccin.overlay,
                 backgroundColor: catppuccin.surface1,
