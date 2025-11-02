@@ -159,3 +159,10 @@
     @apply bg-base-ctp;
   }
 }
+
+.safe-area {
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
+  min-height: 100vh;
+  background-color: #0f0f1a;
+}
