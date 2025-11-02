@@ -603,6 +603,8 @@ export default function Chatbot() {
                       {msg.sender === 'user' ? (
                         <Image
                           src={extended.user.avatar}
+                          width={200}
+                          height={200}
                           alt="You"
                           className="w-8 h-8 rounded-full object-cover"
                           title="You"
