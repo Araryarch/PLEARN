@@ -9,7 +9,6 @@ const config: CapacitorConfig = {
     cleartext: true,
   },
   plugins: {
-    App: { urlOpen: true },
     StatusBar: {
       overlaysWebView: false,
       style: 'DARK',
