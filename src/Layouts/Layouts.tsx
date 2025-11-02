@@ -214,7 +214,7 @@ export default function Layouts({
       <div
         className={`${
           isSidebarCollapsed ? 'md:pl-20' : 'md:pl-64'
-        } ${isInputFocused ? 'pb-0' : 'pb-[env(safe-area-inset-bottom)]'} pt-[env(safe-area-inset-top)] transition-all duration-300 bg-[#1e1e2e] min-h-screen h-screen text-[#cdd6f4] relative safe-area`}
+        } ${isInputFocused ? 'pb-0!' : 'pb-[env(safe-area-inset-bottom)]!'} pt-[env(safe-area-inset-top)]! transition-all duration-300 bg-[#1e1e2e] min-h-screen h-screen text-[#cdd6f4] relative safe-area`}
       >
         {children}
       </div>
