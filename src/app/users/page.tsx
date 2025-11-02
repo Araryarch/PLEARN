@@ -128,6 +128,8 @@ export default function Page() {
 
   const extended = session as ExtendedSession
 
+  console.log(extended.user.avatar)
+
   return (
     <Layouts>
       <div className="min-h-screen w-full bg-[#1e1e2e] text-[#cdd6f4] flex flex-col gap-4 p-4 pb-16">
