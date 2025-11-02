@@ -12,22 +12,12 @@ import { useEffect, useState } from 'react'
 
 export default function Page() {
   const { data: session, status } = useSession()
-  const extended = session as ExtendedSession
-
   const router = useRouter()
 
   const [showAvatarModal, setShowAvatarModal] = useState(false)
   const [showEditModal, setShowEditModal] = useState(false)
   const [selectedAvatar, setSelectedAvatar] = useState<string | null>(null)
   const [username, setUsername] = useState('')
-
-  useEffect(() => {
-    if (status === 'authenticated' && session) {
-      const extended = session as ExtendedSession
-      setSelectedAvatar(extended.user.avatar)
-      setUsername(extended.user.username)
-    }
-  }, [status, session])
 
   const avatars = [
     '/images/hutao-pp.png',
@@ -38,6 +28,19 @@ export default function Page() {
     '/images/raiden-pp.png',
   ]
 
+  // Hanya loading saat session sedang fetch
+  const isLoading = status === 'loading'
+
+  useEffect(() => {
+    if (status === 'authenticated' && session) {
+      const extended = session as ExtendedSession
+      setSelectedAvatar(extended.user.avatar)
+      setUsername(extended.user.username)
+    } else if (status !== 'loading' && !session) {
+      router.push('/login')
+    }
+  }, [status, session, router])
+
   const handleSaveAvatar = async () => {
     try {
       const res = await fetch('/api/user/avatar', {
@@ -45,17 +48,14 @@ export default function Page() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ avatar: selectedAvatar }),
       })
-
       const data = (await res.json()) as { avatar?: string; error?: string }
       if (!res.ok) throw new Error(data.error ?? 'Failed to save avatar')
 
       setSelectedAvatar(data.avatar!)
       setShowAvatarModal(false)
     } catch (err: unknown) {
-      if (err instanceof Error) {
-        console.error(err)
-        alert(err.message)
-      }
+      if (err instanceof Error) alert(err.message)
+      console.error(err)
     }
   }
 
@@ -66,31 +66,67 @@ export default function Page() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username }),
       })
-
       const data = (await res.json()) as { username?: string; error?: string }
       if (!res.ok) throw new Error(data.error ?? 'Failed to save username')
 
       setUsername(data.username!)
       setShowEditModal(false)
     } catch (err: unknown) {
-      if (err instanceof Error) {
-        console.error(err)
-        alert(err.message)
-      }
+      if (err instanceof Error) alert(err.message)
+      console.error(err)
     }
   }
 
-  useEffect(() => {
-    if (status === 'loading') return
-    if (!session) router.push('/login')
-    if (session) {
-      const extended = session as ExtendedSession
-      setUsername(extended.user.username)
-    }
-  }, [session, status, router])
+  const SkeletonLoading = () => (
+    <div className="min-h-screen h-screen w-full bg-[#1e1e2e] p-6 flex flex-col gap-6 overflow-y-auto">
+      <div className="h-6 bg-[#313244] rounded animate-pulse"></div>
+      <div className="w-full h-fit bg-[#181825] border-1 border-[#313244] py-5 rounded-xl flex flex-col gap-2 relative shadow-lg">
+        <div className="h-20 bg-[#313244] rounded animate-pulse absolute bottom-0 right-0 w-20"></div>
+        <div className="h-1/2 w-full flex justify-start items-center px-5">
+          <div className="h-4 bg-[#313244] rounded animate-pulse w-3/4"></div>
+        </div>
+        <div className="h-1/2 w-fit flex px-5 gap-10 justify-between items-center">
+          <div className="flex flex-col items-center gap-2">
+            <div className="h-8 w-12 bg-[#313244] rounded animate-pulse"></div>
+            <div className="h-3 w-8 bg-[#313244] rounded animate-pulse"></div>
+          </div>
+        </div>
+      </div>
+      <div className="w-full h-fit flex justify-between">
+        <div className="h-4 bg-[#313244] rounded animate-pulse w-20"></div>
+        <div className="h-4 bg-[#313244] rounded animate-pulse w-24"></div>
+      </div>
+      <div className="w-full flex flex-col gap-3">
+        {Array.from({ length: 3 }).map((_, index) => (
+          <div
+            key={index}
+            className="rounded-xl border bg-[#181825] p-4 shadow-sm border-[#313244] animate-pulse"
+          >
+            <div className="flex items-start gap-3">
+              <div className="flex-1 min-w-0">
+                <div className="h-5 bg-[#313244] rounded mb-2 w-3/4"></div>
+                <div className="h-3 bg-[#313244] rounded mb-2 w-full"></div>
+                <div className="flex flex-wrap items-center gap-2">
+                  <div className="h-6 w-16 bg-[#313244] rounded"></div>
+                  <div className="h-6 w-20 bg-[#313244] rounded"></div>
+                  <div className="h-6 w-24 bg-[#313244] rounded"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
 
-  if (status === 'loading') return <p></p>
-  if (!session) return null
+  if (isLoading)
+    return (
+      <Layouts>
+        <SkeletonLoading />
+      </Layouts>
+    )
+
+  const extended = session as ExtendedSession
 
   return (
     <Layouts>
@@ -122,7 +158,7 @@ export default function Page() {
             className="w-16 h-16 rounded-full flex items-center justify-center text-[#1e1e2e] overflow-hidden cursor-pointer hover:opacity-80 transition-opacity relative group"
           >
             <Image
-              src={selectedAvatar!}
+              src={selectedAvatar || extended.user.avatar}
               alt="profile"
               width={500}
               height={500}
@@ -134,6 +170,7 @@ export default function Page() {
               </Typography>
             </div>
           </figure>
+
           <div className="text-center">
             <Typography className="text-[#cdd6f4] text-lg font-semibold">
               {extended.user.username}
@@ -144,6 +181,7 @@ export default function Page() {
           </div>
         </div>
 
+        {/* Pencapaian */}
         <div>
           <Typography className="text-[#cdd6f4] mb-3 font-semibold">
             Pencapaian
@@ -202,7 +240,7 @@ export default function Page() {
               {
                 icon: <Mail size={18} className="text-[#89b4fa]" />,
                 title: 'Email',
-                value: session.user?.email,
+                value: extended.user?.email,
               },
               {
                 icon: <Calendar size={18} className="text-[#89b4fa]" />,
@@ -247,7 +285,7 @@ export default function Page() {
         </div>
       </div>
 
-      {/* Modal Ganti Foto Profil */}
+      {/* Modal Avatar */}
       {showAvatarModal && (
         <div
           className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4"
@@ -260,12 +298,10 @@ export default function Page() {
             <Typography className="text-[#cdd6f4] text-lg font-semibold mb-4 text-center">
               Pilih Foto Profil
             </Typography>
-
-            {/* Grid Avatar */}
             <div className="grid grid-cols-3 gap-3 mb-4">
-              {avatars.map((avatar, index) => (
+              {avatars.map((avatar) => (
                 <button
-                  key={index}
+                  key={avatar}
                   onClick={() => setSelectedAvatar(avatar)}
                   className={`relative aspect-square rounded-xl overflow-hidden transition-all ${
                     selectedAvatar === avatar
@@ -275,7 +311,7 @@ export default function Page() {
                 >
                   <Image
                     src={avatar}
-                    alt={`Avatar ${index + 1}`}
+                    alt={avatar}
                     width={200}
                     height={200}
                     className="object-cover w-full h-full"
@@ -291,7 +327,6 @@ export default function Page() {
               ))}
             </div>
 
-            {/* Buttons */}
             <div className="flex flex-col gap-3">
               <button
                 onClick={handleSaveAvatar}
@@ -299,7 +334,6 @@ export default function Page() {
               >
                 Simpan
               </button>
-
               <button
                 onClick={() => setShowAvatarModal(false)}
                 className="w-full bg-[#313244] hover:bg-[#45475a] text-[#cdd6f4] font-medium py-3 rounded-lg transition-colors"
@@ -324,9 +358,7 @@ export default function Page() {
             <Typography className="text-[#cdd6f4] text-lg font-semibold mb-4 text-center">
               Edit Profil
             </Typography>
-
             <div className="flex flex-col gap-4">
-              {/* Username Input */}
               <div className="flex flex-col gap-2">
                 <Typography className="text-[#a6adc8] text-sm">
                   Username
@@ -339,8 +371,6 @@ export default function Page() {
                   placeholder="Masukkan username"
                 />
               </div>
-
-              {/* Buttons */}
               <div className="flex flex-col gap-3 mt-2">
                 <button
                   onClick={handleSaveProfile}
@@ -348,11 +378,10 @@ export default function Page() {
                 >
                   Simpan
                 </button>
-
                 <button
                   onClick={() => {
                     setShowEditModal(false)
-                    setUsername(extended.user.username) // Reset ke nilai awal
+                    setUsername(extended.user.username)
                   }}
                   className="w-full bg-[#313244] hover:bg-[#45475a] text-[#cdd6f4] font-medium py-3 rounded-lg transition-colors"
                 >
