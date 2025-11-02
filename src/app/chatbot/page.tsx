@@ -449,7 +449,7 @@ export default function Chatbot() {
       >
         {/* Header */}
         <div
-          className="border-b px-6 md:pr-72 py-4 fixed top-0 w-full z-50 flex items-center justify-between"
+          className="border-b px-6 md:pr-72 py-4 pt-[calc(env(safe-area-inset-top)_+_1rem)] fixed top-0 w-full z-50 flex items-center justify-between"
           style={{
             borderColor: catppuccin.surface1,
             backgroundColor: catppuccin.surface0,
