@@ -12,10 +12,13 @@ import { useEffect, useState } from 'react'
 
 export default function Page() {
   const { data: session, status } = useSession()
+  const extended = session as ExtendedSession
+
   const router = useRouter()
+
   const [showAvatarModal, setShowAvatarModal] = useState(false)
   const [showEditModal, setShowEditModal] = useState(false)
-  const [selectedAvatar, setSelectedAvatar] = useState('/images/hutao-pp.png')
+  const [selectedAvatar, setSelectedAvatar] = useState(extended.user.avatar)
   const [username, setUsername] = useState('')
 
   const avatars = [
@@ -80,8 +83,6 @@ export default function Page() {
 
   if (status === 'loading') return <p></p>
   if (!session) return null
-
-  const extended = session as ExtendedSession
 
   return (
     <Layouts>
