@@ -899,7 +899,7 @@ export default function Chatbot() {
                 </div>
               )}
 
-              <div ref={messagesEndRef} />
+              <div className="py-20 md:pb-0" ref={messagesEndRef} />
             </div>
           </ScrollArea>
         </div>
