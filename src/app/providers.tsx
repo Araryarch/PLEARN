@@ -9,6 +9,10 @@ import { Toaster } from 'react-hot-toast'
 
 import api from '@/lib/api'
 import { SessionProvider } from 'next-auth/react'
+import { StatusBar, Style } from '@capacitor/status-bar'
+
+await StatusBar.setStyle({ style: Style.Dark })
+await StatusBar.hide() // untuk sembunyikan
 
 const defaultQueryFn = async ({ queryKey }: QueryOptions) => {
   const { data } = await api.get(`${queryKey?.[0]}`)
