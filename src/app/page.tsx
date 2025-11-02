@@ -194,7 +194,7 @@ export default function Page() {
               Semua tugas sudah selesai 🎉
             </Typography>
           ) : (
-            activeTasks.map((task) => (
+            activeTasks.slice(0, 3).map((task) => (
               <div
                 key={task.id}
                 className={`rounded-xl border bg-[#181825] p-4 shadow-sm transition-all hover:shadow-md border-[#313244]`}
