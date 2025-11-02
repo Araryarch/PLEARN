@@ -444,7 +444,7 @@ export default function Chatbot() {
   return (
     <Layouts>
       <div
-        className="h-screen w-full flex flex-col"
+        className="h-screen w-full flex flex-col pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)]"
         style={{ backgroundColor: catppuccin.base, color: catppuccin.text }}
       >
         {/* Header */}
