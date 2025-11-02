@@ -28,6 +28,7 @@ import Swal from 'sweetalert2'
 import { useSession } from 'next-auth/react'
 import { ExtendedSession } from '@/lib/authOptions'
 import Image from 'next/image'
+import { App } from '@capacitor/app'
 
 interface TodoItem {
   title: string
@@ -411,6 +412,10 @@ export default function Chatbot() {
         return catppuccin.subtext
     }
   }
+
+  App.addListener('backButton', () => {
+    setIsInputFocused(false)
+  })
 
   const getCategoryColor = (category?: string) => {
     const colors: Record<string, string> = {
