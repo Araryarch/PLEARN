@@ -82,6 +82,7 @@ export default function Chatbot() {
   const [aiMode, setAiMode] = useState<AIMode>('balanced')
   const [dropdownOpen, setDropdownOpen] = useState(false)
   const [copiedId, setCopiedId] = useState<string | null>(null)
+  const [isInputFocused, setIsInputFocused] = useState<boolean>(false)
 
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const dropdownRef = useRef<HTMLDivElement>(null)
@@ -444,6 +445,7 @@ export default function Chatbot() {
   // ------------------------------------------------------------------ //
   return (
     <Layouts
+      isInputFocused={isInputFocused}
       topBotBar={
         <div
           className="w-full border-t p-4 max-h-fit md:pb-4"
@@ -458,6 +460,8 @@ export default function Chatbot() {
               value={input}
               onChange={handleInputChange}
               onKeyPress={handleKeyPress}
+              onFocus={() => setIsInputFocused(true)}
+              onBlur={() => setIsInputFocused(false)}
               placeholder="Type your message..."
               className="flex-1 rounded-sm py-5"
               style={{

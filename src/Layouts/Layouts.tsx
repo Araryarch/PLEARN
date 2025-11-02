@@ -24,9 +24,14 @@ interface NavigationItem {
 interface LayoutsProps {
   children: React.ReactNode
   topBotBar?: React.ReactNode
+  isInputFocused?: boolean
 }
 
-export default function Layouts({ children, topBotBar }: LayoutsProps) {
+export default function Layouts({
+  children,
+  topBotBar,
+  isInputFocused,
+}: LayoutsProps) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false)
   const pathname = usePathname()
@@ -128,7 +133,9 @@ export default function Layouts({ children, topBotBar }: LayoutsProps) {
 
       {/* Mobile Navigation */}
       <>
-        <div className="md:hidden fixed bottom-0 left-0 right-0 z-50 pb-[env(safe-area-inset-bottom)]">
+        <div
+          className={`md:hidden fixed bottom-0 left-0 right-0 z-50 ${isInputFocused ? 'pb-0' : 'pb-[env(safe-area-inset-bottom)]'} `}
+        >
           {topBotBar}
           <div className="bg-[#1e1e2e] border-t border-b border-[#313244] px-2 py-2">
             <div className="flex justify-around items-center max-w-md mx-auto">
@@ -165,7 +172,9 @@ export default function Layouts({ children, topBotBar }: LayoutsProps) {
       {/* Mobile Overlay */}
       {isMobileMenuOpen && (
         <div className="md:hidden fixed inset-0 z-50 bg-black/40 backdrop-blur-sm">
-          <div className="fixed bottom-0 left-0 right-0 bg-[#1e1e2e] rounded-t-3xl border-t border-[#313244] p-6 pb-[env(safe-area-inset-bottom)]">
+          <div
+            className={`fixed bottom-0 left-0 right-0 bg-[#1e1e2e] rounded-t-3xl border-t border-[#313244] p-6 ${isInputFocused ? 'pb-0' : 'pb-[env(safe-area-inset-bottom)]'} `}
+          >
             <div className="flex items-center justify-between mb-6">
               <h3 className="text-lg font-semibold text-[#cdd6f4]">Menu</h3>
               <button
@@ -205,7 +214,7 @@ export default function Layouts({ children, topBotBar }: LayoutsProps) {
       <div
         className={`${
           isSidebarCollapsed ? 'md:pl-20' : 'md:pl-64'
-        } pb-[env(safe-area-inset-bottom)] pt-[env(safe-area-inset-top)] transition-all duration-300 bg-[#1e1e2e] min-h-screen h-screen text-[#cdd6f4] relative`}
+        } ${isInputFocused ? 'pb-0' : 'pb-[env(safe-area-inset-bottom)]'} pt-[env(safe-area-inset-top)] transition-all duration-300 bg-[#1e1e2e] min-h-screen h-screen text-[#cdd6f4] relative`}
       >
         {children}
       </div>
