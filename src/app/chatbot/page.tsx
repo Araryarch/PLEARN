@@ -27,6 +27,7 @@ import Layouts from '@/Layouts/Layouts'
 import Swal from 'sweetalert2'
 import { useSession } from 'next-auth/react'
 import { ExtendedSession } from '@/lib/authOptions'
+import Image from 'next/image'
 
 interface TodoItem {
   title: string
@@ -589,18 +590,26 @@ export default function Chatbot() {
                     }`}
                   >
                     {/* Avatar */}
-                    <div
-                      className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0"
-                      style={{
-                        backgroundColor:
-                          msg.sender === 'user'
-                            ? catppuccin.mauve
-                            : catppuccin.mauve,
-                        color: catppuccin.base,
-                      }}
-                      title={msg.sender === 'user' ? 'You' : 'PLEARN AI'}
-                    >
-                      {msg.sender === 'user' ? 'U' : 'AI'}
+                    <div className="flex-shrink-0">
+                      {msg.sender === 'user' ? (
+                        <Image
+                          src={extended.user.avatar}
+                          alt="You"
+                          className="w-8 h-8 rounded-full object-cover"
+                          title="You"
+                        />
+                      ) : (
+                        <div
+                          className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold"
+                          style={{
+                            backgroundColor: catppuccin.mauve,
+                            color: catppuccin.base,
+                          }}
+                          title="PLEARN AI"
+                        >
+                          AI
+                        </div>
+                      )}
                     </div>
 
                     {/* Content + actions */}
