@@ -55,7 +55,7 @@ export default function Layouts({ children }: LayoutsProps) {
       >
         <div className="flex flex-col h-full bg-[#1e1e2e] border-r border-[#313244] shadow-xl">
           {/* Header */}
-          <div className="flex items-center justify-between px-4 py-6 border-b border-[#313244]">
+          <div className="flex items-center justify-between px-4 py-6 border-b border-[#313244] pt-[env(safe-area-inset-top)]">
             {!isSidebarCollapsed && (
               <span className="text-2xl font-bold text-[#cdd6f4]">PLEARN</span>
             )}
@@ -126,7 +126,7 @@ export default function Layouts({ children }: LayoutsProps) {
       </div>
 
       {/* Mobile Navigation */}
-      <div className="md:hidden fixed bottom-0 left-0 right-0 z-50">
+      <div className="md:hidden fixed bottom-0 left-0 right-0 z-50 pb-[env(safe-area-inset-bottom)]">
         <div className="bg-[#1e1e2e] border-t border-[#313244] px-2 py-2">
           <div className="flex justify-around items-center max-w-md mx-auto">
             {navigationItems.map((item) => {
@@ -161,7 +161,7 @@ export default function Layouts({ children }: LayoutsProps) {
       {/* Mobile Overlay */}
       {isMobileMenuOpen && (
         <div className="md:hidden fixed inset-0 z-50 bg-black/40 backdrop-blur-sm">
-          <div className="fixed bottom-0 left-0 right-0 bg-[#1e1e2e] rounded-t-3xl border-t border-[#313244] p-6">
+          <div className="fixed bottom-0 left-0 right-0 bg-[#1e1e2e] rounded-t-3xl border-t border-[#313244] p-6 pb-[env(safe-area-inset-bottom)]">
             <div className="flex items-center justify-between mb-6">
               <h3 className="text-lg font-semibold text-[#cdd6f4]">Menu</h3>
               <button
@@ -201,7 +201,7 @@ export default function Layouts({ children }: LayoutsProps) {
       <div
         className={`${
           isSidebarCollapsed ? 'md:pl-20' : 'md:pl-64'
-        } pb-20 md:pb-0 transition-all duration-300 bg-[#1e1e2e] min-h-screen h-screen text-[#cdd6f4] relative safe-area`}
+        } pb-[env(safe-area-inset-bottom)] pt-[env(safe-area-inset-top)] transition-all duration-300 bg-[#1e1e2e] min-h-screen h-screen text-[#cdd6f4] relative`}
       >
         {children}
       </div>
