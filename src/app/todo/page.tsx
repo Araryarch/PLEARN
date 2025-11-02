@@ -336,7 +336,7 @@ export default function DailyTasksPage() {
             ))}
           </div>
           {/* tasks */}
-          <div className="space-y-3">
+          <div className="space-y-3 max-h-full overflow-y-auto">
             {filteredTasks.length > 0 ? (
               filteredTasks.map((task) => (
                 <div

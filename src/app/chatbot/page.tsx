@@ -491,7 +491,7 @@ export default function Chatbot() {
       }
     >
       <div
-        className="h-screen w-full flex flex-col pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)]"
+        className="h-screen w-full flex flex-col pt-[env(safe-area-inset-top)]"
         style={{ backgroundColor: catppuccin.base, color: catppuccin.text }}
       >
         {/* Header */}
