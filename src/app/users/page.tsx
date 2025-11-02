@@ -158,7 +158,7 @@ export default function Page() {
             className="w-16 h-16 rounded-full flex items-center justify-center text-[#1e1e2e] overflow-hidden cursor-pointer hover:opacity-80 transition-opacity relative group"
           >
             <Image
-              src={selectedAvatar || extended.user.avatar}
+              src={extended.user.avatar}
               alt="profile"
               width={500}
               height={500}
