@@ -250,7 +250,7 @@ export default function Chatbot() {
           reply = JSON.stringify(jsonData, null, 2)
         } catch (e) {
           console.error('JSON parse error:', e)
-          reply = 'Warning: AI returned invalid JSON'
+          reply = 'Warning: Please Retry, AI err'
         }
       }
 
@@ -284,6 +284,7 @@ export default function Chatbot() {
   // ------------------------------------------------------------------ //
   // Input handling
   // ------------------------------------------------------------------ //
+
   const handleSend = async () => {
     if (!input.trim()) return
     const userMessage = input.trim()
@@ -313,22 +314,15 @@ export default function Chatbot() {
   // ------------------------------------------------------------------ //
   // Database stub
   // ------------------------------------------------------------------ //
+
+  interface AddResult {
+    success: boolean
+    itemTitle: string
+    error?: unknown
+  }
+
   const handleAddToDatabase = async (items: TodoItem[]) => {
-    console.log('=== TODO ITEMS TO BE ADDED ===')
-    console.log('Total items:', items.length)
-    console.log('Items:', JSON.stringify(items, null, 2))
-
-    let successCount = 0
-    let failedCount = 0
-
-    for (const [index, item] of items.entries()) {
-      console.log(`\nItem ${index + 1}:`)
-      console.log('Title:', item.title)
-      console.log('Description:', item.description)
-      console.log('Category:', item.category)
-      console.log('Priority:', item.priority)
-      console.log('Deadline:', item.deadline)
-
+    const addItem = async (item: TodoItem): Promise<AddResult> => {
       try {
         const res = await fetch('/api/todo', {
           method: 'POST',
@@ -344,21 +338,21 @@ export default function Chatbot() {
         })
 
         if (!res.ok) {
-          failedCount++
-          console.error(`❌ gagal menambah todo ${item.title}`)
-        } else {
-          successCount++
-          console.log(`✅ berhasil tambah todo "${item.title}" ke database`)
+          throw new Error(`Failed to add todo: ${res.statusText}`)
         }
+        return { success: true, itemTitle: item.title }
       } catch (error) {
-        failedCount++
-        console.error(`❌ error saat menambah todo ${item.title}:`, error)
+        return { success: false, itemTitle: item.title, error }
       }
     }
 
+    const results = await Promise.all(items.map(addItem))
+    const successCount = results.filter((r) => r.success).length
+    const failedCount = results.length - successCount
+
     if (successCount > 0 && failedCount === 0) {
       Swal.fire({
-        title: '✨ berhasil!',
+        title: '✨ Berhasil!',
         text: `${successCount} todo berhasil ditambahkan ke database.`,
         icon: 'success',
         background: '#1e1e2e',
@@ -371,7 +365,7 @@ export default function Chatbot() {
       })
     } else if (successCount > 0 && failedCount > 0) {
       Swal.fire({
-        title: '⚠️ sebagian berhasil',
+        title: '⚠️ Sebagian Berhasil',
         text: `${successCount} berhasil, ${failedCount} gagal ditambahkan.`,
         icon: 'warning',
         background: '#1e1e2e',
@@ -384,12 +378,12 @@ export default function Chatbot() {
       })
     } else {
       Swal.fire({
-        title: '❌ gagal!',
-        text: 'semua todo gagal ditambahkan.',
+        title: '❌ Gagal!',
+        text: 'Semua todo gagal ditambahkan.',
         icon: 'error',
         background: '#1e1e2e',
         color: '#cdd6f4',
-        confirmButtonColor: '#f38ba8', // red
+        confirmButtonColor: '#f38ba8',
         iconColor: '#f38ba8',
         customClass: {
           popup: 'rounded-2xl shadow-lg border border-[#313244]',
@@ -397,6 +391,7 @@ export default function Chatbot() {
       })
     }
   }
+
   // ------------------------------------------------------------------ //
   // UI helpers
   // ------------------------------------------------------------------ //
