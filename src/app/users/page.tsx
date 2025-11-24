@@ -11,7 +11,7 @@ import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 
 export default function Page() {
-  const { data: session, status } = useSession()
+  const { data: session, status, update } = useSession()
   const router = useRouter()
 
   const [showAvatarModal, setShowAvatarModal] = useState(false)
@@ -52,6 +52,8 @@ export default function Page() {
       if (!res.ok) throw new Error(data.error ?? 'Failed to save avatar')
 
       setSelectedAvatar(data.avatar!)
+      // update next-auth session for real-time UI update
+      await update({ avatar: data.avatar! })
       setShowAvatarModal(false)
     } catch (err: unknown) {
       if (err instanceof Error) alert(err.message)
@@ -70,6 +72,8 @@ export default function Page() {
       if (!res.ok) throw new Error(data.error ?? 'Failed to save username')
 
       setUsername(data.username!)
+      // update next-auth session for real-time UI update
+      await update({ username: data.username! })
       setShowEditModal(false)
     } catch (err: unknown) {
       if (err instanceof Error) alert(err.message)
@@ -265,7 +269,6 @@ export default function Page() {
           </div>
         </div>
 
-        {/* Settings */}
         <div>
           <Typography className="text-[#cdd6f4] mb-2 font-semibold">
             Pengaturan
@@ -273,7 +276,11 @@ export default function Page() {
           <div className="bg-[#181825] rounded-xl divide-y divide-[#45475a]">
             <button className="w-full flex items-center justify-between p-3 hover:bg-[#45475a] transition-colors duration-200">
               <div
-                onClick={() => signOut()}
+                onClick={() =>
+                  signOut({
+                    callbackUrl: '/',
+                  })
+                }
                 className="flex items-center gap-3"
               >
                 <LogOut size={18} className="text-[#f38ba8]" />
