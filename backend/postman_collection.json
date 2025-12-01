@@ -1,0 +1,311 @@
+{
+  "info": {
+    "name": "PLEARN Backend - Ready Collection (fixed)",
+    "_postman_id": "plearn-postman-ready-002",
+    "description": "Postman collection for PLEARN backend endpoints with fully expanded URLs (ready to send to http://localhost:3000). Fixed to use plain URL strings.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "List Plans",
+      "request": {
+        "method": "GET",
+        "header": [ { "key": "Accept", "value": "application/json" } ],
+        "url": "http://localhost:3000/rest/v1/plans"
+      }
+    },
+    {
+      "name": "Create Plan",
+      "request": {
+        "method": "POST",
+        "header": [ { "key": "Content-Type", "value": "application/json" } ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"title\": \"New Plan from Postman Ready\",\n  \"description\": \"Practice problems and revision\",\n  \"start_time\": \"2025-10-26T09:00:00.000Z\",\n  \"end_time\": \"2025-10-26T12:00:00.000Z\",\n  \"user_id\": null\n}",
+          "options": { "raw": { "language": "json" } }
+        },
+        "url": "http://localhost:3000/rest/v1/plans"
+      }
+    },
+    {
+      "name": "Update Plan",
+      "request": {
+        "method": "PATCH",
+        "header": [ { "key": "Content-Type", "value": "application/json" } ],
+        "body": { "mode": "raw", "raw": "{\n  \"title\": \"Updated Title from Postman Ready\"\n}", "options": { "raw": { "language": "json" } } },
+        "url": "http://localhost:3000/rest/v1/plans/{{plan_id}}"
+      }
+    },
+    {
+      "name": "Delete Plan",
+      "request": { "method": "DELETE", "url": "http://localhost:3000/rest/v1/plans/{{plan_id}}" }
+    },
+    {
+      "name": "List Integrations",
+      "request": { "method": "GET", "header": [ { "key": "Accept", "value": "application/json" } ], "url": "http://localhost:3000/rest/v1/integrations" }
+    },
+    {
+      "name": "Create Integration",
+      "request": {
+        "method": "POST",
+        "header": [ { "key": "Content-Type", "value": "application/json" } ],
+        "body": { "mode": "raw", "raw": "{\n  \"provider\": \"google\",\n  \"access_token\": \"postman-seed-token\",\n  \"refresh_token\": \"postman-seed-refresh\",\n  \"token_expiry\": \"2025-11-01T00:00:00.000Z\",\n  \"user_id\": null\n}", "options": { "raw": { "language": "json" } } },
+        "url": "http://localhost:3000/rest/v1/integrations"
+      }
+    },
+    {
+      "name": "List AI Commands",
+      "request": { "method": "GET", "header": [ { "key": "Accept", "value": "application/json" } ], "url": "http://localhost:3000/rest/v1/ai_commands" }
+    },
+    {
+      "name": "Create AI Command",
+      "request": {
+        "method": "POST",
+        "header": [ { "key": "Content-Type", "value": "application/json" } ],
+        "body": { "mode": "raw", "raw": "{\n  \"raw_text\": \"Generate a 5-point study checklist for Linear Algebra\",\n  \"parsed_action\": \"generate_checklist\",\n  \"parsed_content\": { \"topic\": \"Linear Algebra\", \"points\": 5 },\n  \"user_id\": null\n}", "options": { "raw": { "language": "json" } } },
+        "url": "http://localhost:3000/rest/v1/ai_commands"
+      }
+    },
+    {
+      "name": "List AI History",
+      "request": { "method": "GET", "header": [ { "key": "Accept", "value": "application/json" } ], "url": "http://localhost:3000/rest/v1/ai_history" }
+    },
+    {
+      "name": "Create AI History",
+      "request": {
+        "method": "POST",
+        "header": [ { "key": "Content-Type", "value": "application/json" } ],
+        "body": { "mode": "raw", "raw": "{\n  \"query\": \"What should I cover next in my study plan?\",\n  \"response\": \"Focus on practice problems from chapters 2 and 3.\",\n  \"related_plan_id\": null,\n  \"user_id\": null\n}", "options": { "raw": { "language": "json" } } },
+        "url": "http://localhost:3000/rest/v1/ai_history"
+      }
+    },
+    {
+      "name": "List Profiles",
+      "request": { "method": "GET", "header": [ { "key": "Accept", "value": "application/json" } ], "url": "http://localhost:3000/rest/v1/profiles" }
+    },
+    {
+      "name": "Get Profile by ID",
+      "request": { "method": "GET", "header": [ { "key": "Accept", "value": "application/json" } ], "url": "http://localhost:3000/rest/v1/profiles?id={{user_id}}" }
+    },
+    {
+      "name": "Update Profile",
+      "request": { "method": "PATCH", "header": [ { "key": "Content-Type", "value": "application/json" } ], "body": { "mode": "raw", "raw": "{\n  \"full_name\": \"Updated Name\",\n  \"bio\": \"Updated bio from Postman Ready\"\n}", "options": { "raw": { "language": "json" } } }, "url": "http://localhost:3000/rest/v1/profiles/{{user_id}}" }
+    }
+  ]
+}
+{
+  "info": {
+    "name": "PLEARN Backend - Ready Collection (fixed)",
+    "_postman_id": "plearn-postman-ready-002",
+    "description": "Postman collection for PLEARN backend endpoints with fully expanded URLs (ready to send to http://localhost:3000). Fixed to use plain URL strings.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "List Plans",
+      "request": {
+        "method": "GET",
+        "header": [ { "key": "Accept", "value": "application/json" } ],
+        "url": "http://localhost:3000/rest/v1/plans"
+      }
+    },
+    {
+      "name": "Create Plan",
+      "request": {
+        "method": "POST",
+        "header": [ { "key": "Content-Type", "value": "application/json" } ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"title\": \"New Plan from Postman Ready\",\n  \"description\": \"Practice problems and revision\",\n  \"start_time\": \"2025-10-26T09:00:00.000Z\",\n  \"end_time\": \"2025-10-26T12:00:00.000Z\",\n  \"user_id\": null\n}",
+          "options": { "raw": { "language": "json" } }
+        },
+        "url": "http://localhost:3000/rest/v1/plans"
+      }
+    },
+    {
+      "name": "Update Plan",
+      "request": {
+        "method": "PATCH",
+        "header": [ { "key": "Content-Type", "value": "application/json" } ],
+        "body": { "mode": "raw", "raw": "{\n  \"title\": \"Updated Title from Postman Ready\"\n}", "options": { "raw": { "language": "json" } } },
+        "url": "http://localhost:3000/rest/v1/plans/{{plan_id}}"
+      }
+    },
+    {
+      "name": "Delete Plan",
+      "request": { "method": "DELETE", "url": "http://localhost:3000/rest/v1/plans/{{plan_id}}" }
+    },
+    {
+      "name": "List Integrations",
+      "request": { "method": "GET", "header": [ { "key": "Accept", "value": "application/json" } ], "url": "http://localhost:3000/rest/v1/integrations" }
+    },
+    {
+      "name": "Create Integration",
+      "request": {
+        "method": "POST",
+        "header": [ { "key": "Content-Type", "value": "application/json" } ],
+        "body": { "mode": "raw", "raw": "{\n  \"provider\": \"google\",\n  \"access_token\": \"postman-seed-token\",\n  \"refresh_token\": \"postman-seed-refresh\",\n  \"token_expiry\": \"2025-11-01T00:00:00.000Z\",\n  \"user_id\": null\n}", "options": { "raw": { "language": "json" } } },
+        "url": "http://localhost:3000/rest/v1/integrations"
+      }
+    },
+    {
+      "name": "List AI Commands",
+      "request": { "method": "GET", "header": [ { "key": "Accept", "value": "application/json" } ], "url": "http://localhost:3000/rest/v1/ai_commands" }
+    },
+    {
+      "name": "Create AI Command",
+      "request": {
+        "method": "POST",
+        "header": [ { "key": "Content-Type", "value": "application/json" } ],
+        "body": { "mode": "raw", "raw": "{\n  \"raw_text\": \"Generate a 5-point study checklist for Linear Algebra\",\n  \"parsed_action\": \"generate_checklist\",\n  \"parsed_content\": { \"topic\": \"Linear Algebra\", \"points\": 5 },\n  \"user_id\": null\n}", "options": { "raw": { "language": "json" } } },
+        "url": "http://localhost:3000/rest/v1/ai_commands"
+      }
+    },
+    {
+      "name": "List AI History",
+      "request": { "method": "GET", "header": [ { "key": "Accept", "value": "application/json" } ], "url": "http://localhost:3000/rest/v1/ai_history" }
+    },
+    {
+      "name": "Create AI History",
+      "request": {
+        "method": "POST",
+        "header": [ { "key": "Content-Type", "value": "application/json" } ],
+        "body": { "mode": "raw", "raw": "{\n  \"query\": \"What should I cover next in my study plan?\",\n  \"response\": \"Focus on practice problems from chapters 2 and 3.\",\n  \"related_plan_id\": null,\n  \"user_id\": null\n}", "options": { "raw": { "language": "json" } } },
+        "url": "http://localhost:3000/rest/v1/ai_history"
+      }
+    },
+    {
+      "name": "List Profiles",
+      "request": { "method": "GET", "header": [ { "key": "Accept", "value": "application/json" } ], "url": "http://localhost:3000/rest/v1/profiles" }
+    },
+    {
+      "name": "Get Profile by ID",
+      "request": { "method": "GET", "header": [ { "key": "Accept", "value": "application/json" } ], "url": "http://localhost:3000/rest/v1/profiles?id={{user_id}}" }
+    },
+    {
+      "name": "Update Profile",
+      "request": { "method": "PATCH", "header": [ { "key": "Content-Type", "value": "application/json" } ], "body": { "mode": "raw", "raw": "{\n  \"full_name\": \"Updated Name\",\n  \"bio\": \"Updated bio from Postman Ready\"\n}", "options": { "raw": { "language": "json" } } }, "url": "http://localhost:3000/rest/v1/profiles/{{user_id}}" }
+    }
+  ]
+}
+{
+  "info": {
+    "name": "PLEARN Backend - Postman Collection",
+    "_postman_id": "plearn-postman-001",
+    "description": "Postman collection for PLEARN backend endpoints (import into Postman or Hoppscotch).",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "List Plans",
+      "request": {
+        "method": "GET",
+        "header": [
+          { "key": "Accept", "value": "{{accept}}" }
+        ],
+        "url": { "raw": "{{protocol}}://{{host}}:{{port}}{{base_path}}/plans" }
+      }
+    },
+    {
+      "name": "Create Plan",
+      "request": {
+        "method": "POST",
+        "header": [ { "key": "Content-Type", "value": "{{content_type}}" } ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"title\": \"New Plan from Postman\",\n  \"description\": \"Practice problems and revision\",\n  \"start_time\": \"2025-10-26T09:00:00.000Z\",\n  \"end_time\": \"2025-10-26T12:00:00.000Z\",\n  \"user_id\": null\n}",
+          {
+            "info": {
+              "name": "PLEARN Backend - Ready Collection (fixed)",
+              "_postman_id": "plearn-postman-ready-002",
+              "description": "Postman collection for PLEARN backend endpoints with fully expanded URLs (ready to send to http://localhost:3000). Fixed to use plain URL strings.",
+              "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+            },
+            "item": [
+              {
+                "name": "List Plans",
+                "request": {
+                  "method": "GET",
+                  "header": [ { "key": "Accept", "value": "application/json" } ],
+                  "url": "http://localhost:3000/rest/v1/plans"
+                }
+              },
+              {
+                "name": "Create Plan",
+                "request": {
+                  "method": "POST",
+                  "header": [ { "key": "Content-Type", "value": "application/json" } ],
+                  "body": {
+                    "mode": "raw",
+                    "raw": "{\n  \"title\": \"New Plan from Postman Ready\",\n  \"description\": \"Practice problems and revision\",\n  \"start_time\": \"2025-10-26T09:00:00.000Z\",\n  \"end_time\": \"2025-10-26T12:00:00.000Z\",\n  \"user_id\": null\n}",
+                    "options": { "raw": { "language": "json" } }
+                  },
+                  "url": "http://localhost:3000/rest/v1/plans"
+                }
+              },
+              {
+                "name": "Update Plan",
+                "request": {
+                  "method": "PATCH",
+                  "header": [ { "key": "Content-Type", "value": "application/json" } ],
+                  "body": { "mode": "raw", "raw": "{\n  \"title\": \"Updated Title from Postman Ready\"\n}", "options": { "raw": { "language": "json" } } },
+                  "url": "http://localhost:3000/rest/v1/plans/{{plan_id}}"
+                }
+              },
+              {
+                "name": "Delete Plan",
+                "request": { "method": "DELETE", "url": "http://localhost:3000/rest/v1/plans/{{plan_id}}" }
+              },
+              {
+                "name": "List Integrations",
+                "request": { "method": "GET", "header": [ { "key": "Accept", "value": "application/json" } ], "url": "http://localhost:3000/rest/v1/integrations" }
+              },
+              {
+                "name": "Create Integration",
+                "request": {
+                  "method": "POST",
+                  "header": [ { "key": "Content-Type", "value": "application/json" } ],
+                  "body": { "mode": "raw", "raw": "{\n  \"provider\": \"google\",\n  \"access_token\": \"postman-seed-token\",\n  \"refresh_token\": \"postman-seed-refresh\",\n  \"token_expiry\": \"2025-11-01T00:00:00.000Z\",\n  \"user_id\": null\n}", "options": { "raw": { "language": "json" } } },
+                  "url": "http://localhost:3000/rest/v1/integrations"
+                }
+              },
+              {
+                "name": "List AI Commands",
+                "request": { "method": "GET", "header": [ { "key": "Accept", "value": "application/json" } ], "url": "http://localhost:3000/rest/v1/ai_commands" }
+              },
+              {
+                "name": "Create AI Command",
+                "request": {
+                  "method": "POST",
+                  "header": [ { "key": "Content-Type", "value": "application/json" } ],
+                  "body": { "mode": "raw", "raw": "{\n  \"raw_text\": \"Generate a 5-point study checklist for Linear Algebra\",\n  \"parsed_action\": \"generate_checklist\",\n  \"parsed_content\": { \"topic\": \"Linear Algebra\", \"points\": 5 },\n  \"user_id\": null\n}", "options": { "raw": { "language": "json" } } },
+                  "url": "http://localhost:3000/rest/v1/ai_commands"
+                }
+              },
+              {
+                "name": "List AI History",
+                "request": { "method": "GET", "header": [ { "key": "Accept", "value": "application/json" } ], "url": "http://localhost:3000/rest/v1/ai_history" }
+              },
+              {
+                "name": "Create AI History",
+                "request": {
+                  "method": "POST",
+                  "header": [ { "key": "Content-Type", "value": "application/json" } ],
+                  "body": { "mode": "raw", "raw": "{\n  \"query\": \"What should I cover next in my study plan?\",\n  \"response\": \"Focus on practice problems from chapters 2 and 3.\",\n  \"related_plan_id\": null,\n  \"user_id\": null\n}", "options": { "raw": { "language": "json" } } },
+                  "url": "http://localhost:3000/rest/v1/ai_history"
+                }
+              },
+              {
+                "name": "List Profiles",
+                "request": { "method": "GET", "header": [ { "key": "Accept", "value": "application/json" } ], "url": "http://localhost:3000/rest/v1/profiles" }
+              },
+              {
+                "name": "Get Profile by ID",
+                "request": { "method": "GET", "header": [ { "key": "Accept", "value": "application/json" } ], "url": "http://localhost:3000/rest/v1/profiles?id={{user_id}}" }
+              },
+              {
+                "name": "Update Profile",
+                "request": { "method": "PATCH", "header": [ { "key": "Content-Type", "value": "application/json" } ], "body": { "mode": "raw", "raw": "{\n  \"full_name\": \"Updated Name\",\n  \"bio\": \"Updated bio from Postman Ready\"\n}", "options": { "raw": { "language": "json" } } }, "url": "http://localhost:3000/rest/v1/profiles/{{user_id}}" }
+              }
+            ]
+          }

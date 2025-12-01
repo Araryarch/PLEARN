@@ -498,7 +498,7 @@ export default function Chatbot() {
           }}
         >
           <h1 className="text-xl font-bold" style={{ color: catppuccin.text }}>
-            PLEARN AI
+            SENOPATI
           </h1>
 
           {/* Mode selector */}

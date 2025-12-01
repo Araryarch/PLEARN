@@ -85,7 +85,16 @@ export const authOptions: NextAuthOptions = {
           score: Number(user.score),
           startDate: user.startDate.toISOString(),
           avatar: user.avatar || '/images/hutao-pp.png',
-          todos: user.todos.map((t) => ({
+          todos: user.todos.map((t: {
+            id: number
+            title: string
+            desc: string
+            category: string
+            prioritas: string
+            deadline: Date
+            createdAt: Date
+            status: 'Aktif' | 'Selesai'
+          }) => ({
             ...t,
             deadline: t.deadline.toISOString(),
             createdAt: t.createdAt.toISOString(),
