@@ -57,18 +57,7 @@ export const authOptions: NextAuthOptions = {
             score: true,
             startDate: true,
             avatar: true,
-            todos: {
-              select: {
-                id: true,
-                title: true,
-                desc: true,
-                category: true,
-                prioritas: true,
-                deadline: true,
-                createdAt: true,
-                status: true,
-              },
-            },
+            // Exclude todos to prevent cookie overflow
           },
         })
 
@@ -85,20 +74,7 @@ export const authOptions: NextAuthOptions = {
           score: Number(user.score),
           startDate: user.startDate.toISOString(),
           avatar: user.avatar || '/images/hutao-pp.png',
-          todos: user.todos.map((t: {
-            id: number
-            title: string
-            desc: string
-            category: string
-            prioritas: string
-            deadline: Date
-            createdAt: Date
-            status: 'Aktif' | 'Selesai'
-          }) => ({
-            ...t,
-            deadline: t.deadline.toISOString(),
-            createdAt: t.createdAt.toISOString(),
-          })),
+          todos: [], // Return empty array to verify session size fix
         }
       },
     }),
@@ -136,7 +112,8 @@ export const authOptions: NextAuthOptions = {
         extendedSession.user.score = token.score as number
         extendedSession.user.startDate = token.startDate as string
         extendedSession.user.avatar = token.avatar as string
-        extendedSession.user.todos = token.todos as AuthUser['todos']
+        // If todos are needed in session, they must be limited. Returns empty for now.
+        extendedSession.user.todos = (token.todos as AuthUser['todos']) || []
       }
       return extendedSession
     },
