@@ -1,5 +1,4 @@
 import { Compass, Code, Lightbulb, PenTool } from 'lucide-react'
-import { catppuccin } from '../constants'
 
 interface EmptyStateProps {
   setInput: (value: string) => void
@@ -11,25 +10,21 @@ const suggestions = [
     icon: <Compass size={20} />,
     text: 'Rencanakan jadwal belajar',
     prompt: 'Buatkan jadwal belajar efektif untuk persiapan UTBK',
-    color: catppuccin.blue,
   },
   {
     icon: <Code size={20} />,
     text: 'Bantu debug kode',
     prompt: 'Saya punya masalah dengan React hooks, bantu saya debug',
-    color: catppuccin.mauve,
   },
   {
     icon: <Lightbulb size={20} />,
     text: 'Ide project baru',
     prompt: 'Berikan 5 ide project portfolio untuk web developer pemula',
-    color: catppuccin.yellow,
   },
   {
     icon: <PenTool size={20} />,
     text: 'Tips produktivitas',
     prompt: 'Bagaimana cara mengatasi prokrastinasi saat belajar?',
-    color: catppuccin.green,
   },
 ]
 
@@ -41,7 +36,7 @@ export const EmptyState = ({ setInput, children }: EmptyStateProps) => {
         <h2 className="text-4xl md:text-6xl font-black tracking-tight bg-gradient-to-b from-white to-white/40 bg-clip-text text-transparent pb-2">
           PLEARN
         </h2>
-        <p className="text-lg text-[#a6adc8] font-medium">
+        <p className="text-lg text-zinc-400 font-medium">
           Your personal learning companion.
         </p>
       </div>
@@ -55,14 +50,14 @@ export const EmptyState = ({ setInput, children }: EmptyStateProps) => {
           <button
             key={idx}
             onClick={() => setInput(item.prompt)}
-            className="flex items-center gap-3 p-3 rounded-lg text-left transition-all hover:bg-white/5 border border-transparent hover:border-white/10 group"
+            className="flex items-center gap-3 p-3 rounded-lg text-left transition-all hover:bg-zinc-900 border border-transparent hover:border-zinc-800 group"
           >
             <div
-              className={`p-1.5 rounded-md transition-colors ${idx === 0 ? 'bg-blue-500/10 text-blue-400' : ''} ${idx === 1 ? 'bg-purple-500/10 text-purple-400' : ''} ${idx === 2 ? 'bg-yellow-500/10 text-yellow-400' : ''} ${idx === 3 ? 'bg-green-500/10 text-green-400' : ''}`}
+              className={`p-1.5 rounded-md transition-colors bg-zinc-800 text-zinc-300`}
             >
               {item.icon}
             </div>
-            <span className="text-sm font-medium text-[#cdd6f4] opacity-70 group-hover:opacity-100 truncate">
+            <span className="text-sm font-medium text-white opacity-70 group-hover:opacity-100 truncate">
               {item.text}
             </span>
           </button>

@@ -158,7 +158,7 @@ function ChatbotContent() {
 export default function Chatbot() {
   return (
     <Layouts>
-      <Suspense fallback={<div className="h-full w-full bg-[#1e1e2e]" />}>
+      <Suspense fallback={<div className="h-full w-full bg-black" />}>
         <ChatbotContent />
       </Suspense>
     </Layouts>

@@ -84,7 +84,7 @@ export const ChatInput = ({
           />
           <button
             onClick={onClearImage}
-            className="absolute -top-2 -right-2 bg-[#313244] text-white rounded-full p-1.5 border border-[#45475a] shadow-lg hover:bg-[#45475a] transition-all hover:scale-110"
+            className="absolute -top-2 -right-2 bg-zinc-800 text-white rounded-full p-1.5 border border-zinc-700 shadow-lg hover:bg-zinc-700 transition-all hover:scale-110"
           >
             <X size={12} />
           </button>
@@ -96,11 +96,11 @@ export const ChatInput = ({
         className={`relative flex items-end gap-2 rounded-[2rem] p-2 pl-3 shadow-2xl transition-all duration-300 backdrop-blur-2xl ring-1 ${
           isListening
             ? 'bg-red-500/10 ring-red-500/50'
-            : 'bg-[#1e1e2e]/90 hover:bg-[#1e1e2e] ring-white/10 focus-within:ring-white/20'
+            : 'bg-zinc-950/90 hover:bg-zinc-950 ring-zinc-800 focus-within:ring-zinc-700'
         }`}
       >
         <label
-          className={`cursor-pointer w-10 h-10 rounded-full hover:bg-white/10 transition flex items-center justify-center shrink-0 mb-[1px] text-[#a6adc8] hover:text-[#cdd6f4] ${selectedImage ? 'text-blue-400 bg-blue-500/10' : ''}`}
+          className={`cursor-pointer w-10 h-10 rounded-full hover:bg-zinc-800 transition flex items-center justify-center shrink-0 mb-[1px] text-zinc-400 hover:text-white ${selectedImage ? 'text-white bg-zinc-800' : ''}`}
           title="Upload Image"
         >
           <input
@@ -127,10 +127,9 @@ export const ChatInput = ({
                 : 'Message Senopati...'
           }
           rows={1}
-          className="flex-1 bg-transparent py-3 px-1 focus:outline-none resize-none max-h-[200px] overflow-y-auto w-full custom-scrollbar text-[15px] placeholder:text-[#585b70]"
+          className="flex-1 bg-transparent py-3 px-1 focus:outline-none resize-none max-h-[200px] overflow-y-auto w-full custom-scrollbar text-[15px] text-white placeholder:text-zinc-600"
           style={{
             minHeight: '24px',
-            color: '#cdd6f4',
           }}
         />
 
@@ -138,7 +137,7 @@ export const ChatInput = ({
           <Button
             onClick={onSend}
             size="icon"
-            className="shrink-0 rounded-full w-10 h-10 transition-all shadow-md mb-[1px] bg-[#cdd6f4] hover:bg-white text-[#1e1e2e] hover:scale-105"
+            className="shrink-0 rounded-full w-10 h-10 transition-all shadow-md mb-[1px] bg-white hover:bg-zinc-200 text-black hover:scale-105"
           >
             <Send size={18} strokeWidth={2.5} className="ml-0.5" />
           </Button>
@@ -146,14 +145,14 @@ export const ChatInput = ({
           <Button
             onClick={handleMicClick}
             size="icon"
-            className={`shrink-0 rounded-full w-10 h-10 transition-all mb-[1px] hover:bg-white/10 ${isListening ? 'bg-red-500 text-white animate-pulse hover:bg-red-600' : 'bg-transparent text-[#a6adc8]'}`}
+            className={`shrink-0 rounded-full w-10 h-10 transition-all mb-[1px] hover:bg-zinc-800 ${isListening ? 'bg-red-500 text-white animate-pulse hover:bg-red-600' : 'bg-transparent text-zinc-400'}`}
           >
             <Mic size={20} strokeWidth={2} />
           </Button>
         )}
       </div>
       <div className="text-center mt-2">
-        <p className="text-[10px] text-[#585b70]">
+        <p className="text-[10px] text-zinc-600">
           AI can make mistakes. Verify important information.
         </p>
       </div>

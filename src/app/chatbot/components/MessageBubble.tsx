@@ -74,7 +74,7 @@ export const MessageBubble = ({
               className="w-8 h-8 rounded-full object-cover shadow-sm ring-2 ring-white/5"
             />
           ) : (
-            <div className="w-8 h-8 flex items-center justify-center text-blue-400 bg-blue-500/10 rounded-lg">
+            <div className="w-8 h-8 flex items-center justify-center text-zinc-400 bg-zinc-900 rounded-lg">
               <Bot size={20} />
             </div>
           )}
@@ -88,10 +88,10 @@ export const MessageBubble = ({
           <div
             className={`flex items-center gap-2 px-1 ${isUser ? 'flex-row-reverse' : ''}`}
           >
-            <span className="text-xs font-semibold text-[#cdd6f4]">
+            <span className="text-xs font-semibold text-white">
               {isUser ? 'You' : 'Senopati'}
             </span>
-            <span className="text-[10px] text-[#585b70]">
+            <span className="text-[10px] text-zinc-600">
               {formatTime(message.timestamp)}
             </span>
           </div>
@@ -100,10 +100,10 @@ export const MessageBubble = ({
           <div
             className={`py-2 px-4 md:py-3 md:px-5 overflow-hidden break-words ${
               isUser
-                ? 'rounded-2xl rounded-tr-sm bg-[#313244] text-[#cdd6f4] shadow-md'
+                ? 'rounded-2xl rounded-tr-sm bg-zinc-800 text-white shadow-md'
                 : message.error
-                  ? 'rounded-xl bg-red-500/10 border border-red-500/20 text-[#cdd6f4]'
-                  : 'rounded-none bg-transparent text-[#cdd6f4] px-0 md:px-0'
+                  ? 'rounded-xl bg-red-500/10 border border-red-500/20 text-white'
+                  : 'rounded-none bg-transparent text-white px-0 md:px-0'
             }`}
           >
             {message.image && (
