@@ -15,7 +15,11 @@ import { EmptyState } from './components/EmptyState'
 import { MessageBubble } from './components/MessageBubble'
 import { ChatSkeleton } from './components/ChatSkeleton'
 
-function ChatbotContent() {
+interface ChatbotContentProps {
+  openSidebar: () => void
+}
+
+function ChatbotContent({ openSidebar }: ChatbotContentProps) {
   const router = useRouter()
   const {
     messages,
@@ -107,6 +111,7 @@ function ChatbotContent() {
         toggleDropdown={toggleDropdown}
         dropdownRef={dropdownRef}
         buttonRef={triggerRef}
+        onMenuClick={openSidebar}
       />
 
       <div className="flex-1 flex flex-col overflow-hidden w-full">
@@ -145,7 +150,7 @@ function ChatbotContent() {
       </div>
 
       {hasMessages && (
-        <div className="flex-none w-full z-20 bg-black pt-10 pb-2">
+        <div className="flex-none w-full z-20 bg-black pt-10 pb-safe">
           {chatInput}
         </div>
       )}
@@ -153,12 +158,22 @@ function ChatbotContent() {
   )
 }
 
+interface ChatbotWrapperProps {
+  openSidebar: () => void
+}
+
+function ChatbotWrapper({ openSidebar }: ChatbotWrapperProps) {
+  return (
+    <Suspense fallback={<div className="h-full w-full bg-black" />}>
+      <ChatbotContent openSidebar={openSidebar} />
+    </Suspense>
+  )
+}
+
 export default function Chatbot() {
   return (
-    <Layouts>
-      <Suspense fallback={<div className="h-full w-full bg-black" />}>
-        <ChatbotContent />
-      </Suspense>
+    <Layouts hideHeader>
+      {({ openSidebar }) => <ChatbotWrapper openSidebar={openSidebar} />}
     </Layouts>
   )
 }

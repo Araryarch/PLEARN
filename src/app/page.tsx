@@ -136,7 +136,7 @@ export default function Page() {
 
   return (
     <Layouts>
-      <div className="min-h-screen w-full bg-black p-6 flex flex-col gap-8 pb-32 overflow-y-auto">
+      <div className="h-full w-full bg-black p-6 flex flex-col gap-8 pb-32 overflow-y-auto">
         <Typography
           className="text-white text-3xl tracking-tight"
           weight="bold"

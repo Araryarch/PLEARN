@@ -1,4 +1,5 @@
 import { Button } from '@/components/ui/button'
+import { Menu } from 'lucide-react'
 import { aiModes } from '../constants'
 import { AIMode } from '../types'
 
@@ -9,6 +10,7 @@ interface ChatHeaderProps {
   toggleDropdown: () => void
   dropdownRef: React.RefObject<HTMLDivElement | null>
   buttonRef: React.RefObject<HTMLButtonElement | null>
+  onMenuClick?: () => void
 }
 
 export const ChatHeader = ({
@@ -18,17 +20,27 @@ export const ChatHeader = ({
   toggleDropdown,
   dropdownRef,
   buttonRef,
+  onMenuClick,
 }: ChatHeaderProps) => {
   const currentMode = aiModes.find((m) => m.value === aiMode)
 
   return (
-    <div className="px-6 py-4 pt-[calc(env(safe-area-inset-top)+1rem)] sticky top-0 z-50 flex items-center justify-between flex-none w-full backdrop-blur-xl border-b border-zinc-800 bg-black/80">
+    <div className="px-4 md:px-6 py-3 pt-safe sticky top-0 z-50 flex items-center justify-between flex-none w-full backdrop-blur-xl border-b border-zinc-800 bg-black/80">
       <div className="flex items-center gap-2">
+        {/* Mobile Menu Button */}
+        {onMenuClick && (
+          <button
+            onClick={onMenuClick}
+            className="md:hidden p-2 -ml-2 rounded-md hover:bg-zinc-900 text-zinc-200"
+          >
+            <Menu size={20} />
+          </button>
+        )}
         <h1 className="text-lg font-bold tracking-tight text-white">
           SENOPATI
         </h1>
-        <div className="h-4 w-[1px] bg-zinc-800 mx-2" />
-        <span className="text-xs font-medium text-zinc-400 px-2 py-0.5 rounded-full bg-zinc-900 border border-zinc-800">
+        <div className="h-4 w-[1px] bg-zinc-800 mx-2 hidden sm:block" />
+        <span className="text-xs font-medium text-zinc-400 px-2 py-0.5 rounded-full bg-zinc-900 border border-zinc-800 hidden sm:inline">
           Beta
         </span>
       </div>
@@ -40,7 +52,8 @@ export const ChatHeader = ({
           variant="ghost"
           className="gap-2 h-9 text-sm font-medium text-white hover:bg-zinc-900 transition-all rounded-lg border border-zinc-800 hover:border-zinc-700"
         >
-          <span>{currentMode?.label}</span>
+          <span className="hidden sm:inline">{currentMode?.label}</span>
+          <span className="sm:hidden">{currentMode?.label.split(' ')[0]}</span>
           <svg
             width="12"
             height="12"

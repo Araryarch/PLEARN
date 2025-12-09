@@ -19,7 +19,7 @@ export default function RegisterPage() {
   if (status === 'loading') return <p></p>
   if (!session)
     return (
-      <div className="grid min-h-svh lg:grid-cols-2 bg-black">
+      <div className="grid h-[100dvh] lg:grid-cols-2 bg-black overflow-hidden">
         <div className="bg-zinc-900 relative hidden lg:block">
           <Image
             src="/placeholder.svg"

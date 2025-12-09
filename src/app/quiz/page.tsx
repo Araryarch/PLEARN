@@ -145,7 +145,7 @@ export default function QuizPage() {
 
   return (
     <Layouts>
-      <div className="flex h-full w-full min-h-screen bg-black text-zinc-50">
+      <div className="flex h-full w-full bg-black text-zinc-50">
         {/* Main Content */}
         <div className="flex-1 flex flex-col p-4 md:p-6 pb-24 overflow-y-auto">
           <div className="max-w-3xl mx-auto w-full flex-1 flex flex-col">

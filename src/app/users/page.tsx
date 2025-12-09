@@ -82,7 +82,7 @@ export default function Page() {
   }
 
   const SkeletonLoading = () => (
-    <div className="min-h-screen h-screen w-full bg-black p-6 flex flex-col gap-6 overflow-y-auto">
+    <div className="h-full w-full bg-black p-6 flex flex-col gap-6 overflow-y-auto">
       <div className="h-6 bg-zinc-900 rounded animate-pulse w-48"></div>
       <div className="w-full h-fit bg-zinc-950 border border-zinc-900 py-5 rounded-2xl flex flex-col gap-2 relative shadow-lg">
         <div className="h-20 bg-zinc-900 rounded animate-pulse absolute bottom-0 right-0 w-20"></div>
@@ -134,7 +134,7 @@ export default function Page() {
 
   return (
     <Layouts>
-      <div className="min-h-screen w-full bg-black text-zinc-50 flex flex-col gap-6 p-4 pb-20">
+      <div className="h-full w-full bg-black text-zinc-50 flex flex-col gap-6 p-4 pb-20 overflow-y-auto">
         <div className="bg-zinc-950 border border-zinc-900 rounded-2xl p-6 flex flex-col items-center gap-4 relative shadow-sm">
           <button
             onClick={() => setShowEditModal(true)}

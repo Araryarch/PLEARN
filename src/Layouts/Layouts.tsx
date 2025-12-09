@@ -9,18 +9,24 @@ import { navigationItems } from '@/constants/navigation'
 import { useSession } from 'next-auth/react'
 import { ExtendedSession } from '@/lib/authOptions'
 import Image from 'next/image'
-import { useSafeArea } from '@/hooks/useSafeArea'
 
 interface LayoutsProps {
-  children: React.ReactNode
+  children:
+    | React.ReactNode
+    | ((props: { openSidebar: () => void }) => React.ReactNode)
+  hideHeader?: boolean
 }
 
-export default function Layouts({ children }: LayoutsProps) {
+export default function Layouts({
+  children,
+  hideHeader = false,
+}: LayoutsProps) {
   const [isOpen, setIsOpen] = useState(false)
   const pathname = usePathname()
   const { data: session } = useSession()
   const extended = session as ExtendedSession
-  const safeArea = useSafeArea()
+
+  const openSidebar = () => setIsOpen(true)
 
   useEffect(() => setIsOpen(false), [pathname])
 
@@ -135,30 +141,28 @@ export default function Layouts({ children }: LayoutsProps) {
       </AnimatePresence>
 
       {/* Main Content */}
-      <div className="flex-1 flex flex-col min-h-screen md:ml-64 w-full bg-black">
-        {/* Mobile Header */}
-        <header
-          className="md:hidden h-14 bg-zinc-950 border-b border-zinc-900 flex items-center justify-between px-4 sticky top-0 z-30"
-          style={{ paddingTop: `${safeArea.top}px` }}
-        >
-          <div className="flex items-center gap-3">
-            <button
-              onClick={() => setIsOpen(true)}
-              className="p-2 -ml-2 rounded-md hover:bg-zinc-900 text-zinc-200"
-            >
-              <Menu size={20} />
-            </button>
-            <span className="font-bold text-white tracking-tight">PLEARN</span>
-          </div>
-        </header>
+      <div className="flex-1 flex flex-col h-[100dvh] md:ml-64 w-full bg-black overflow-hidden">
+        {/* Mobile Header - hide if hideHeader is true */}
+        {!hideHeader && (
+          <header className="md:hidden h-14 pt-safe bg-zinc-950 border-b border-zinc-900 flex items-center justify-between px-4 sticky top-0 z-30">
+            <div className="flex items-center gap-3">
+              <button
+                onClick={openSidebar}
+                className="p-2 -ml-2 rounded-md hover:bg-zinc-900 text-zinc-200"
+              >
+                <Menu size={20} />
+              </button>
+              <span className="font-bold text-white tracking-tight">
+                PLEARN
+              </span>
+            </div>
+          </header>
+        )}
 
-        <main
-          className="flex-1 w-full relative"
-          style={{
-            paddingBottom: `${safeArea.bottom}px`,
-          }}
-        >
-          {children}
+        <main className="flex-1 w-full relative overflow-auto pb-safe">
+          {typeof children === 'function'
+            ? children({ openSidebar })
+            : children}
         </main>
       </div>
     </div>
