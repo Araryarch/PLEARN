@@ -225,7 +225,7 @@ export default function Layouts({
         className={`${isSidebarCollapsed ? 'md:pl-20' : 'md:pl-64'} ${
           isInputFocused || hideBottomNav
             ? 'pb-0!'
-            : 'pb-[env(safe-area-inset-bottom)]!'
+            : 'pb-[calc(env(safe-area-inset-bottom)+4.5rem)]!'
         } pt-[env(safe-area-inset-top)]! transition-all duration-300 bg-[#1e1e2e] min-h-screen h-screen text-[#cdd6f4] relative safe-area`}
       >
         {children}

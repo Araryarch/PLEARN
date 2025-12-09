@@ -102,7 +102,7 @@ export const fetchChatResponse = async (
 export const fetchVisionResponse = async (
   prompt: string,
   messages: { role: string; content: string }[],
-  image: string,
+  image: File,
 ): Promise<string> => {
   try {
     const formData = new FormData()

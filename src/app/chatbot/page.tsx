@@ -93,7 +93,7 @@ export default function Chatbot() {
   )
 
   return (
-    <Layouts isInputFocused={isInputFocused} hideBottomNav={hasMessages}>
+    <Layouts isInputFocused={isInputFocused}>
       <div
         className="flex flex-col h-[100dvh] w-full relative"
         style={{ backgroundColor: catppuccin.base, color: catppuccin.text }}

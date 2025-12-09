@@ -27,6 +27,7 @@ export const useChatbot = () => {
   const [aiMode, setAiMode] = useState<AIMode>('balanced')
   const [copiedId, setCopiedId] = useState<string | null>(null)
   const [selectedImage, setSelectedImage] = useState<string | null>(null)
+  const [selectedFile, setSelectedFile] = useState<File | null>(null)
 
   const messagesEndRef = useRef<HTMLDivElement>(null)
 
@@ -84,6 +85,7 @@ export const useChatbot = () => {
   const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (file) {
+      setSelectedFile(file)
       const reader = new FileReader()
       reader.onloadend = () => {
         setSelectedImage(reader.result as string)
@@ -92,7 +94,10 @@ export const useChatbot = () => {
     }
   }
 
-  const clearImage = () => setSelectedImage(null)
+  const clearImage = () => {
+    setSelectedImage(null)
+    setSelectedFile(null)
+  }
 
   const fetchAIReply = async (prompt: string) => {
     setIsTyping(true)
@@ -116,11 +121,11 @@ export const useChatbot = () => {
       let reply = ''
       let jsonData: TodoItem[] | undefined = undefined
 
-      if (selectedImage) {
+      if (selectedFile) {
         reply = await fetchVisionResponse(
           enhancedPrompt,
           apiMessages,
-          selectedImage,
+          selectedFile, // Now correct type
         )
       } else {
         reply = await fetchChatResponse(apiMessages)
@@ -160,6 +165,7 @@ export const useChatbot = () => {
     } finally {
       setIsTyping(false)
       setSelectedImage(null)
+      setSelectedFile(null)
     }
   }
 
@@ -289,6 +295,6 @@ export const useChatbot = () => {
     selectedImage,
     handleImageSelect,
     clearImage,
-    extended, // Export extended session
+    extended,
   }
 }
