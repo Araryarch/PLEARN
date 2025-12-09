@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import { useSession } from 'next-auth/react'
 import { ExtendedSession } from '@/lib/authOptions'
 import { toast } from 'react-hot-toast'
+import { useSearchParams } from 'next/navigation'
 import { Message, AIMode, TodoItem, QuizQuestion } from '../types'
 import {
   generateListPrompt,
@@ -20,6 +21,7 @@ interface AddResult {
 export const useChatbot = () => {
   const { data: session } = useSession()
   const extended = session as ExtendedSession
+  const searchParams = useSearchParams()
 
   const [messages, setMessages] = useState<Message[]>([])
   const [input, setInput] = useState<string>('')
@@ -30,6 +32,13 @@ export const useChatbot = () => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
 
   const messagesEndRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const mode = searchParams.get('mode')
+    if (mode === 'quiz') {
+      setAiMode('quiz')
+    }
+  }, [searchParams])
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })

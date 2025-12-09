@@ -35,49 +35,36 @@ const suggestions = [
 
 export const EmptyState = ({ setInput, children }: EmptyStateProps) => {
   return (
-    <div className="flex flex-col items-center justify-center min-h-[80vh] w-full max-w-4xl mx-auto px-4 animate-in fade-in zoom-in duration-500">
+    <div className="flex flex-col items-center justify-center min-h-[85vh] w-full max-w-4xl mx-auto px-4">
       {/* Hero Section */}
-      <div className="mb-10 text-center space-y-1">
-        <h2
-          className="text-4xl md:text-5xl font-semibold tracking-tight"
-          style={{ color: catppuccin.text }}
-        >
-          Hello, Learner
+      <div className="mb-8 text-center space-y-2 animate-in fade-in slide-in-from-bottom-4 duration-700">
+        <h2 className="text-4xl md:text-6xl font-black tracking-tight bg-gradient-to-b from-white to-white/40 bg-clip-text text-transparent pb-2">
+          PLEARN
         </h2>
-        <p
-          className="text-xl md:text-2xl font-normal opacity-50"
-          style={{ color: catppuccin.subtext }}
-        >
-          How can I help you today?
+        <p className="text-lg text-[#a6adc8] font-medium">
+          Your personal learning companion.
         </p>
       </div>
 
-      {/* Input Container (Centered) */}
-      <div className="w-full max-w-2xl mb-12">{children}</div>
+      {/* Input Container */}
+      <div className="w-full max-w-3xl mb-16 z-20">{children}</div>
 
-      {/* Suggestions Grid (Minimalist) */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 w-full max-w-4xl">
+      {/* Suggestions Grid */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 w-full max-w-3xl px-2 animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-100">
         {suggestions.map((item, idx) => (
           <button
             key={idx}
             onClick={() => setInput(item.prompt)}
-            className="flex flex-col gap-2 p-4 rounded-xl text-left transition-all hover:bg-white/5 group h-full"
-            style={{
-              backgroundColor: catppuccin.surface0,
-            }}
+            className="flex items-center gap-3 p-3 rounded-lg text-left transition-all hover:bg-white/5 border border-transparent hover:border-white/10 group"
           >
             <div
-              className="p-2 rounded-full w-fit"
-              style={{ backgroundColor: catppuccin.base, color: item.color }}
+              className={`p-1.5 rounded-md transition-colors ${idx === 0 ? 'bg-blue-500/10 text-blue-400' : ''} ${idx === 1 ? 'bg-purple-500/10 text-purple-400' : ''} ${idx === 2 ? 'bg-yellow-500/10 text-yellow-400' : ''} ${idx === 3 ? 'bg-green-500/10 text-green-400' : ''}`}
             >
               {item.icon}
             </div>
-            <p
-              className="font-medium text-sm"
-              style={{ color: catppuccin.text }}
-            >
+            <span className="text-sm font-medium text-[#cdd6f4] opacity-70 group-hover:opacity-100 truncate">
               {item.text}
-            </p>
+            </span>
           </button>
         ))}
       </div>

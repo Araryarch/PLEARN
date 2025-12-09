@@ -40,46 +40,26 @@ type PriorityFilter = 'all' | 'high' | 'medium' | 'low'
 
 // Skeleton Loading Component
 const SkeletonLoading = () => (
-  <div className="min-h-screen h-screen w-full bg-[#1e1e2e] p-6 flex flex-col gap-6 overflow-y-auto">
-    {/* Greeting Skeleton */}
-    <div className="h-6 bg-[#313244] rounded animate-pulse"></div>
+  <div className="min-h-screen h-screen w-full bg-black p-6 flex flex-col gap-6 overflow-y-auto">
+    <div className="h-6 bg-zinc-900 rounded animate-pulse w-48"></div>
 
-    {/* Main Card Skeleton */}
-    <div className="w-full h-fit bg-[#181825] border-1 border-[#313244] py-5 rounded-xl flex flex-col gap-2 relative shadow-lg">
-      <div className="h-20 bg-[#313244] rounded animate-pulse absolute bottom-0 right-0 w-20"></div>
+    <div className="w-full h-fit bg-zinc-950 border border-zinc-900 py-5 rounded-xl flex flex-col gap-2 relative shadow-lg">
+      <div className="h-20 bg-zinc-900 rounded animate-pulse absolute bottom-0 right-0 w-20"></div>
       <div className="h-1/2 w-full flex justify-start items-center px-5">
-        <div className="h-4 bg-[#313244] rounded animate-pulse w-3/4"></div>
-      </div>
-      <div className="h-1/2 w-fit flex px-5 gap-10 justify-between items-center">
-        <div className="flex flex-col items-center gap-2">
-          <div className="h-8 w-12 bg-[#313244] rounded animate-pulse"></div>
-          <div className="h-3 w-8 bg-[#313244] rounded animate-pulse"></div>
-        </div>
+        <div className="h-4 bg-zinc-900 rounded animate-pulse w-3/4"></div>
       </div>
     </div>
 
-    {/* Agenda Header Skeleton */}
-    <div className="w-full h-fit flex justify-between">
-      <div className="h-4 bg-[#313244] rounded animate-pulse w-20"></div>
-      <div className="h-4 bg-[#313244] rounded animate-pulse w-24"></div>
-    </div>
-
-    {/* Tasks List Skeleton */}
     <div className="w-full flex flex-col gap-3">
       {Array.from({ length: 3 }).map((_, index) => (
         <div
           key={index}
-          className="rounded-xl border bg-[#181825] p-4 shadow-sm border-[#313244] animate-pulse"
+          className="rounded-xl border bg-zinc-950 p-4 shadow-sm border-zinc-900 animate-pulse"
         >
           <div className="flex items-start gap-3">
             <div className="flex-1 min-w-0">
-              <div className="h-5 bg-[#313244] rounded mb-2 w-3/4"></div>
-              <div className="h-3 bg-[#313244] rounded mb-2 w-full"></div>
-              <div className="flex flex-wrap items-center gap-2">
-                <div className="h-6 w-16 bg-[#313244] rounded"></div>
-                <div className="h-6 w-20 bg-[#313244] rounded"></div>
-                <div className="h-6 w-24 bg-[#313244] rounded"></div>
-              </div>
+              <div className="h-5 bg-zinc-900 rounded mb-2 w-3/4"></div>
+              <div className="h-3 bg-zinc-900 rounded mb-2 w-full"></div>
             </div>
           </div>
         </div>
@@ -198,18 +178,20 @@ export default function DailyTasksPage() {
   })
   const completedCount = tasks.filter((t) => t.status === 'Selesai').length
   const totalCount = tasks.length
+
   const getPriorityColor = (prioritas: string) => {
     switch (prioritas) {
       case 'high':
-        return 'bg-[#f38ba8]/10 text-[#f38ba8]'
+        return 'bg-white/10 text-white border border-white/20'
       case 'medium':
-        return 'bg-[#f9e2af]/10 text-[#f9e2af]'
+        return 'bg-zinc-800/50 text-zinc-300 border border-zinc-700/50'
       case 'low':
-        return 'bg-[#a6e3a1]/10 text-[#a6e3a1]'
+        return 'bg-zinc-900/50 text-zinc-500 border border-zinc-800/50'
       default:
-        return 'bg-[#313244] text-[#a6adc8]'
+        return 'bg-zinc-900/50 text-zinc-500 border border-zinc-800'
     }
   }
+
   const getPriorityLabel = (prioritas: string) => {
     switch (prioritas) {
       case 'high':
@@ -222,73 +204,76 @@ export default function DailyTasksPage() {
         return prioritas
     }
   }
+
   if (loading)
     return (
       <Layouts>
         <SkeletonLoading />
       </Layouts>
     )
+
   return (
     <Layouts>
-      <div className="h-full w-full bg-[#1e1e2e] text-[#cdd6f4]">
+      <div className="h-full w-full bg-black text-zinc-50">
         <div className="mx-auto max-w-2xl p-4 pb-24">
-          <div className="mb-6">
-            <h1 className="text-2xl font-bold mb-2 text-[#cdd6f4]">
-              Tugas Harian
-            </h1>
-            <p className="text-sm text-[#a6adc8]">
-              Kelola tugas harianmu dengan mudah
+          <div className="mb-8">
+            <h1 className="text-3xl font-bold mb-2 text-white">Tugas Harian</h1>
+            <p className="text-sm text-zinc-400">
+              Kelola tugas harianmu dengan mudah & efisien
             </p>
           </div>
+
           {/* summary bar */}
-          <div className="mb-6 rounded-xl bg-[#181825] border border-[#313244] p-4 shadow-sm">
+          <div className="mb-8 rounded-2xl bg-zinc-950 border border-zinc-900 p-6 shadow-sm">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-[#a6adc8] mb-1">Total Tugas</p>
-                <p className="text-2xl font-bold text-[#cdd6f4]">
-                  {totalCount}
+                <p className="text-sm text-zinc-400 mb-1 uppercase tracking-wider font-medium">
+                  Progress
                 </p>
-              </div>
-              <div className="text-right">
-                <p className="text-sm text-[#a6adc8] mb-1">Selesai</p>
-                <p className="text-2xl font-bold text-[#89b4fa]">
-                  {completedCount}/{totalCount}
-                </p>
+                <div className="flex items-baseline gap-2">
+                  <p className="text-3xl font-bold text-white">
+                    {completedCount}
+                  </p>
+                  <p className="text-lg text-zinc-500 font-medium">
+                    / {totalCount} Selesai
+                  </p>
+                </div>
               </div>
             </div>
-            <div className="mt-3 h-2 rounded-full bg-[#313244] overflow-hidden">
+            <div className="mt-4 h-2 rounded-full bg-zinc-900 overflow-hidden">
               <div
-                className="h-full bg-[#89b4fa] transition-all duration-300"
+                className="h-full bg-white transition-all duration-500 ease-out"
                 style={{
                   width: `${totalCount > 0 ? (completedCount / totalCount) * 100 : 0}%`,
                 }}
               />
             </div>
           </div>
+
           {/* search & filter */}
-          <div className="mb-4 flex gap-2">
+          <div className="mb-6 flex gap-3">
             <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[#a6adc8]" />
+              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-500" />
               <input
                 type="text"
                 placeholder="Cari tugas..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full rounded-md border border-[#313244] bg-[#1e1e2e] pl-9 pr-4 py-2 text-sm text-[#cdd6f4] placeholder:text-[#7f849c] focus:outline-none focus:ring-2 focus:ring-[#89b4fa]"
+                className="w-full rounded-xl border border-zinc-800 bg-zinc-950 pl-10 pr-4 py-2.5 text-sm text-zinc-100 placeholder:text-zinc-600 focus:outline-none focus:ring-1 focus:ring-zinc-700 transition lg:text-sm"
               />
             </div>
             <div className="relative">
               <button
                 onClick={() => setShowFilterMenu(!showFilterMenu)}
-                className="rounded-md border border-[#313244] bg-[#1e1e2e] p-2 text-[#cdd6f4] hover:bg-[#45475a] transition-colors"
+                className="h-full rounded-xl border border-zinc-800 bg-zinc-950 px-3 text-zinc-400 hover:text-white hover:bg-zinc-900 transition-colors"
               >
                 <Filter className="h-5 w-5" />
               </button>
               {showFilterMenu && (
-                <div className="absolute right-0 mt-2 w-48 rounded-md border border-[#313244] bg-[#181825] shadow-lg z-10">
-                  <div className="p-2">
-                    <p className="text-xs font-semibold text-[#a6adc8] mb-2 px-2">
-                      Filter Prioritas
+                <div className="absolute right-0 mt-2 w-48 rounded-xl border border-zinc-800 bg-zinc-950 shadow-xl z-20 overflow-hidden">
+                  <div className="p-1">
+                    <p className="text-[10px] font-bold text-zinc-500 uppercase tracking-wider px-3 py-2">
+                      Prioritas
                     </p>
                     {(['all', 'high', 'medium', 'low'] as PriorityFilter[]).map(
                       (priority) => (
@@ -298,10 +283,10 @@ export default function DailyTasksPage() {
                             setPriorityFilter(priority)
                             setShowFilterMenu(false)
                           }}
-                          className={`w-full text-left px-3 py-2 rounded-sm text-sm transition-colors ${
+                          className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-colors ${
                             priorityFilter === priority
-                              ? 'bg-[#89b4fa] text-[#1e1e2e]'
-                              : 'text-[#cdd6f4] hover:bg-[#45475a]'
+                              ? 'bg-zinc-100 text-black font-medium'
+                              : 'text-zinc-400 hover:bg-zinc-900 hover:text-white'
                           }`}
                         >
                           {priority === 'all'
@@ -315,16 +300,17 @@ export default function DailyTasksPage() {
               )}
             </div>
           </div>
+
           {/* status filter */}
-          <div className="mb-6 flex gap-2 rounded-lg bg-[#313244] p-1">
+          <div className="mb-6 flex gap-1 rounded-xl bg-zinc-950 border border-zinc-900 p-1">
             {(['all', 'pending', 'completed'] as FilterType[]).map((filter) => (
               <button
                 key={filter}
                 onClick={() => setActiveFilter(filter)}
-                className={`flex-1 rounded-sm px-4 py-2 text-sm font-medium transition-colors ${
+                className={`flex-1 rounded-lg px-4 py-2 text-sm font-medium transition-all ${
                   activeFilter === filter
-                    ? 'bg-[#1e1e2e] text-[#cdd6f4] shadow-sm'
-                    : 'text-[#a6adc8] hover:text-[#cdd6f4]'
+                    ? 'bg-zinc-800 text-white shadow-sm'
+                    : 'text-zinc-500 hover:text-zinc-300 hover:bg-zinc-900/50'
                 }`}
               >
                 {filter === 'all'
@@ -335,42 +321,43 @@ export default function DailyTasksPage() {
               </button>
             ))}
           </div>
+
           {/* tasks */}
-          <div className="space-y-3 max-h-full overflow-y-auto">
+          <div className="space-y-4 max-h-full overflow-y-auto pb-32">
             {filteredTasks.length > 0 ? (
               filteredTasks.map((task) => (
                 <div
                   key={task.id}
-                  className={`rounded-xl border bg-[#181825] p-4 shadow-sm transition-all hover:shadow-md ${task.status === 'Selesai' ? 'border-[#313244] opacity-60' : 'border-[#313244]'}`}
+                  className={`group rounded-2xl border bg-zinc-950 p-5 shadow-sm transition-all hover:border-zinc-700 ${task.status === 'Selesai' ? 'border-zinc-900 opacity-50 bg-black' : 'border-zinc-900'}`}
                 >
-                  <div className="flex items-start gap-3">
+                  <div className="flex items-start gap-4">
                     <button
                       onClick={() => toggleTaskCompletion(task.id)}
-                      className="mt-0.5 text-[#7f849c] hover:text-[#cdd6f4] transition-colors"
+                      className="mt-1 text-zinc-600 hover:text-white transition-colors"
                     >
                       {task.status === 'Selesai' ? (
-                        <CheckCircle2 className="h-5 w-5 text-[#89b4fa]" />
+                        <CheckCircle2 className="h-6 w-6 text-zinc-400" />
                       ) : (
-                        <Circle className="h-5 w-5" />
+                        <Circle className="h-6 w-6" />
                       )}
                     </button>
                     <div className="flex-1 min-w-0">
                       <h3
-                        className={`font-medium mb-1 ${task.status === 'Selesai' ? 'text-[#7f849c] line-through' : 'text-[#cdd6f4]'}`}
+                        className={`font-medium mb-1.5 text-base ${task.status === 'Selesai' ? 'text-zinc-500 line-through' : 'text-zinc-100'}`}
                       >
                         {task.title}
                       </h3>
-                      <p className="text-xs text-[#a6adc8] mb-2">{task.desc}</p>
+                      <p className="text-sm text-zinc-500 mb-3">{task.desc}</p>
                       <div className="flex flex-wrap items-center gap-2 text-xs">
                         <span
-                          className={`inline-flex items-center gap-1 rounded-md px-2 py-1 font-medium ${getPriorityColor(task.prioritas)}`}
+                          className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 font-medium ${getPriorityColor(task.prioritas)}`}
                         >
                           {getPriorityLabel(task.prioritas)}
                         </span>
-                        <span className="inline-flex items-center gap-1 text-[#a6adc8]">
+                        <span className="inline-flex items-center gap-1.5 text-zinc-500 bg-zinc-900/50 px-2.5 py-1 rounded-full border border-zinc-800">
                           <Tag className="h-3 w-3" /> {task.category}
                         </span>
-                        <span className="inline-flex items-center gap-1 text-[#a6adc8]">
+                        <span className="inline-flex items-center gap-1.5 text-zinc-500 bg-zinc-900/50 px-2.5 py-1 rounded-full border border-zinc-800">
                           <Clock className="h-3 w-3" />{' '}
                           {parseISOToString(task.deadline)}
                         </span>
@@ -383,28 +370,28 @@ export default function DailyTasksPage() {
                             showTaskMenu === task.id ? null : task.id,
                           )
                         }
-                        className="p-1 text-[#7f849c] hover:text-[#cdd6f4] transition-colors"
+                        className="p-2 -mr-2 text-zinc-600 hover:text-white hover:bg-zinc-900 rounded-md transition-colors opacity-0 group-hover:opacity-100"
                       >
-                        <MoreVertical className="h-4 w-4" />
+                        <MoreVertical className="h-5 w-5" />
                       </button>
                       {showTaskMenu === task.id && (
-                        <div className="absolute right-0 mt-1 w-32 rounded-md border border-[#313244] bg-[#181825] shadow-lg z-10">
+                        <div className="absolute right-0 mt-2 w-32 rounded-lg border border-zinc-800 bg-zinc-950 shadow-xl z-20 overflow-hidden">
                           {task.status !== 'Selesai' && (
                             <button
                               onClick={() => {
                                 setEditingTask(task)
                                 setShowTaskMenu(null)
                               }}
-                              className="w-full flex items-center gap-2 px-3 py-2 text-sm text-[#cdd6f4] hover:bg-[#45475a] transition-colors rounded-t-sm"
+                              className="w-full flex items-center gap-2 px-4 py-2.5 text-sm text-zinc-300 hover:bg-zinc-900 hover:text-white transition-colors"
                             >
-                              <Edit2 className="h-3 w-3" /> Edit
+                              <Edit2 className="h-3.5 w-3.5" /> Edit
                             </button>
                           )}
                           <button
                             onClick={() => deleteTask(task.id)}
-                            className={`w-full flex items-center gap-2 px-3 py-2 text-sm text-[#f38ba8] hover:bg-[#f38ba8]/10 transition-colors ${task.status === 'Selesai' ? 'rounded-md' : 'rounded-b-sm'}`}
+                            className="w-full flex items-center gap-2 px-4 py-2.5 text-sm text-red-400 hover:bg-red-500/10 transition-colors"
                           >
-                            <Trash2 className="h-3 w-3" /> Hapus
+                            <Trash2 className="h-3.5 w-3.5" /> Hapus
                           </button>
                         </div>
                       )}
@@ -413,50 +400,51 @@ export default function DailyTasksPage() {
                 </div>
               ))
             ) : (
-              <div className="py-12 text-center">
-                <div className="mb-4 text-4xl">🎉</div>
-                <h3 className="text-lg font-semibold text-[#cdd6f4] mb-1">
+              <div className="py-20 text-center">
+                <div className="mb-4 text-5xl opacity-20 filter grayscale">
+                  ✨
+                </div>
+                <h3 className="text-lg font-medium text-white mb-2">
                   Tidak ada tugas
                 </h3>
-                <p className="text-sm text-[#a6adc8]">
+                <p className="text-sm text-zinc-500">
                   {searchQuery
                     ? 'Tidak ada tugas yang cocok dengan pencarian'
-                    : 'Semua tugas sudah selesai!'}
+                    : 'Semua beres! Nikmati harimu.'}
                 </p>
               </div>
             )}
-            <div className="py-20"></div>
           </div>
+
           {/* add task button */}
           <button
             onClick={() => setShowAddModal(true)}
-            className="fixed bottom-36 right-6 rounded-md bg-[#89b4fa] p-2 text-[#1e1e2e] shadow-sm cursor-pointer"
+            className="fixed bottom-8 right-8 rounded-full bg-white p-4 text-black shadow-lg hover:scale-110 active:scale-95 transition-all duration-300 z-30"
           >
             <Plus className="h-6 w-6" />
           </button>
         </div>
+
         {/* edit modal */}
         {editingTask && (
-          <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-            <div className="bg-[#181825] rounded-md border border-[#313244] shadow-xl max-w-md w-full p-6">
-              <div className="flex justify-between items-center mb-4">
-                <h3 className="text-lg font-medium text-[#cdd6f4]">
-                  Edit Tugas
-                </h3>
+          <div className="fixed inset-0 bg-black/80 flex items-center justify-center p-4 z-50 backdrop-blur-sm">
+            <div className="bg-zinc-950 rounded-2xl border border-zinc-900 shadow-2xl max-w-md w-full p-6 animate-in fade-in zoom-in-95 duration-200">
+              <div className="flex justify-between items-center mb-6">
+                <h3 className="text-xl font-bold text-white">Edit Tugas</h3>
                 <button
                   onClick={() => setEditingTask(null)}
-                  className="text-[#f38ba8]"
+                  className="text-zinc-500 hover:text-white transition-colors"
                 >
                   <X className="h-5 w-5" />
                 </button>
               </div>
-              <div className="flex flex-col gap-3">
+              <div className="flex flex-col gap-4">
                 <input
                   value={editingTask.title}
                   onChange={(e) =>
                     setEditingTask({ ...editingTask, title: e.target.value })
                   }
-                  className="w-full rounded-md border border-[#313244] bg-[#1e1e2e] px-3 py-2 text-sm text-[#cdd6f4]"
+                  className="w-full rounded-xl border border-zinc-800 bg-zinc-900 px-4 py-3 text-sm text-white placeholder:text-zinc-600 focus:outline-none focus:border-white/20 transition"
                   placeholder="Judul"
                 />
                 <textarea
@@ -464,31 +452,36 @@ export default function DailyTasksPage() {
                   onChange={(e) =>
                     setEditingTask({ ...editingTask, desc: e.target.value })
                   }
-                  className="w-full rounded-md border border-[#313244] bg-[#1e1e2e] px-3 py-2 text-sm text-[#cdd6f4]"
+                  className="w-full rounded-xl border border-zinc-800 bg-zinc-900 px-4 py-3 text-sm text-white placeholder:text-zinc-600 focus:outline-none focus:border-white/20 transition resize-none h-24"
                   placeholder="Deskripsi"
                 />
-                <input
-                  value={editingTask.category}
-                  onChange={(e) =>
-                    setEditingTask({ ...editingTask, category: e.target.value })
-                  }
-                  className="w-full rounded-md border border-[#313244] bg-[#1e1e2e] px-3 py-2 text-sm text-[#cdd6f4]"
-                  placeholder="Kategori"
-                />
-                <select
-                  value={editingTask.prioritas}
-                  onChange={(e) =>
-                    setEditingTask({
-                      ...editingTask,
-                      prioritas: e.target.value as 'high' | 'medium' | 'low',
-                    })
-                  }
-                  className="w-full rounded-md border border-[#313244] bg-[#1e1e2e] px-3 py-2 text-sm text-[#cdd6f4]"
-                >
-                  <option value="high">Tinggi</option>
-                  <option value="medium">Sedang</option>
-                  <option value="low">Rendah</option>
-                </select>
+                <div className="grid grid-cols-2 gap-4">
+                  <input
+                    value={editingTask.category}
+                    onChange={(e) =>
+                      setEditingTask({
+                        ...editingTask,
+                        category: e.target.value,
+                      })
+                    }
+                    className="w-full rounded-xl border border-zinc-800 bg-zinc-900 px-4 py-2.5 text-sm text-white"
+                    placeholder="Kategori"
+                  />
+                  <select
+                    value={editingTask.prioritas}
+                    onChange={(e) =>
+                      setEditingTask({
+                        ...editingTask,
+                        prioritas: e.target.value as 'high' | 'medium' | 'low',
+                      })
+                    }
+                    className="w-full rounded-xl border border-zinc-800 bg-zinc-900 px-4 py-2.5 text-sm text-white focus:outline-none"
+                  >
+                    <option value="high">High</option>
+                    <option value="medium">Medium</option>
+                    <option value="low">Low</option>
+                  </select>
+                </div>
 
                 <Popover
                   open={editCalendarOpen}
@@ -497,9 +490,9 @@ export default function DailyTasksPage() {
                   <PopoverTrigger asChild>
                     <button
                       type="button"
-                      className="w-full rounded-md border border-[#313244] bg-[#1e1e2e] px-3 py-2 text-sm text-[#cdd6f4] flex items-center gap-2 hover:bg-[#45475a] transition-colors"
+                      className="w-full rounded-xl border border-zinc-800 bg-zinc-900 px-4 py-3 text-sm text-white flex items-center gap-3 hover:bg-zinc-800 transition-colors"
                     >
-                      <CalendarIcon className="h-4 w-4" />
+                      <CalendarIcon className="h-4 w-4 text-zinc-400" />
                       {editingTask.deadline
                         ? new Date(editingTask.deadline).toLocaleDateString(
                             'id-ID',
@@ -509,7 +502,7 @@ export default function DailyTasksPage() {
                   </PopoverTrigger>
                   <PopoverContent
                     align="start"
-                    className="w-auto p-0 border-[#313244] bg-[#181825] shadow-xl"
+                    className="w-auto p-0 border-zinc-800 bg-zinc-950 shadow-xl"
                   >
                     <Calendar
                       mode="single"
@@ -526,7 +519,7 @@ export default function DailyTasksPage() {
                       disabled={(date) =>
                         date < new Date(new Date().setHours(0, 0, 0, 0))
                       }
-                      className="p-3"
+                      className="p-3 bg-zinc-950 text-white rounded-xl border border-zinc-900"
                     />
                   </PopoverContent>
                 </Popover>
@@ -538,16 +531,16 @@ export default function DailyTasksPage() {
                       status: e.target.value as 'Aktif' | 'Selesai',
                     })
                   }
-                  className="w-full rounded-md border border-[#313244] bg-[#1e1e2e] px-3 py-2 text-sm text-[#cdd6f4]"
+                  className="w-full rounded-xl border border-zinc-800 bg-zinc-900 px-4 py-3 text-sm text-white focus:outline-none"
                 >
                   <option value="Aktif">Aktif</option>
                   <option value="Selesai">Selesai</option>
                 </select>
                 <button
                   onClick={() => saveTask(editingTask)}
-                  className="mt-2 rounded-md bg-[#89b4fa] py-2 text-[#1e1e2e] font-medium"
+                  className="mt-4 rounded-xl bg-white py-3 text-black font-bold hover:bg-zinc-200 transition-colors"
                 >
-                  Simpan
+                  Simpan Perubahan
                 </button>
               </div>
             </div>
@@ -556,7 +549,7 @@ export default function DailyTasksPage() {
 
         {/* add modal */}
         {showAddModal && (
-          <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+          <div className="fixed inset-0 bg-black/80 flex items-center justify-center p-4 z-50 backdrop-blur-sm">
             <AddTaskForm
               onSave={addNewTask}
               onCancel={() => setShowAddModal(false)}
@@ -599,51 +592,56 @@ function AddTaskForm({
   }
 
   return (
-    <div className="bg-[#181825] rounded-md border border-[#313244] shadow-xl max-w-md w-full p-6">
-      <div className="flex justify-between items-center mb-4">
-        <h3 className="text-lg font-medium text-[#cdd6f4]">Tambah Tugas</h3>
-        <button onClick={onCancel} className="text-[#f38ba8]">
+    <div className="bg-zinc-950 rounded-2xl border border-zinc-900 shadow-2xl max-w-md w-full p-6 animate-in fade-in zoom-in-95 duration-200">
+      <div className="flex justify-between items-center mb-6">
+        <h3 className="text-xl font-bold text-white">Tambah Tugas Baru</h3>
+        <button
+          onClick={onCancel}
+          className="text-zinc-500 hover:text-white transition-colors"
+        >
           <X className="h-5 w-5" />
         </button>
       </div>
-      <div className="flex flex-col gap-3">
+      <div className="flex flex-col gap-4">
         <input
-          placeholder="Judul"
+          placeholder="Judul Tugas"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
-          className="w-full rounded-md border border-[#313244] bg-[#1e1e2e] px-3 py-2 text-sm text-[#cdd6f4]"
+          className="w-full rounded-xl border border-zinc-800 bg-zinc-900 px-4 py-3 text-sm text-white placeholder:text-zinc-600 focus:outline-none focus:border-white/20 transition"
         />
         <textarea
-          placeholder="Deskripsi"
+          placeholder="Deskripsi singkat"
           value={desc}
           onChange={(e) => setDesc(e.target.value)}
-          className="w-full rounded-md border border-[#313244] bg-[#1e1e2e] px-3 py-2 text-sm text-[#cdd6f4]"
+          className="w-full rounded-xl border border-zinc-800 bg-zinc-900 px-4 py-3 text-sm text-white placeholder:text-zinc-600 focus:outline-none focus:border-white/20 transition resize-none h-24"
         />
-        <input
-          placeholder="Kategori"
-          value={category}
-          onChange={(e) => setCategory(e.target.value)}
-          className="w-full rounded-md border border-[#313244] bg-[#1e1e2e] px-3 py-2 text-sm text-[#cdd6f4]"
-        />
-        <select
-          value={prioritas}
-          onChange={(e) =>
-            setPrioritas(e.target.value as 'high' | 'medium' | 'low')
-          }
-          className="w-full rounded-md border border-[#313244] bg-[#1e1e2e] px-3 py-2 text-sm text-[#cdd6f4]"
-        >
-          <option value="high">high</option>
-          <option value="medium">medium</option>
-          <option value="low">low</option>
-        </select>
+        <div className="grid grid-cols-2 gap-4">
+          <input
+            placeholder="Kategori"
+            value={category}
+            onChange={(e) => setCategory(e.target.value)}
+            className="w-full rounded-xl border border-zinc-800 bg-zinc-900 px-4 py-2.5 text-sm text-white focus:outline-none focus:border-white/20"
+          />
+          <select
+            value={prioritas}
+            onChange={(e) =>
+              setPrioritas(e.target.value as 'high' | 'medium' | 'low')
+            }
+            className="w-full rounded-xl border border-zinc-800 bg-zinc-900 px-4 py-2.5 text-sm text-white focus:outline-none focus:border-white/20"
+          >
+            <option value="high">High</option>
+            <option value="medium">Medium</option>
+            <option value="low">Low</option>
+          </select>
+        </div>
 
         <Popover open={calendarOpen} onOpenChange={setCalendarOpen}>
           <PopoverTrigger asChild>
             <button
               type="button"
-              className="w-full rounded-md border border-[#313244] bg-[#1e1e2e] px-3 py-2 text-sm text-[#cdd6f4] flex items-center gap-2 hover:bg-[#45475a] transition-colors"
+              className="w-full rounded-xl border border-zinc-800 bg-zinc-900 px-4 py-3 text-sm text-white flex items-center gap-3 hover:bg-zinc-800 transition-colors"
             >
-              <CalendarIcon className="h-4 w-4" />
+              <CalendarIcon className="h-4 w-4 text-zinc-400" />
               {deadline
                 ? new Date(deadline).toLocaleDateString('id-ID')
                 : 'Pilih deadline'}
@@ -651,7 +649,7 @@ function AddTaskForm({
           </PopoverTrigger>
           <PopoverContent
             align="start"
-            className="w-auto p-0 border-[#313244] bg-[#181825] shadow-xl"
+            className="w-auto p-0 border-zinc-800 bg-zinc-950 shadow-xl"
           >
             <Calendar
               mode="single"
@@ -665,15 +663,15 @@ function AddTaskForm({
               disabled={(date) =>
                 date < new Date(new Date().setHours(0, 0, 0, 0))
               }
-              className="p-3"
+              className="p-3 bg-zinc-950 text-white rounded-xl border border-zinc-900"
             />
           </PopoverContent>
         </Popover>
         <button
           onClick={handleSubmit}
-          className="mt-2 rounded-md bg-[#89b4fa] py-2 text-[#1e1e2e] font-medium"
+          className="mt-4 rounded-xl bg-white py-3 text-black font-bold hover:bg-zinc-200 transition-colors"
         >
-          Tambah
+          Buat Tugas
         </button>
       </div>
     </div>

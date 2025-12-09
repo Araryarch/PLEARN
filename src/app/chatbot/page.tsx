@@ -13,7 +13,6 @@ import { ChatInput } from './components/ChatInput'
 import { EmptyState } from './components/EmptyState'
 import { MessageBubble } from './components/MessageBubble'
 import { ChatSkeleton } from './components/ChatSkeleton'
-import { catppuccin } from './constants'
 
 export default function Chatbot() {
   const router = useRouter()
@@ -100,10 +99,9 @@ export default function Chatbot() {
 
   return (
     <Layouts>
-      <div
-        className="flex flex-col h-full w-full relative"
-        style={{ backgroundColor: catppuccin.base, color: catppuccin.text }}
-      >
+      <div className="flex flex-col h-full w-full relative bg-[#1e1e2e]">
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-blue-900/20 via-[#1e1e2e] to-[#1e1e2e] pointer-events-none" />
+
         <ChatHeader
           aiMode={aiMode}
           setAiMode={setAiMode}
@@ -142,14 +140,16 @@ export default function Chatbot() {
 
                 {isTyping && <ChatSkeleton />}
 
-                <div ref={messagesEndRef} className="h-2" />
+                <div ref={messagesEndRef} className="h-4" />
               </div>
             </ScrollArea>
           )}
         </div>
 
         {hasMessages && (
-          <div className="flex-none w-full bg-[#1e1e2e] z-20">{chatInput}</div>
+          <div className="flex-none w-full z-20 bg-gradient-to-t from-[#1e1e2e] via-[#1e1e2e] to-transparent pt-10 pb-2">
+            {chatInput}
+          </div>
         )}
       </div>
     </Layouts>

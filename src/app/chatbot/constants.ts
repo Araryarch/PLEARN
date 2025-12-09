@@ -5,20 +5,20 @@ import { AIModeConfig } from './types'
  * @see https://github.com/catppuccin/catppuccin
  */
 export const catppuccin = {
-  base: '#1e1e2e',
-  surface0: '#181825',
-  surface1: '#181825',
-  text: '#cdd6f4',
-  subtext: '#a6adc8',
-  blue: '#89b4fa',
-  green: '#a6e3a1',
-  red: '#f38ba8',
-  peach: '#fab387',
-  yellow: '#f9e2af',
-  teal: '#94e2d5',
-  mauve: '#cba6f7',
-  overlay: '#585b70',
-  lavender: '#b4befe',
+  base: '#09090b', // zinc-950
+  surface0: '#18181b', // zinc-900
+  surface1: '#27272a', // zinc-800
+  text: '#fafafa', // zinc-50
+  subtext: '#a1a1aa', // zinc-400
+  blue: '#fafafa', // zinc-50 (Accent/Primary)
+  green: '#d4d4d8', // zinc-300 (Success-ish)
+  red: '#71717a', // zinc-500 (Error-ish)
+  peach: '#e4e4e7', // zinc-200
+  yellow: '#f4f4f5', // zinc-100
+  teal: '#a1a1aa', // zinc-400
+  mauve: '#fafafa', // zinc-50
+  overlay: '#52525b', // zinc-600
+  lavender: '#e4e4e7', // zinc-200
 } as const
 
 /**

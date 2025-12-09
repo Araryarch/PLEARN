@@ -11,6 +11,7 @@ import {
   RotateCcw,
   Plus,
   GraduationCap,
+  Bot,
 } from 'lucide-react'
 import Image from 'next/image'
 import { catppuccin } from '../constants'
@@ -60,28 +61,21 @@ export const MessageBubble = ({
       className={`flex ${isUser ? 'justify-end' : 'justify-start'} group`}
     >
       <div
-        className={`flex gap-2 md:gap-3 max-w-[90%] md:max-w-[85%] lg:max-w-2xl items-start ${isUser ? 'flex-row-reverse' : ''}`}
+        className={`flex gap-3 md:gap-4 max-w-[90%] md:max-w-[85%] lg:max-w-3xl items-start ${isUser ? 'flex-row-reverse' : ''}`}
       >
         {/* Avatar */}
-        <div className="flex-shrink-0 mt-1">
+        <div className="flex-shrink-0 mt-1 opacity-70 hover:opacity-100 transition-opacity">
           {isUser ? (
             <Image
               src={userAvatar}
               width={32}
               height={32}
               alt="You"
-              className="w-7 h-7 md:w-8 md:h-8 rounded-full object-cover border border-opacity-20 shadow-sm"
-              style={{ borderColor: catppuccin.overlay }}
+              className="w-8 h-8 rounded-full object-cover shadow-sm ring-2 ring-white/5"
             />
           ) : (
-            <div
-              className="w-7 h-7 md:w-8 md:h-8 rounded-full flex items-center justify-center text-[10px] md:text-xs font-bold shadow-sm"
-              style={{
-                backgroundColor: catppuccin.mauve,
-                color: catppuccin.base,
-              }}
-            >
-              AI
+            <div className="w-8 h-8 flex items-center justify-center text-blue-400 bg-blue-500/10 rounded-lg">
+              <Bot size={20} />
             </div>
           )}
         </div>
@@ -91,35 +85,26 @@ export const MessageBubble = ({
           className={`flex flex-col gap-1 ${isUser ? 'items-end' : 'items-start'}`}
         >
           {/* Name & Time */}
-          <div className="flex items-center gap-1.5 md:gap-2 px-1">
-            <span
-              className="text-[10px] md:text-xs font-semibold"
-              style={{ color: catppuccin.subtext }}
-            >
-              {isUser ? 'You' : 'Senopati AI'}
+          <div
+            className={`flex items-center gap-2 px-1 ${isUser ? 'flex-row-reverse' : ''}`}
+          >
+            <span className="text-xs font-semibold text-[#cdd6f4]">
+              {isUser ? 'You' : 'Senopati'}
             </span>
-            <span
-              className="text-[9px] md:text-[10px]"
-              style={{ color: catppuccin.overlay }}
-            >
+            <span className="text-[10px] text-[#585b70]">
               {formatTime(message.timestamp)}
             </span>
           </div>
 
           {/* Bubble */}
           <div
-            className={`px-3 md:px-5 py-2.5 md:py-3.5 rounded-2xl shadow-sm overflow-hidden break-words ${isUser ? 'rounded-tr-none' : 'rounded-tl-none'}`}
-            style={{
-              backgroundColor: isUser
-                ? catppuccin.surface1
+            className={`py-2 px-4 md:py-3 md:px-5 overflow-hidden break-words ${
+              isUser
+                ? 'rounded-2xl rounded-tr-sm bg-[#313244] text-[#cdd6f4] shadow-md'
                 : message.error
-                  ? 'rgba(243, 139, 168, 0.1)'
-                  : 'transparent',
-              border: message.error ? `1px solid ${catppuccin.red}` : 'none',
-              color: catppuccin.text,
-              overflowWrap: 'break-word',
-              wordBreak: 'break-word',
-            }}
+                  ? 'rounded-xl bg-red-500/10 border border-red-500/20 text-[#cdd6f4]'
+                  : 'rounded-none bg-transparent text-[#cdd6f4] px-0 md:px-0'
+            }`}
           >
             {message.image && (
               <div className="mb-3">

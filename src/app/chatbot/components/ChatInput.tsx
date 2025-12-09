@@ -2,7 +2,6 @@ import { Button } from '@/components/ui/button'
 import { Send, X, Image as ImageIcon, Mic } from 'lucide-react'
 import Image from 'next/image'
 import { useRef, useEffect } from 'react'
-import { catppuccin } from '../constants'
 import { useSpeechRecognition } from '../hooks/useSpeechRecognition'
 
 interface ChatInputProps {
@@ -73,35 +72,35 @@ export const ChatInput = ({
   }
 
   return (
-    <div className="w-full px-4 pb-4 pt-2 bg-transparent">
+    <div className="w-full max-w-3xl mx-auto px-4 pb-6 pt-2">
       {selectedImage && (
-        <div className="relative inline-block mb-3 ml-2">
+        <div className="relative inline-block mb-4 animate-in fade-in slide-in-from-bottom-2">
           <Image
             src={selectedImage}
             alt="Selected"
-            width={72}
-            height={72}
-            className="h-[72px] w-auto rounded-xl border border-white/10 object-cover shadow-lg"
+            width={80}
+            height={80}
+            className="h-20 w-auto rounded-xl border border-white/10 object-cover shadow-2xl ring-1 ring-white/5"
           />
           <button
             onClick={onClearImage}
-            className="absolute -top-2 -right-2 bg-gray-800 text-white rounded-full p-1 border border-white/10 shadow-md hover:bg-gray-700 transition"
+            className="absolute -top-2 -right-2 bg-[#313244] text-white rounded-full p-1.5 border border-[#45475a] shadow-lg hover:bg-[#45475a] transition-all hover:scale-110"
           >
             <X size={12} />
           </button>
         </div>
       )}
 
-      {/* Input Capsule */}
+      {/* Floating Pill Input */}
       <div
-        className={`flex items-end gap-2 rounded-[26px] p-1.5 pl-2 border shadow-lg transition-all focus-within:shadow-xl focus-within:border-opacity-100 backdrop-blur-md ${isListening ? 'ring-2 ring-red-500/50 border-red-500/50' : ''}`}
-        style={{
-          backgroundColor: `${catppuccin.surface0}E6`,
-          borderColor: isListening ? catppuccin.red : catppuccin.surface1,
-        }}
+        className={`relative flex items-end gap-2 rounded-[2rem] p-2 pl-3 shadow-2xl transition-all duration-300 backdrop-blur-2xl ring-1 ${
+          isListening
+            ? 'bg-red-500/10 ring-red-500/50'
+            : 'bg-[#1e1e2e]/90 hover:bg-[#1e1e2e] ring-white/10 focus-within:ring-white/20'
+        }`}
       >
         <label
-          className="cursor-pointer w-10 h-10 rounded-full hover:bg-white/5 transition flex items-center justify-center shrink-0 mb-[1px]"
+          className={`cursor-pointer w-10 h-10 rounded-full hover:bg-white/10 transition flex items-center justify-center shrink-0 mb-[1px] text-[#a6adc8] hover:text-[#cdd6f4] ${selectedImage ? 'text-blue-400 bg-blue-500/10' : ''}`}
           title="Upload Image"
         >
           <input
@@ -110,14 +109,7 @@ export const ChatInput = ({
             className="hidden"
             onChange={onImageSelect}
           />
-          <ImageIcon
-            size={22}
-            strokeWidth={2}
-            style={{
-              color: selectedImage ? catppuccin.green : catppuccin.text,
-              opacity: 0.7,
-            }}
-          />
+          <ImageIcon size={20} strokeWidth={2} />
         </label>
 
         <textarea
@@ -131,28 +123,22 @@ export const ChatInput = ({
             isListening
               ? 'Listening...'
               : selectedImage
-                ? 'Describe this image...'
+                ? 'Ask about this image...'
                 : 'Message Senopati...'
           }
           rows={1}
-          className="flex-1 bg-transparent py-2.5 px-2 focus:outline-none resize-none max-h-[160px] overflow-y-auto w-full custom-scrollbar text-[16px]"
+          className="flex-1 bg-transparent py-3 px-1 focus:outline-none resize-none max-h-[200px] overflow-y-auto w-full custom-scrollbar text-[15px] placeholder:text-[#585b70]"
           style={{
-            color: catppuccin.text,
             minHeight: '24px',
-            lineHeight: '24px',
+            color: '#cdd6f4',
           }}
         />
 
         {canSend ? (
           <Button
             onClick={onSend}
-            disabled={!canSend}
             size="icon"
-            className="shrink-0 rounded-full w-10 h-10 transition-all shadow-sm mb-[1px]"
-            style={{
-              backgroundColor: catppuccin.text,
-              color: catppuccin.base,
-            }}
+            className="shrink-0 rounded-full w-10 h-10 transition-all shadow-md mb-[1px] bg-[#cdd6f4] hover:bg-white text-[#1e1e2e] hover:scale-105"
           >
             <Send size={18} strokeWidth={2.5} className="ml-0.5" />
           </Button>
@@ -160,15 +146,16 @@ export const ChatInput = ({
           <Button
             onClick={handleMicClick}
             size="icon"
-            className={`shrink-0 rounded-full w-10 h-10 transition-all shadow-sm mb-[1px] ${isListening ? 'animate-pulse' : ''}`}
-            style={{
-              backgroundColor: isListening ? catppuccin.red : 'transparent',
-              color: isListening ? '#fff' : catppuccin.subtext,
-            }}
+            className={`shrink-0 rounded-full w-10 h-10 transition-all mb-[1px] hover:bg-white/10 ${isListening ? 'bg-red-500 text-white animate-pulse hover:bg-red-600' : 'bg-transparent text-[#a6adc8]'}`}
           >
             <Mic size={20} strokeWidth={2} />
           </Button>
         )}
+      </div>
+      <div className="text-center mt-2">
+        <p className="text-[10px] text-[#585b70]">
+          AI can make mistakes. Verify important information.
+        </p>
       </div>
     </div>
   )
