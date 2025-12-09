@@ -1,8 +1,9 @@
 import { Button } from '@/components/ui/button'
-import { Send, X, Image as ImageIcon } from 'lucide-react'
+import { Send, X, Image as ImageIcon, Mic } from 'lucide-react'
 import Image from 'next/image'
 import { useRef, useEffect } from 'react'
 import { catppuccin } from '../constants'
+import { useSpeechRecognition } from '../hooks/useSpeechRecognition'
 
 interface ChatInputProps {
   input: string
@@ -13,8 +14,8 @@ interface ChatInputProps {
   onKeyPress: (e: React.KeyboardEvent<HTMLTextAreaElement>) => void
   onImageSelect: (e: React.ChangeEvent<HTMLInputElement>) => void
   onClearImage: () => void
-  onFocus: () => void
-  onBlur: () => void
+  onFocus?: () => void
+  onBlur?: () => void
 }
 
 export const ChatInput = ({
@@ -32,6 +33,20 @@ export const ChatInput = ({
   const canSend = (input.trim() || selectedImage) && !isTyping
   const textareaRef = useRef<HTMLTextAreaElement>(null)
 
+  const {
+    isListening,
+    text: voiceText,
+    startListening,
+    stopListening,
+  } = useSpeechRecognition()
+
+  // Sync voice input to text state
+  useEffect(() => {
+    if (voiceText) {
+      setInput(voiceText)
+    }
+  }, [voiceText, setInput])
+
   // Auto-resize logic
   useEffect(() => {
     if (textareaRef.current) {
@@ -44,9 +59,17 @@ export const ChatInput = ({
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault()
       onSend()
-      return // Stop here, do not call onKeyPress
+      return
     }
     onKeyPress(e)
+  }
+
+  const handleMicClick = () => {
+    if (isListening) {
+      stopListening()
+    } else {
+      startListening()
+    }
   }
 
   return (
@@ -71,10 +94,10 @@ export const ChatInput = ({
 
       {/* Input Capsule */}
       <div
-        className="flex items-end gap-2 rounded-[26px] p-1.5 pl-2 border shadow-lg transition-all focus-within:shadow-xl focus-within:border-opacity-100 backdrop-blur-md"
+        className={`flex items-end gap-2 rounded-[26px] p-1.5 pl-2 border shadow-lg transition-all focus-within:shadow-xl focus-within:border-opacity-100 backdrop-blur-md ${isListening ? 'ring-2 ring-red-500/50 border-red-500/50' : ''}`}
         style={{
           backgroundColor: `${catppuccin.surface0}E6`,
-          borderColor: catppuccin.surface1,
+          borderColor: isListening ? catppuccin.red : catppuccin.surface1,
         }}
       >
         <label
@@ -105,7 +128,11 @@ export const ChatInput = ({
           onFocus={onFocus}
           onBlur={onBlur}
           placeholder={
-            selectedImage ? 'Describe this image...' : 'Message Senopati...'
+            isListening
+              ? 'Listening...'
+              : selectedImage
+                ? 'Describe this image...'
+                : 'Message Senopati...'
           }
           rows={1}
           className="flex-1 bg-transparent py-2.5 px-2 focus:outline-none resize-none max-h-[160px] overflow-y-auto w-full custom-scrollbar text-[16px]"
@@ -116,23 +143,32 @@ export const ChatInput = ({
           }}
         />
 
-        <Button
-          onClick={onSend}
-          disabled={!canSend}
-          size="icon"
-          className="shrink-0 rounded-full w-10 h-10 transition-all shadow-sm mb-[1px]"
-          style={{
-            backgroundColor: canSend ? catppuccin.text : 'transparent',
-            color: canSend ? catppuccin.base : catppuccin.subtext,
-            opacity: canSend ? 1 : 0.3,
-          }}
-        >
-          <Send
-            size={18}
-            strokeWidth={2.5}
-            className={canSend ? 'ml-0.5' : ''}
-          />
-        </Button>
+        {canSend ? (
+          <Button
+            onClick={onSend}
+            disabled={!canSend}
+            size="icon"
+            className="shrink-0 rounded-full w-10 h-10 transition-all shadow-sm mb-[1px]"
+            style={{
+              backgroundColor: catppuccin.text,
+              color: catppuccin.base,
+            }}
+          >
+            <Send size={18} strokeWidth={2.5} className="ml-0.5" />
+          </Button>
+        ) : (
+          <Button
+            onClick={handleMicClick}
+            size="icon"
+            className={`shrink-0 rounded-full w-10 h-10 transition-all shadow-sm mb-[1px] ${isListening ? 'animate-pulse' : ''}`}
+            style={{
+              backgroundColor: isListening ? catppuccin.red : 'transparent',
+              color: isListening ? '#fff' : catppuccin.subtext,
+            }}
+          >
+            <Mic size={20} strokeWidth={2} />
+          </Button>
+        )}
       </div>
     </div>
   )

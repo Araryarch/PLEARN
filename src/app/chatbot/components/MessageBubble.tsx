@@ -10,14 +10,14 @@ import {
   X,
   RotateCcw,
   Plus,
+  GraduationCap,
 } from 'lucide-react'
 import Image from 'next/image'
 import { catppuccin } from '../constants'
 import { formatTime } from '../utils'
-import { Message, TodoItem } from '../types'
+import { Message, TodoItem, QuizQuestion } from '../types'
 import { MessageContent } from './MessageContent'
 import { TodoCard } from './TodoCard'
-
 interface MessageBubbleProps {
   message: Message
   userAvatar: string
@@ -31,6 +31,7 @@ interface MessageBubbleProps {
   onRetry: (text: string) => void
   onAddToDatabase: (items: TodoItem[]) => void
   onEditTextChange: (id: string, text: string) => void
+  onStartQuiz: (questions: QuizQuestion[]) => void
 }
 
 export const MessageBubble = ({
@@ -46,6 +47,7 @@ export const MessageBubble = ({
   onRetry,
   onAddToDatabase,
   onEditTextChange,
+  onStartQuiz,
 }: MessageBubbleProps) => {
   const isUser = message.sender === 'user'
   const isCopied = copiedId === message.id
@@ -186,6 +188,34 @@ export const MessageBubble = ({
                     Add All to Database
                   </Button>
                 )}
+              </div>
+            ) : message.quizData ? (
+              <div className="w-full min-w-[250px] space-y-3">
+                <div
+                  className="p-4 rounded-xl border border-dashed flex flex-col items-center justify-center text-center gap-2"
+                  style={{
+                    borderColor: catppuccin.blue,
+                    backgroundColor: `${catppuccin.blue}1A`,
+                  }}
+                >
+                  <GraduationCap size={32} style={{ color: catppuccin.blue }} />
+                  <div>
+                    <h4 className="font-bold text-base">Quiz Siap!</h4>
+                    <p className="text-sm opacity-70">
+                      {message.quizData.length} pertanyaan generated.
+                    </p>
+                  </div>
+                  <Button
+                    onClick={() => onStartQuiz(message.quizData!)}
+                    className="w-full mt-2 font-bold shadow-lg hover:scale-105 transition-transform"
+                    style={{
+                      backgroundColor: catppuccin.blue,
+                      color: catppuccin.base,
+                    }}
+                  >
+                    Mulai Mengerjakan
+                  </Button>
+                </div>
               </div>
             ) : (
               <MessageContent content={message.text} />

@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server'
 
 const API_BASE_URL = 'https://senopati-elysia.vercel.app/api'
 
+export const runtime = 'edge'
+
 export async function POST(request: NextRequest) {
   try {
     const formData = await request.formData()
@@ -21,8 +23,6 @@ export async function POST(request: NextRequest) {
     if (prompt) {
       newFormData.append('prompt', prompt)
     }
-
-    console.log('Proxying Vision Request...')
 
     const res = await fetch(`${API_BASE_URL}/vision`, {
       method: 'POST',

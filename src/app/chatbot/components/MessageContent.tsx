@@ -3,12 +3,15 @@ import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import remarkMath from 'remark-math'
 import rehypeKatex from 'rehype-katex'
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
+import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism'
 
 interface MessageContentProps {
   content: string
 }
 
 interface CodeProps extends React.HTMLAttributes<HTMLElement> {
+  inline?: boolean
   className?: string
   children?: React.ReactNode
 }
@@ -34,17 +37,37 @@ export const MessageContent = memo(
                 rel="noopener noreferrer"
               />
             ),
-            code: ({ className, children, ...props }: CodeProps) => {
+            code({ inline, className, children, ...props }: CodeProps) {
               const match = /language-(\w+)/.exec(className || '')
-              return match ? (
+              return !inline && match ? (
+                <div className="relative rounded-md overflow-hidden my-3">
+                  <div className="absolute right-2 top-2 z-10 text-xs text-white/50 bg-black/20 px-2 py-1 rounded select-none">
+                    {match[1]}
+                  </div>
+                  <SyntaxHighlighter
+                    {...props}
+                    style={vscDarkPlus}
+                    language={match[1]}
+                    PreTag="div"
+                    customStyle={{
+                      margin: 0,
+                      borderRadius: '0.375rem',
+                      fontSize: '0.875rem',
+                      lineHeight: '1.5',
+                      padding: '1.25rem',
+                      backgroundColor: '#1e1e2e', // Match theme layout
+                    }}
+                    showLineNumbers={true}
+                    wrapLongLines={true}
+                  >
+                    {String(children).replace(/\n$/, '')}
+                  </SyntaxHighlighter>
+                </div>
+              ) : (
                 <code
-                  className={`${className} bg-gray-800 rounded px-1 py-0.5`}
+                  className={`${className} bg-white/10 text-catppuccin-text rounded px-1.5 py-0.5 font-mono text-sm`}
                   {...props}
                 >
-                  {children}
-                </code>
-              ) : (
-                <code className="bg-gray-800 rounded px-1 py-0.5" {...props}>
                   {children}
                 </code>
               )

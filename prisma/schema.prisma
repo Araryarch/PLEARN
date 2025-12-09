@@ -42,4 +42,6 @@ model Todo {
   userId     String
   status     Status
   user       User     @relation(fields: [userId], references: [id])
+
+  @@index([userId])
 }

@@ -1,12 +1,12 @@
 import { useState, useEffect, useRef } from 'react'
 import { useSession } from 'next-auth/react'
 import { ExtendedSession } from '@/lib/authOptions'
-import Swal from 'sweetalert2'
-import { Message, AIMode, TodoItem } from '../types'
-import { catppuccin } from '../constants'
+import { toast } from 'react-hot-toast'
+import { Message, AIMode, TodoItem, QuizQuestion } from '../types'
 import {
   generateListPrompt,
   parseTodoList,
+  parseQuiz,
   fetchChatResponse,
   fetchVisionResponse,
 } from '../services/chatService'
@@ -99,12 +99,15 @@ export const useChatbot = () => {
     setSelectedFile(null)
   }
 
-  const fetchAIReply = async (prompt: string) => {
+  const fetchAIReply = async (prompt: string, imageFile?: File | null) => {
     setIsTyping(true)
     try {
       let enhancedPrompt = prompt
 
-      if (aiMode === 'list') {
+      // Inject Quiz instruction if detected
+      if (prompt.toLowerCase().includes('quiz')) {
+        enhancedPrompt += `\n\nGenerate 5 multiple choice questions about "${prompt}" in Bahasa Indonesia. Output JSON Array format: [{ "question": "...", "options": ["A", "B", "C", "D"], "correctAnswer": 0 (0-3 index) }]. Return ONLY raw JSON.`
+      } else if (aiMode === 'list') {
         enhancedPrompt = generateListPrompt(prompt)
       }
 
@@ -120,22 +123,31 @@ export const useChatbot = () => {
 
       let reply = ''
       let jsonData: TodoItem[] | undefined = undefined
+      let quizData: QuizQuestion[] | undefined = undefined
 
-      if (selectedFile) {
+      if (imageFile) {
         reply = await fetchVisionResponse(
           enhancedPrompt,
           apiMessages,
-          selectedFile, // Now correct type
+          imageFile,
         )
       } else {
         reply = await fetchChatResponse(apiMessages)
       }
 
       if (aiMode === 'list') {
-        jsonData = parseTodoList(reply)
-        if (jsonData) {
-          reply = 'Here is your generated list.'
+        const parsed = parseTodoList(reply)
+        if (parsed) {
+          jsonData = parsed
+          reply = 'Berikut daftar tugas yang telah dibuat.'
         }
+      }
+
+      // Try parsing quiz
+      const parsedQuiz = parseQuiz(reply)
+      if (parsedQuiz && parsedQuiz.length > 0) {
+        quizData = parsedQuiz
+        reply = 'Quiz telah siap! Klik tombol di bawah untuk mengerjakan.'
       }
 
       setMessages((prev) => [
@@ -145,18 +157,18 @@ export const useChatbot = () => {
           text: reply,
           sender: 'bot',
           jsonData,
+          quizData,
           timestamp: new Date(),
         },
       ])
     } catch (e) {
       console.error('Fetch error:', e)
+      toast.error('Gagal terhubung ke AI.')
       setMessages((prev) => [
         ...prev,
         {
           id: Date.now().toString(),
-          text:
-            'Warning: Gagal terhubung ke AI. ' +
-            (e instanceof Error ? e.message : String(e)),
+          text: 'Maaf, terjadi kesalahan saat memproses permintaan Anda.',
           sender: 'bot',
           error: true,
           timestamp: new Date(),
@@ -164,15 +176,19 @@ export const useChatbot = () => {
       ])
     } finally {
       setIsTyping(false)
-      setSelectedImage(null)
-      setSelectedFile(null)
     }
   }
 
   const handleSend = async () => {
     if (!input.trim() && !selectedImage) return
     const userMessage = input.trim()
+    const currentFile = selectedFile
+    const currentImage = selectedImage
+
+    // Clear UI state immediately
     setInput('')
+    setSelectedImage(null)
+    setSelectedFile(null)
 
     setMessages((prev) => [
       ...prev,
@@ -181,13 +197,17 @@ export const useChatbot = () => {
         text: userMessage,
         sender: 'user',
         timestamp: new Date(),
-        image: selectedImage || undefined,
+        image: currentImage || undefined,
       },
     ])
-    await fetchAIReply(userMessage)
+
+    // Pass captured state to fetch function
+    await fetchAIReply(userMessage, currentFile)
   }
 
   const handleRetry = async (messageText: string) => {
+    // Retry usually just text, but could be enhanced to support context re-fetch if needed
+    // For now we assume retry is text-based or the last context logic needs to be smarter
     await fetchAIReply(messageText)
   }
 
@@ -195,13 +215,7 @@ export const useChatbot = () => {
     const userId = extended?.user?.id
 
     if (!userId) {
-      Swal.fire({
-        title: 'Error',
-        text: 'User session not found',
-        icon: 'error',
-        background: catppuccin.base,
-        color: catppuccin.text,
-      })
+      toast.error('User session not found')
       return
     }
 
@@ -229,49 +243,22 @@ export const useChatbot = () => {
       }
     }
 
+    const toastId = toast.loading('Menambahkan ke database...')
     const results = await Promise.all(items.map(addItem))
     const successCount = results.filter((r) => r.success).length
     const failedCount = results.length - successCount
 
     if (successCount > 0 && failedCount === 0) {
-      Swal.fire({
-        title: '✨ Berhasil!',
-        text: `${successCount} todo berhasil ditambahkan ke database.`,
-        icon: 'success',
-        background: '#1e1e2e',
-        color: '#cdd6f4',
-        confirmButtonColor: '#b4befe',
-        iconColor: '#a6e3a1',
-        customClass: {
-          popup: 'rounded-2xl shadow-lg border border-[#313244]',
-        },
+      toast.success(`${successCount} todo berhasil ditambahkan!`, {
+        id: toastId,
       })
     } else if (successCount > 0 && failedCount > 0) {
-      Swal.fire({
-        title: '⚠️ Sebagian Berhasil',
-        text: `${successCount} berhasil, ${failedCount} gagal ditambahkan.`,
-        icon: 'warning',
-        background: '#1e1e2e',
-        color: '#cdd6f4',
-        confirmButtonColor: '#f9e2af',
-        iconColor: '#f9e2af',
-        customClass: {
-          popup: 'rounded-2xl shadow-lg border border-[#313244]',
-        },
+      toast(`${successCount} berhasil, ${failedCount} gagal.`, {
+        icon: '⚠️',
+        id: toastId,
       })
     } else {
-      Swal.fire({
-        title: '❌ Gagal!',
-        text: 'Semua todo gagal ditambahkan.',
-        icon: 'error',
-        background: '#1e1e2e',
-        color: '#cdd6f4',
-        confirmButtonColor: '#f38ba8',
-        iconColor: '#f38ba8',
-        customClass: {
-          popup: 'rounded-2xl shadow-lg border border-[#313244]',
-        },
-      })
+      toast.error('Gagal menambahkan todo.', { id: toastId })
     }
   }
 

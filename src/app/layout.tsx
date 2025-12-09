@@ -14,6 +14,10 @@ export const metadata: Metadata = {
   ...BASE_METADATA,
 }
 
+import { Toaster } from 'react-hot-toast'
+
+// ...
+
 export default function RootLayout({
   children,
 }: {
@@ -30,6 +34,15 @@ export default function RootLayout({
       </head>
       <body className={cn(Inter.variable, 'dark')}>
         <Providers>{children}</Providers>
+        <Toaster
+          position="top-center"
+          toastOptions={{
+            style: {
+              background: '#333',
+              color: '#fff',
+            },
+          }}
+        />
         <GoogleAnalytics gaId="" />
       </body>
     </html>

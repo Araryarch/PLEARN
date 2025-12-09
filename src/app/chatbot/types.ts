@@ -9,6 +9,12 @@ export interface TodoItem {
   deadline?: string
 }
 
+export interface QuizQuestion {
+  question: string
+  options: string[] // Array of 4 options
+  correctAnswer: number // Index 0-3
+}
+
 /**
  * AI mode types for different conversation styles
  */
@@ -25,6 +31,7 @@ export interface Message {
   timestamp: Date
   image?: string
   jsonData?: TodoItem[]
+  quizData?: QuizQuestion[]
   error?: boolean
   isEditing?: boolean
   editedText?: string

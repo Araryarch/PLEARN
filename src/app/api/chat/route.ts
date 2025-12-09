@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server'
 
 const API_BASE_URL = 'https://senopati-elysia.vercel.app/api'
 
+export const runtime = 'edge'
+
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()

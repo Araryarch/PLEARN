@@ -1,6 +1,7 @@
 'use client'
 
-import { useState } from 'react'
+import { useRouter } from 'next/navigation'
+import { QuizQuestion } from './types'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import Layouts from '@/Layouts/Layouts'
 import { App } from '@capacitor/app'
@@ -15,6 +16,7 @@ import { ChatSkeleton } from './components/ChatSkeleton'
 import { catppuccin } from './constants'
 
 export default function Chatbot() {
+  const router = useRouter()
   const {
     messages,
     input,
@@ -44,10 +46,9 @@ export default function Chatbot() {
     dropdownRef,
     triggerRef,
   } = useDropdown()
-  const [isInputFocused, setIsInputFocused] = useState(false)
 
   App.addListener('backButton', () => {
-    setIsInputFocused(false)
+    // Handle back button if needed
   })
 
   const handleKeyPress = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
@@ -75,6 +76,13 @@ export default function Chatbot() {
     )
   }
 
+  const handleStartQuiz = (questions: QuizQuestion[]) => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('activeQuiz', JSON.stringify(questions))
+      router.push('/quiz')
+    }
+  }
+
   const hasMessages = messages.length > 0
 
   const chatInput = (
@@ -87,15 +95,13 @@ export default function Chatbot() {
       onKeyPress={handleKeyPress}
       onImageSelect={handleImageSelect}
       onClearImage={clearImage}
-      onFocus={() => setIsInputFocused(true)}
-      onBlur={() => setIsInputFocused(false)}
     />
   )
 
   return (
-    <Layouts isInputFocused={isInputFocused}>
+    <Layouts>
       <div
-        className="flex flex-col h-[100dvh] w-full relative"
+        className="flex flex-col h-full w-full relative"
         style={{ backgroundColor: catppuccin.base, color: catppuccin.text }}
       >
         <ChatHeader
@@ -130,6 +136,7 @@ export default function Chatbot() {
                     onRetry={handleRetry}
                     onAddToDatabase={handleAddToDatabase}
                     onEditTextChange={handleEditTextChange}
+                    onStartQuiz={handleStartQuiz}
                   />
                 ))}
 
@@ -142,9 +149,7 @@ export default function Chatbot() {
         </div>
 
         {hasMessages && (
-          <div className="flex-none w-full bg-[#1e1e2e] z-20 pb-[env(safe-area-inset-bottom)]">
-            {chatInput}
-          </div>
+          <div className="flex-none w-full bg-[#1e1e2e] z-20">{chatInput}</div>
         )}
       </div>
     </Layouts>
