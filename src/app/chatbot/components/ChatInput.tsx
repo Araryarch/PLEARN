@@ -1,7 +1,7 @@
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
 import { Send, X, Image as ImageIcon } from 'lucide-react'
 import Image from 'next/image'
+import { useRef, useEffect } from 'react'
 import { catppuccin } from '../constants'
 
 interface ChatInputProps {
@@ -10,7 +10,7 @@ interface ChatInputProps {
   selectedImage: string | null
   isTyping: boolean
   onSend: () => void
-  onKeyPress: (e: React.KeyboardEvent<HTMLInputElement>) => void
+  onKeyPress: (e: React.KeyboardEvent<HTMLTextAreaElement>) => void
   onImageSelect: (e: React.ChangeEvent<HTMLInputElement>) => void
   onClearImage: () => void
   onFocus: () => void
@@ -30,10 +30,27 @@ export const ChatInput = ({
   onBlur,
 }: ChatInputProps) => {
   const canSend = (input.trim() || selectedImage) && !isTyping
+  const textareaRef = useRef<HTMLTextAreaElement>(null)
+
+  // Auto-resize logic
+  useEffect(() => {
+    if (textareaRef.current) {
+      textareaRef.current.style.height = 'auto'
+      textareaRef.current.style.height = `${Math.min(textareaRef.current.scrollHeight, 200)}px`
+    }
+  }, [input])
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault()
+      onSend()
+    }
+    onKeyPress(e)
+  }
 
   return (
     <div
-      className="w-full border-t p-4 max-h-fit md:pb-4"
+      className="w-full border-t p-4 pb-6"
       style={{
         borderColor: catppuccin.overlay,
         backgroundColor: catppuccin.base,
@@ -57,9 +74,16 @@ export const ChatInput = ({
         </div>
       )}
 
-      <div className="flex items-center gap-3">
+      {/* Input Container */}
+      <div
+        className="flex items-end gap-2 rounded-3xl p-2 border transition-colors focus-within:border-opacity-100"
+        style={{
+          backgroundColor: catppuccin.surface1,
+          borderColor: catppuccin.overlay,
+        }}
+      >
         <label
-          className="cursor-pointer p-3 rounded-full hover:bg-[#313244] transition flex items-center justify-center group"
+          className="cursor-pointer p-2 rounded-full hover:bg-white/10 transition flex items-center justify-center shrink-0 mb-1"
           title="Upload Image"
         >
           <input
@@ -76,34 +100,36 @@ export const ChatInput = ({
           />
         </label>
 
-        <Input
-          type="text"
+        <textarea
+          ref={textareaRef}
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          onKeyPress={onKeyPress}
+          onKeyDown={handleKeyDown}
           onFocus={onFocus}
           onBlur={onBlur}
           placeholder={
-            selectedImage ? 'Describe the image...' : 'Type your message...'
+            selectedImage ? 'Describe the image...' : 'Type a message...'
           }
-          className="flex-1 rounded-sm py-5 px-4 transition-all"
+          rows={1}
+          className="flex-1 bg-transparent py-3 px-2 focus:outline-none resize-none max-h-[200px] overflow-y-auto w-full custom-scrollbar"
           style={{
-            borderColor: catppuccin.overlay,
-            backgroundColor: catppuccin.surface1,
             color: catppuccin.text,
+            minHeight: '44px',
           }}
         />
 
         <Button
           onClick={onSend}
           disabled={!canSend}
+          size="icon"
+          className="shrink-0 mb-1 rounded-full w-10 h-10 transition-all active:scale-95"
           style={{
-            backgroundColor: catppuccin.blue,
-            color: catppuccin.base,
+            backgroundColor: canSend ? catppuccin.text : 'transparent',
+            color: canSend ? catppuccin.base : catppuccin.subtext,
             opacity: canSend ? 1 : 0.5,
           }}
         >
-          <Send size={20} />
+          <Send size={18} />
         </Button>
       </div>
     </div>

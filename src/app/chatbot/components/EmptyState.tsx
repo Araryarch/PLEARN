@@ -1,9 +1,7 @@
 import { Compass, Code, Lightbulb, PenTool } from 'lucide-react'
-import { catppuccin, aiModes } from '../constants'
-import { AIMode } from '../types'
+import { catppuccin } from '../constants'
 
 interface EmptyStateProps {
-  aiMode: AIMode
   setInput: (value: string) => void
   children?: React.ReactNode
 }
@@ -35,56 +33,51 @@ const suggestions = [
   },
 ]
 
-export const EmptyState = ({ aiMode, setInput, children }: EmptyStateProps) => {
-  const currentMode = aiModes.find((m) => m.value === aiMode)
-
+export const EmptyState = ({ setInput, children }: EmptyStateProps) => {
   return (
     <div className="flex flex-col items-center justify-center min-h-[80vh] w-full max-w-4xl mx-auto px-4 animate-in fade-in zoom-in duration-500">
       {/* Hero Section */}
-      <div className="mb-8 text-center space-y-2">
-        <div className="inline-block p-4 rounded-2xl bg-gradient-to-br from-blue-500/20 to-purple-500/20 mb-4 backdrop-blur-sm border border-white/5">
-          <span className="text-4xl">✨</span>
-        </div>
-        <h2 className="text-3xl md:text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400">
-          Hello, Learner!
+      <div className="mb-10 text-center space-y-1">
+        <h2
+          className="text-4xl md:text-5xl font-semibold tracking-tight"
+          style={{ color: catppuccin.text }}
+        >
+          Hello, Learner
         </h2>
         <p
-          className="text-lg md:text-xl font-medium"
+          className="text-xl md:text-2xl font-normal opacity-50"
           style={{ color: catppuccin.subtext }}
         >
-          How can I help you regarding {currentMode?.label.toLowerCase()} today?
+          How can I help you today?
         </p>
       </div>
 
       {/* Input Container (Centered) */}
       <div className="w-full max-w-2xl mb-12">{children}</div>
 
-      {/* Suggestions Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 w-full max-w-3xl">
+      {/* Suggestions Grid (Minimalist) */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 w-full max-w-4xl">
         {suggestions.map((item, idx) => (
           <button
             key={idx}
             onClick={() => setInput(item.prompt)}
-            className="flex items-start gap-4 p-4 rounded-xl text-left transition-all duration-300 hover:-translate-y-1 hover:shadow-lg group"
+            className="flex flex-col gap-2 p-4 rounded-xl text-left transition-all hover:bg-white/5 group h-full"
             style={{
               backgroundColor: catppuccin.surface0,
-              border: `1px solid ${catppuccin.surface1}`,
             }}
           >
             <div
-              className="p-2 rounded-lg transition-colors group-hover:bg-opacity-20"
-              style={{ backgroundColor: `${item.color}20`, color: item.color }}
+              className="p-2 rounded-full w-fit"
+              style={{ backgroundColor: catppuccin.base, color: item.color }}
             >
               {item.icon}
             </div>
-            <div className="flex-1">
-              <p
-                className="font-medium text-sm md:text-base"
-                style={{ color: catppuccin.text }}
-              >
-                {item.text}
-              </p>
-            </div>
+            <p
+              className="font-medium text-sm"
+              style={{ color: catppuccin.text }}
+            >
+              {item.text}
+            </p>
           </button>
         ))}
       </div>

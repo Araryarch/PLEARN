@@ -4,14 +4,13 @@ const API_BASE_URL = 'https://senopati-elysia.vercel.app/api'
 
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json()
+    const formData = await request.formData()
 
-    const res = await fetch(`${API_BASE_URL}/chat`, {
+    const res = await fetch(`${API_BASE_URL}/vision`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(body),
+      body: formData,
+      // Note: Do NOT set Content-Type header when sending FormData,
+      // fetch will automatically set it with boundary
     })
 
     if (!res.ok) {

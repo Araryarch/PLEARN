@@ -1,6 +1,6 @@
 import { AIResponse, TodoItem } from '../types'
 
-const API_BASE_URL = 'https://senopati-elysia.vercel.app/api'
+const API_BASE_URL = '/api'
 
 /**
  * Parse AI response into TodoItem array

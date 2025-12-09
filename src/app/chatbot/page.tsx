@@ -50,7 +50,7 @@ export default function Chatbot() {
     setIsInputFocused(false)
   })
 
-  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+  const handleKeyPress = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault()
       handleSend()
@@ -113,9 +113,7 @@ export default function Chatbot() {
         <div className="flex-1 flex flex-col overflow-y-auto">
           <ScrollArea className="flex-1 w-full pt-[73px] pb-2">
             {!hasMessages ? (
-              <EmptyState aiMode={aiMode} setInput={setInput}>
-                {chatInput}
-              </EmptyState>
+              <EmptyState setInput={setInput}>{chatInput}</EmptyState>
             ) : (
               <div className="px-4 py-6 space-y-6 pb-6 container mx-auto max-w-4xl">
                 {messages.map((msg) => (
