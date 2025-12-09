@@ -15,6 +15,8 @@ import {
   Clock,
   Target,
   Award,
+  ChevronUp,
+  ChevronDown,
 } from 'lucide-react'
 
 export default function QuizPage() {
@@ -26,6 +28,7 @@ export default function QuizPage() {
   const [isAnswered, setIsAnswered] = useState(false)
   const [answers, setAnswers] = useState<(number | null)[]>([])
   const [timeElapsed, setTimeElapsed] = useState(0)
+  const [showMobileStats, setShowMobileStats] = useState(false)
 
   // Timer
   useEffect(() => {
@@ -77,6 +80,8 @@ export default function QuizPage() {
         setSelectedOption(null)
         setIsAnswered(false)
       } else {
+        // Clear quiz from localStorage when finished
+        localStorage.removeItem('activeQuiz')
         setStatus('result')
       }
     }, 1500)
@@ -94,19 +99,31 @@ export default function QuizPage() {
     setSelectedOption(null)
   }
 
+  const handleFinishQuiz = () => {
+    // Reset all state
+    setStatus('idle')
+    setQuestions([])
+    setCurrentQIndex(0)
+    setScore(0)
+    setSelectedOption(null)
+    setIsAnswered(false)
+    setAnswers([])
+    setTimeElapsed(0)
+  }
+
   return (
     <Layouts>
       <div className="flex h-full w-full min-h-screen bg-black text-zinc-50">
         {/* Main Content */}
-        <div className="flex-1 flex flex-col p-6 pb-24 overflow-y-auto">
+        <div className="flex-1 flex flex-col p-4 md:p-6 pb-24 overflow-y-auto">
           <div className="max-w-3xl mx-auto w-full flex-1 flex flex-col">
             {/* Header */}
-            <div className="mb-8">
-              <h1 className="text-3xl font-bold mb-2 flex items-center gap-3 text-white">
-                <BrainCircuit className="text-white" size={32} />
+            <div className="mb-6 md:mb-8">
+              <h1 className="text-2xl md:text-3xl font-bold mb-2 flex items-center gap-3 text-white">
+                <BrainCircuit className="text-white" size={28} />
                 AI Quiz
               </h1>
-              <p className="text-zinc-400">Test your knowledge</p>
+              <p className="text-zinc-400 text-sm">Test your knowledge</p>
             </div>
 
             {/* IDLE / EMPTY STATE */}
@@ -177,7 +194,7 @@ export default function QuizPage() {
                         </div>
                       </div>
 
-                      <h3 className="text-2xl font-semibold mb-8 leading-relaxed text-white">
+                      <h3 className="text-xl md:text-2xl font-semibold mb-6 md:mb-8 leading-relaxed text-white">
                         {questions[currentQIndex].question}
                       </h3>
 
@@ -188,15 +205,15 @@ export default function QuizPage() {
                             questions[currentQIndex].correctAnswer === idx
 
                           let btnClass =
-                            'w-full justify-start text-left p-5 h-auto text-base border-zinc-800 bg-zinc-900 hover:bg-zinc-800 text-zinc-300 transition-all'
+                            'w-full justify-start text-left p-4 md:p-5 h-auto text-sm md:text-base border-zinc-800 bg-zinc-900 hover:bg-zinc-800 text-zinc-300 transition-all'
 
                           if (isAnswered) {
                             if (isCorrect)
                               btnClass =
-                                'w-full justify-start text-left p-5 h-auto bg-white text-black border-white font-medium'
+                                'w-full justify-start text-left p-4 md:p-5 h-auto bg-white text-black border-white font-medium'
                             else if (isSelected && !isCorrect)
                               btnClass =
-                                'w-full justify-start text-left p-5 h-auto bg-zinc-900 text-zinc-500 border-zinc-800 opacity-50'
+                                'w-full justify-start text-left p-4 md:p-5 h-auto bg-zinc-900 text-zinc-500 border-zinc-800 opacity-50'
                           }
 
                           return (
@@ -257,15 +274,23 @@ export default function QuizPage() {
                       Waktu: {formatTime(timeElapsed)}
                     </p>
 
-                    <Button
-                      onClick={() =>
-                        (window.location.href = '/chatbot?mode=quiz')
-                      }
-                      className="gap-2 bg-white text-black hover:bg-zinc-200 font-bold"
-                    >
-                      <RefreshCcw size={18} />
-                      Coba Topik Lain
-                    </Button>
+                    <div className="flex flex-col sm:flex-row gap-3 w-full max-w-sm">
+                      <Button
+                        onClick={handleFinishQuiz}
+                        className="flex-1 gap-2 bg-zinc-800 text-white hover:bg-zinc-700 font-bold border border-zinc-700"
+                      >
+                        Selesai
+                      </Button>
+                      <Button
+                        onClick={() =>
+                          (window.location.href = '/chatbot?mode=quiz')
+                        }
+                        className="flex-1 gap-2 bg-white text-black hover:bg-zinc-200 font-bold"
+                      >
+                        <RefreshCcw size={18} />
+                        Topik Lain
+                      </Button>
+                    </div>
                   </CardContent>
                 </Card>
               </motion.div>
@@ -273,7 +298,7 @@ export default function QuizPage() {
           </div>
         </div>
 
-        {/* Right Sidebar - Only show during quiz */}
+        {/* Desktop Right Sidebar */}
         {status === 'quiz' && questions.length > 0 && (
           <div className="hidden lg:flex w-80 border-l border-zinc-900 bg-zinc-950 flex-col overflow-y-auto">
             <div className="p-6 space-y-6">
@@ -382,6 +407,92 @@ export default function QuizPage() {
                 </div>
               </div>
             </div>
+          </div>
+        )}
+
+        {/* Mobile Bottom Stats Sheet */}
+        {status === 'quiz' && questions.length > 0 && (
+          <div className="lg:hidden fixed bottom-0 left-0 right-0 z-50">
+            {/* Toggle Button */}
+            <button
+              onClick={() => setShowMobileStats(!showMobileStats)}
+              className="w-full bg-zinc-900 border-t border-zinc-800 px-4 py-3 flex items-center justify-between text-white"
+            >
+              <div className="flex items-center gap-3">
+                <Clock size={16} className="text-zinc-400" />
+                <span className="text-sm font-medium">
+                  {formatTime(timeElapsed)}
+                </span>
+                <span className="text-zinc-600">•</span>
+                <Target size={16} className="text-zinc-400" />
+                <span className="text-sm font-medium">{score}</span>
+                <span className="text-zinc-600">•</span>
+                <span className="text-sm text-zinc-500">
+                  {currentQIndex + 1}/{questions.length}
+                </span>
+              </div>
+              {showMobileStats ? (
+                <ChevronDown size={20} />
+              ) : (
+                <ChevronUp size={20} />
+              )}
+            </button>
+
+            {/* Expandable Stats */}
+            <AnimatePresence>
+              {showMobileStats && (
+                <motion.div
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: 'auto', opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  transition={{ duration: 0.2 }}
+                  className="bg-zinc-950 border-t border-zinc-800 overflow-hidden"
+                >
+                  <div className="p-4 space-y-4 max-h-[60vh] overflow-y-auto">
+                    {/* Question Navigator */}
+                    <div>
+                      <h3 className="text-xs font-bold text-zinc-500 uppercase tracking-wider mb-3">
+                        Questions
+                      </h3>
+                      <div className="grid grid-cols-6 gap-2">
+                        {questions.map((_, idx) => {
+                          const isAnswered = answers[idx] !== null
+                          const isCurrent = idx === currentQIndex
+                          const isCorrect =
+                            isAnswered &&
+                            answers[idx] === questions[idx].correctAnswer
+
+                          return (
+                            <button
+                              key={idx}
+                              onClick={() => {
+                                goToQuestion(idx)
+                                setShowMobileStats(false)
+                              }}
+                              disabled={isAnswered}
+                              className={`
+                                aspect-square rounded-lg flex items-center justify-center text-sm font-bold transition-all
+                                ${
+                                  isCurrent
+                                    ? 'bg-white text-black ring-2 ring-white ring-offset-2 ring-offset-zinc-950'
+                                    : isAnswered
+                                      ? isCorrect
+                                        ? 'bg-zinc-800 text-white border border-zinc-700'
+                                        : 'bg-zinc-900 text-zinc-600 border border-zinc-800'
+                                      : 'bg-zinc-900 text-zinc-500 border border-zinc-800'
+                                }
+                              `}
+                            >
+                              {idx + 1}
+                            </button>
+                          )
+                        })}
+                      </div>
+                    </div>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
         )}
       </div>
