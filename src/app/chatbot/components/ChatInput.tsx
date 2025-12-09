@@ -35,6 +35,7 @@ export const ChatInput = ({
   const {
     isListening,
     text: voiceText,
+    error: voiceError,
     startListening,
     stopListening,
   } = useSpeechRecognition()
@@ -152,6 +153,19 @@ export const ChatInput = ({
         )}
       </div>
       <div className="text-center mt-2">
+        {isListening && (
+          <p className="text-[11px] text-red-400 mb-1 animate-pulse">
+            🎤 Mendengarkan...
+          </p>
+        )}
+        {voiceError && (
+          <p className="text-[11px] text-red-400 mb-1">
+            ⚠️{' '}
+            {voiceError === 'not-allowed'
+              ? 'Izin mikrofon ditolak'
+              : 'Gagal merekam suara'}
+          </p>
+        )}
         <p className="text-[10px] text-zinc-600">
           AI can make mistakes. Verify important information.
         </p>

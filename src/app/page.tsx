@@ -95,39 +95,6 @@ export default function Page() {
     staleTime: 1000 * 60 * 5, // Cache for 5 minutes
   })
 
-  // Skeleton Loading Component
-  const SkeletonHome = () => (
-    <div className="min-h-screen h-screen w-full bg-black p-6 flex flex-col gap-6 overflow-y-auto">
-      <div className="h-8 bg-zinc-900 rounded animate-pulse w-48 mb-2"></div>
-
-      {/* Progress Skeleton */}
-      <div className="w-full h-48 bg-zinc-900 rounded-2xl animate-pulse"></div>
-
-      <div className="flex justify-between items-center mt-2">
-        <div className="h-6 bg-zinc-900 rounded animate-pulse w-24"></div>
-        <div className="h-4 bg-zinc-900 rounded animate-pulse w-20"></div>
-      </div>
-
-      {/* Tasks Skeleton */}
-      <div className="flex flex-col gap-4">
-        {[1, 2, 3].map((i) => (
-          <div
-            key={i}
-            className="w-full h-24 bg-zinc-900 rounded-xl animate-pulse"
-          ></div>
-        ))}
-      </div>
-    </div>
-  )
-
-  if (status === 'loading') {
-    return (
-      <Layouts>
-        <SkeletonHome />
-      </Layouts>
-    )
-  }
-
   if (!session) return null
 
   const activeTasks = tasks.filter((t) => t.status !== 'Selesai')
@@ -178,42 +145,38 @@ export default function Page() {
           <span className="text-zinc-400">{extended.user.username}</span>
         </Typography>
 
-        {isLoading ? (
-          <div className="w-full h-48 bg-zinc-900 rounded-2xl animate-pulse"></div>
-        ) : (
-          <div className="w-full bg-zinc-950 border border-zinc-900 p-6 rounded-3xl flex items-center justify-between relative overflow-hidden shadow-lg">
-            {/* Background Decoration */}
-            <div className="absolute top-0 right-0 w-32 h-32 bg-zinc-800/10 rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none"></div>
+        <div className="w-full bg-zinc-950 border border-zinc-900 p-6 rounded-3xl flex items-center justify-between relative overflow-hidden shadow-lg">
+          {/* Background Decoration */}
+          <div className="absolute top-0 right-0 w-32 h-32 bg-zinc-800/10 rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none"></div>
 
-            <div className="flex flex-col gap-1 z-10">
-              <Typography className="text-zinc-400 text-xs font-bold uppercase tracking-widest mb-2">
-                Your Progress
-              </Typography>
-              <div className="flex flex-col gap-1">
-                <div className="flex items-baseline gap-2">
-                  <span className="text-4xl font-bold text-white">
-                    {completedCount}
-                  </span>
-                  <span className="text-sm text-zinc-500">
-                    / {totalCount} Selesai
-                  </span>
-                </div>
-                <span className="text-xs text-zinc-500 mt-1">
-                  {activeCount} tugas tersisa
+          <div className="flex flex-col gap-1 z-10">
+            <Typography className="text-zinc-400 text-xs font-bold uppercase tracking-widest mb-2">
+              Your Progress
+            </Typography>
+            <div className="flex flex-col gap-1">
+              <div className="flex items-baseline gap-2">
+                <span className="text-4xl font-bold text-white">
+                  {completedCount}
+                </span>
+                <span className="text-sm text-zinc-500">
+                  / {totalCount} Selesai
                 </span>
               </div>
-            </div>
-
-            <div className="z-10 relative">
-              <CircularProgress
-                value={completedCount}
-                max={totalCount}
-                size={90}
-                strokeWidth={8}
-              />
+              <span className="text-xs text-zinc-500 mt-1">
+                {activeCount} tugas tersisa
+              </span>
             </div>
           </div>
-        )}
+
+          <div className="z-10 relative">
+            <CircularProgress
+              value={completedCount}
+              max={totalCount}
+              size={90}
+              strokeWidth={8}
+            />
+          </div>
+        </div>
 
         <div className="flex flex-col gap-4">
           <div className="w-full flex justify-between items-end">

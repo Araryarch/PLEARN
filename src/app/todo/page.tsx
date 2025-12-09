@@ -39,40 +39,9 @@ interface Task {
 type FilterType = 'all' | 'pending' | 'completed'
 type PriorityFilter = 'all' | 'high' | 'medium' | 'low'
 
-// Skeleton Loading Component
-const SkeletonLoading = () => (
-  <div className="min-h-screen h-screen w-full bg-black p-6 flex flex-col gap-6 overflow-y-auto">
-    <div className="h-6 bg-zinc-900 rounded animate-pulse w-48"></div>
-
-    <div className="w-full h-fit bg-zinc-950 border border-zinc-900 py-5 rounded-xl flex flex-col gap-2 relative shadow-lg">
-      <div className="h-20 bg-zinc-900 rounded animate-pulse absolute bottom-0 right-0 w-20"></div>
-      <div className="h-1/2 w-full flex justify-start items-center px-5">
-        <div className="h-4 bg-zinc-900 rounded animate-pulse w-3/4"></div>
-      </div>
-    </div>
-
-    <div className="w-full flex flex-col gap-3">
-      {Array.from({ length: 3 }).map((_, index) => (
-        <div
-          key={index}
-          className="rounded-xl border bg-zinc-950 p-4 shadow-sm border-zinc-900 animate-pulse"
-        >
-          <div className="flex items-start gap-3">
-            <div className="flex-1 min-w-0">
-              <div className="h-5 bg-zinc-900 rounded mb-2 w-3/4"></div>
-              <div className="h-3 bg-zinc-900 rounded mb-2 w-full"></div>
-            </div>
-          </div>
-        </div>
-      ))}
-    </div>
-  </div>
-)
-
 export default function DailyTasksPage() {
   const { data: session } = useSession()
   const [tasks, setTasks] = useState<Task[]>([])
-  const [loading, setLoading] = useState(true)
   const [searchQuery, setSearchQuery] = useState('')
   const [activeFilter, setActiveFilter] = useState<FilterType>('pending')
   const [priorityFilter, setPriorityFilter] = useState<PriorityFilter>('all')
@@ -96,8 +65,6 @@ export default function DailyTasksPage() {
         setTasks(data)
       } catch (err) {
         console.error(err)
-      } finally {
-        setLoading(false)
       }
     }
     fetchTasks()
@@ -226,13 +193,6 @@ export default function DailyTasksPage() {
         return prioritas
     }
   }
-
-  if (loading)
-    return (
-      <Layouts>
-        <SkeletonLoading />
-      </Layouts>
-    )
 
   return (
     <Layouts>
