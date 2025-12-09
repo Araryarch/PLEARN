@@ -11,6 +11,7 @@ import { ChatHeader } from './components/ChatHeader'
 import { ChatInput } from './components/ChatInput'
 import { EmptyState } from './components/EmptyState'
 import { MessageBubble } from './components/MessageBubble'
+import { ChatSkeleton } from './components/ChatSkeleton'
 import { catppuccin } from './constants'
 
 export default function Chatbot() {
@@ -74,23 +75,27 @@ export default function Chatbot() {
     )
   }
 
+  const hasMessages = messages.length > 0
+
+  const chatInput = (
+    <ChatInput
+      input={input}
+      setInput={setInput}
+      selectedImage={selectedImage}
+      isTyping={isTyping}
+      onSend={handleSend}
+      onKeyPress={handleKeyPress}
+      onImageSelect={handleImageSelect}
+      onClearImage={clearImage}
+      onFocus={() => setIsInputFocused(true)}
+      onBlur={() => setIsInputFocused(false)}
+    />
+  )
+
   return (
     <Layouts
       isInputFocused={isInputFocused}
-      topBotBar={
-        <ChatInput
-          input={input}
-          setInput={setInput}
-          selectedImage={selectedImage}
-          isTyping={isTyping}
-          onSend={handleSend}
-          onKeyPress={handleKeyPress}
-          onImageSelect={handleImageSelect}
-          onClearImage={clearImage}
-          onFocus={() => setIsInputFocused(true)}
-          onBlur={() => setIsInputFocused(false)}
-        />
-      }
+      topBotBar={hasMessages ? chatInput : undefined}
     >
       <div
         className="h-screen w-full flex flex-col"
@@ -107,30 +112,35 @@ export default function Chatbot() {
 
         <div className="flex-1 flex flex-col overflow-y-auto">
           <ScrollArea className="flex-1 w-full pt-[73px] pb-2">
-            <div className="px-4 py-6 space-y-6 pb-6">
-              {messages.length === 0 && !isTyping && (
-                <EmptyState aiMode={aiMode} />
-              )}
+            {!hasMessages ? (
+              <EmptyState aiMode={aiMode} setInput={setInput}>
+                {chatInput}
+              </EmptyState>
+            ) : (
+              <div className="px-4 py-6 space-y-6 pb-6 container mx-auto max-w-4xl">
+                {messages.map((msg) => (
+                  <MessageBubble
+                    key={msg.id}
+                    message={msg}
+                    userAvatar={extended?.user?.avatar || '/default-avatar.png'}
+                    copiedId={copiedId}
+                    onCopy={handleCopy}
+                    onSpeak={handleTextToSpeech}
+                    onEdit={handleStartEdit}
+                    onSaveEdit={handleEditMessage}
+                    onCancelEdit={handleCancelEdit}
+                    onDelete={handleDeleteMessage}
+                    onRetry={handleRetry}
+                    onAddToDatabase={handleAddToDatabase}
+                    onEditTextChange={handleEditTextChange}
+                  />
+                ))}
 
-              {messages.map((msg) => (
-                <MessageBubble
-                  key={msg.id}
-                  message={msg}
-                  userAvatar={extended?.user?.avatar || '/default-avatar.png'}
-                  copiedId={copiedId}
-                  onCopy={handleCopy}
-                  onSpeak={handleTextToSpeech}
-                  onEdit={handleStartEdit}
-                  onSaveEdit={handleEditMessage}
-                  onCancelEdit={handleCancelEdit}
-                  onDelete={handleDeleteMessage}
-                  onRetry={handleRetry}
-                  onAddToDatabase={handleAddToDatabase}
-                  onEditTextChange={handleEditTextChange}
-                />
-              ))}
-              <div ref={messagesEndRef} className="h-4" />
-            </div>
+                {isTyping && <ChatSkeleton />}
+
+                <div ref={messagesEndRef} className="h-4" />
+              </div>
+            )}
           </ScrollArea>
         </div>
       </div>
