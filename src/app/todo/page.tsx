@@ -75,6 +75,15 @@ export default function DailyTasksPage() {
 
   const addNewTask = async (task: Omit<Task, 'id'>) => {
     if (!extended?.user?.id) return
+
+    // Optimistic Update
+    const tempId = Date.now()
+    const tempTask: Task = { ...task, id: tempId, status: 'Aktif' }
+
+    // Update UI immediately
+    setTasks((prev) => [tempTask, ...prev])
+    setShowAddModal(false)
+
     try {
       const res = await fetch('/api/todo', {
         method: 'POST',
@@ -82,15 +91,27 @@ export default function DailyTasksPage() {
         body: JSON.stringify({ ...task, userId: extended.user.id }),
       })
       if (!res.ok) throw new Error('Gagal tambah tugas')
+
       const newTask: Task = await res.json()
-      setTasks((prev) => [newTask, ...prev])
-      setShowAddModal(false)
+
+      // Replace temp task with real task
+      setTasks((prev) => prev.map((t) => (t.id === tempId ? newTask : t)))
     } catch (err) {
       console.error(err)
+      // Revert on failure
+      setTasks((prev) => prev.filter((t) => t.id !== tempId))
+      // Optional: Show toast error here
     }
   }
+
   const saveTask = async (task: Task | null) => {
     if (!task) return
+
+    // Optimistic Update
+    const originalTasks = [...tasks]
+    setTasks((prev) => prev.map((t) => (t.id === task.id ? task : t)))
+    setEditingTask(null)
+
     try {
       const res = await fetch(`/api/todo/${task.id}`, {
         method: 'PUT',
@@ -98,28 +119,46 @@ export default function DailyTasksPage() {
         body: JSON.stringify(task),
       })
       if (!res.ok) throw new Error('Gagal update tugas')
+
+      // Sync with server response to be sure
       const updatedTask: Task = await res.json()
       setTasks((prev) =>
         prev.map((t) => (t.id === updatedTask.id ? updatedTask : t)),
       )
-      setEditingTask(null)
     } catch (err) {
       console.error(err)
+      // Revert
+      setTasks(originalTasks)
     }
   }
+
   const deleteTask = async (taskId: number) => {
+    // Optimistic Update
+    const originalTasks = [...tasks]
+    setTasks((prev) => prev.filter((t) => t.id !== taskId))
+
     try {
       const res = await fetch(`/api/todo/${taskId}`, { method: 'DELETE' })
       if (!res.ok) throw new Error('Gagal hapus tugas')
-      setTasks((prev) => prev.filter((t) => t.id !== taskId))
     } catch (err) {
       console.error(err)
+      // Revert
+      setTasks(originalTasks)
     }
   }
+
   const toggleTaskCompletion = async (taskId: number) => {
     const task = tasks.find((t) => t.id === taskId)
     if (!task) return
+
     const newStatus = task.status === 'Aktif' ? 'Selesai' : 'Aktif'
+
+    // Optimistic Update
+    const originalTasks = [...tasks]
+    setTasks((prev) =>
+      prev.map((t) => (t.id === taskId ? { ...t, status: newStatus } : t)),
+    )
+
     try {
       const res = await fetch(`/api/todo/${taskId}`, {
         method: 'PUT',
@@ -127,12 +166,10 @@ export default function DailyTasksPage() {
         body: JSON.stringify({ ...task, status: newStatus }),
       })
       if (!res.ok) throw new Error('Gagal update status tugas')
-      const updatedTask: Task = await res.json()
-      setTasks((prev) =>
-        prev.map((t) => (t.id === updatedTask.id ? updatedTask : t)),
-      )
     } catch (err) {
       console.error(err)
+      // Revert
+      setTasks(originalTasks)
     }
   }
 
@@ -174,13 +211,13 @@ export default function DailyTasksPage() {
   const getPriorityColor = (prioritas: string) => {
     switch (prioritas) {
       case 'high':
-        return 'bg-white/10 text-white border border-white/20'
+        return 'bg-primary/10 text-primary border border-primary/20'
       case 'medium':
-        return 'bg-zinc-800/50 text-zinc-300 border border-zinc-700/50'
+        return 'bg-secondary/50 text-secondary-foreground border border-secondary/50'
       case 'low':
-        return 'bg-zinc-900/50 text-zinc-500 border border-zinc-800/50'
+        return 'bg-muted/50 text-muted-foreground border border-border/50'
       default:
-        return 'bg-zinc-900/50 text-zinc-500 border border-zinc-800'
+        return 'bg-muted/50 text-muted-foreground border border-border'
     }
   }
 
@@ -199,21 +236,21 @@ export default function DailyTasksPage() {
 
   return (
     <Layouts>
-      <div className="h-full w-full bg-black text-zinc-50">
-        <div className="mx-auto max-w-2xl p-4 pb-24">
-          <div className="mb-8 flex items-start justify-between">
+      <div className="h-[100dvh] w-full bg-background text-foreground overflow-hidden flex flex-col">
+        <div className="flex-1 flex flex-col max-w-2xl mx-auto w-full p-4 h-full relative">
+          <div className="flex-none mb-6 flex items-start justify-between mt-2">
             <div>
-              <h1 className="text-3xl font-bold mb-2 text-white">
+              <h1 className="text-3xl font-bold mb-2 text-foreground">
                 Tugas Harian
               </h1>
-              <p className="text-sm text-zinc-400">
+              <p className="text-sm text-muted-foreground">
                 Kelola tugas harianmu dengan mudah & efisien
               </p>
             </div>
             {tasks.filter((t) => t.status === 'Aktif').length > 0 && (
               <button
                 onClick={markAllAsDone}
-                className="flex items-center gap-2 px-4 py-2 rounded-xl bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 hover:border-zinc-700 text-white text-sm font-medium transition-all"
+                className="flex items-center gap-2 px-4 py-2 rounded-xl bg-card hover:bg-muted border border-border hover:border-border/80 text-foreground text-sm font-medium transition-all"
               >
                 <CheckCircle2 size={16} />
                 Done All
@@ -222,25 +259,25 @@ export default function DailyTasksPage() {
           </div>
 
           {/* summary bar */}
-          <div className="mb-8 rounded-2xl bg-zinc-950 border border-zinc-900 p-6 shadow-sm">
+          <div className="flex-none mb-6 rounded-2xl bg-card border border-border p-6 shadow-sm">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-zinc-400 mb-1 uppercase tracking-wider font-medium">
+                <p className="text-sm text-muted-foreground mb-1 uppercase tracking-wider font-medium">
                   Progress
                 </p>
                 <div className="flex items-baseline gap-2">
-                  <p className="text-3xl font-bold text-white">
+                  <p className="text-3xl font-bold text-foreground">
                     {isLoading ? '-' : completedCount}
                   </p>
-                  <p className="text-lg text-zinc-500 font-medium">
+                  <p className="text-lg text-muted-foreground font-medium">
                     / {isLoading ? '-' : totalCount} Selesai
                   </p>
                 </div>
               </div>
             </div>
-            <div className="mt-4 h-2 rounded-full bg-zinc-900 overflow-hidden">
+            <div className="mt-4 h-2 rounded-full bg-muted overflow-hidden">
               <div
-                className="h-full bg-white transition-all duration-500 ease-out"
+                className="h-full bg-primary transition-all duration-500 ease-out"
                 style={{
                   width: `${totalCount > 0 ? (completedCount / totalCount) * 100 : 0}%`,
                 }}
@@ -249,28 +286,28 @@ export default function DailyTasksPage() {
           </div>
 
           {/* search & filter */}
-          <div className="mb-6 flex gap-3">
+          <div className="flex-none mb-4 flex gap-3">
             <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-500" />
+              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
               <input
                 type="text"
                 placeholder="Cari tugas..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full rounded-xl border border-zinc-800 bg-zinc-950 pl-10 pr-4 py-2.5 text-sm text-zinc-100 placeholder:text-zinc-600 focus:outline-none focus:ring-1 focus:ring-zinc-700 transition lg:text-sm"
+                className="w-full rounded-xl border border-input bg-card pl-10 pr-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring transition lg:text-sm"
               />
             </div>
             <div className="relative">
               <button
                 onClick={() => setShowFilterMenu(!showFilterMenu)}
-                className="h-full rounded-xl border border-zinc-800 bg-zinc-950 px-3 text-zinc-400 hover:text-white hover:bg-zinc-900 transition-colors"
+                className="h-full rounded-xl border border-input bg-card px-3 text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
               >
                 <Filter className="h-5 w-5" />
               </button>
               {showFilterMenu && (
-                <div className="absolute right-0 mt-2 w-48 rounded-xl border border-zinc-800 bg-zinc-950 shadow-xl z-20 overflow-hidden">
+                <div className="absolute right-0 mt-2 w-48 rounded-xl border border-border bg-card shadow-xl z-20 overflow-hidden">
                   <div className="p-1">
-                    <p className="text-[10px] font-bold text-zinc-500 uppercase tracking-wider px-3 py-2">
+                    <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider px-3 py-2">
                       Prioritas
                     </p>
                     {(['all', 'high', 'medium', 'low'] as PriorityFilter[]).map(
@@ -283,8 +320,8 @@ export default function DailyTasksPage() {
                           }}
                           className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-colors ${
                             priorityFilter === priority
-                              ? 'bg-zinc-100 text-black font-medium'
-                              : 'text-zinc-400 hover:bg-zinc-900 hover:text-white'
+                              ? 'bg-muted text-foreground font-medium'
+                              : 'text-muted-foreground hover:bg-muted hover:text-foreground'
                           }`}
                         >
                           {priority === 'all'
@@ -300,15 +337,15 @@ export default function DailyTasksPage() {
           </div>
 
           {/* status filter */}
-          <div className="mb-6 flex gap-1 rounded-xl bg-zinc-950 border border-zinc-900 p-1">
+          <div className="flex-none mb-4 flex gap-1 rounded-xl bg-card border border-border p-1">
             {(['all', 'pending', 'completed'] as FilterType[]).map((filter) => (
               <button
                 key={filter}
                 onClick={() => setActiveFilter(filter)}
                 className={`flex-1 rounded-lg px-4 py-2 text-sm font-medium transition-all ${
                   activeFilter === filter
-                    ? 'bg-zinc-800 text-white shadow-sm'
-                    : 'text-zinc-500 hover:text-zinc-300 hover:bg-zinc-900/50'
+                    ? 'bg-muted text-foreground shadow-sm'
+                    : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'
                 }`}
               >
                 {filter === 'all'
@@ -321,32 +358,32 @@ export default function DailyTasksPage() {
           </div>
 
           {/* tasks */}
-          <ScrollArea className="h-[calc(100vh-400px)] pr-4">
+          <ScrollArea className="flex-1 -mr-4 pr-4 pb-20">
             <div className="space-y-4 pb-8">
               {filteredTasks.length > 0 ? (
                 filteredTasks.map((task) => (
                   <div
                     key={task.id}
-                    className={`group rounded-2xl border bg-zinc-950 p-5 shadow-sm transition-all hover:border-zinc-700 ${task.status === 'Selesai' ? 'border-zinc-900 opacity-50 bg-black' : 'border-zinc-900'}`}
+                    className={`group rounded-2xl border bg-card p-5 shadow-sm transition-all hover:border-border/80 ${task.status === 'Selesai' ? 'border-border opacity-50 bg-background' : 'border-border'}`}
                   >
                     <div className="flex items-start gap-4">
                       <button
                         onClick={() => toggleTaskCompletion(task.id)}
-                        className="mt-1 text-zinc-600 hover:text-white transition-colors"
+                        className="mt-1 text-muted-foreground hover:text-foreground transition-colors"
                       >
                         {task.status === 'Selesai' ? (
-                          <CheckCircle2 className="h-6 w-6 text-zinc-400" />
+                          <CheckCircle2 className="h-6 w-6 text-muted-foreground" />
                         ) : (
                           <Circle className="h-6 w-6" />
                         )}
                       </button>
                       <div className="flex-1 min-w-0">
                         <h3
-                          className={`font-medium mb-1.5 text-base ${task.status === 'Selesai' ? 'text-zinc-500 line-through' : 'text-zinc-100'}`}
+                          className={`font-medium mb-1.5 text-base ${task.status === 'Selesai' ? 'text-muted-foreground line-through' : 'text-foreground'}`}
                         >
                           {task.title}
                         </h3>
-                        <p className="text-sm text-zinc-500 mb-3">
+                        <p className="text-sm text-muted-foreground mb-3">
                           {task.desc}
                         </p>
                         <div className="flex flex-wrap items-center gap-2 text-xs">
@@ -355,10 +392,10 @@ export default function DailyTasksPage() {
                           >
                             {getPriorityLabel(task.prioritas)}
                           </span>
-                          <span className="inline-flex items-center gap-1.5 text-zinc-500 bg-zinc-900/50 px-2.5 py-1 rounded-full border border-zinc-800">
+                          <span className="inline-flex items-center gap-1.5 text-muted-foreground bg-muted/50 px-2.5 py-1 rounded-full border border-border">
                             <Tag className="h-3 w-3" /> {task.category}
                           </span>
-                          <span className="inline-flex items-center gap-1.5 text-zinc-500 bg-zinc-900/50 px-2.5 py-1 rounded-full border border-zinc-800">
+                          <span className="inline-flex items-center gap-1.5 text-muted-foreground bg-muted/50 px-2.5 py-1 rounded-full border border-border">
                             <Clock className="h-3 w-3" />{' '}
                             {parseISOToString(task.deadline)}
                           </span>
@@ -371,26 +408,26 @@ export default function DailyTasksPage() {
                               showTaskMenu === task.id ? null : task.id,
                             )
                           }
-                          className="p-2 -mr-2 text-zinc-600 hover:text-white hover:bg-zinc-900 rounded-md transition-colors opacity-0 group-hover:opacity-100"
+                          className="p-2 -mr-2 text-muted-foreground hover:text-foreground hover:bg-muted rounded-md transition-colors opacity-0 group-hover:opacity-100"
                         >
                           <MoreVertical className="h-5 w-5" />
                         </button>
                         {showTaskMenu === task.id && (
-                          <div className="absolute right-0 mt-2 w-32 rounded-lg border border-zinc-800 bg-zinc-950 shadow-xl z-20 overflow-hidden">
+                          <div className="absolute right-0 mt-2 w-32 rounded-lg border border-border bg-card shadow-xl z-20 overflow-hidden">
                             {task.status !== 'Selesai' && (
                               <button
                                 onClick={() => {
                                   setEditingTask(task)
                                   setShowTaskMenu(null)
                                 }}
-                                className="w-full flex items-center gap-2 px-4 py-2.5 text-sm text-zinc-300 hover:bg-zinc-900 hover:text-white transition-colors"
+                                className="w-full flex items-center gap-2 px-4 py-2.5 text-sm text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
                               >
                                 <Edit2 className="h-3.5 w-3.5" /> Edit
                               </button>
                             )}
                             <button
                               onClick={() => deleteTask(task.id)}
-                              className="w-full flex items-center gap-2 px-4 py-2.5 text-sm text-red-400 hover:bg-red-500/10 transition-colors"
+                              className="w-full flex items-center gap-2 px-4 py-2.5 text-sm text-destructive hover:bg-destructive/10 transition-colors"
                             >
                               <Trash2 className="h-3.5 w-3.5" /> Hapus
                             </button>
@@ -405,10 +442,10 @@ export default function DailyTasksPage() {
                   <div className="mb-4 text-5xl opacity-20 filter grayscale">
                     ✨
                   </div>
-                  <h3 className="text-lg font-medium text-white mb-2">
+                  <h3 className="text-lg font-medium text-foreground mb-2">
                     Tidak ada tugas
                   </h3>
-                  <p className="text-sm text-zinc-500">
+                  <p className="text-sm text-muted-foreground">
                     {searchQuery
                       ? 'Tidak ada tugas yang cocok dengan pencarian'
                       : 'Semua beres! Nikmati harimu.'}
@@ -421,7 +458,7 @@ export default function DailyTasksPage() {
           {/* add task button */}
           <button
             onClick={() => setShowAddModal(true)}
-            className="fixed bottom-8 right-8 rounded-full bg-white p-4 text-black shadow-lg hover:scale-110 active:scale-95 transition-all duration-300 z-30"
+            className="absolute bottom-8 right-8 rounded-full bg-foreground p-4 text-background shadow-lg hover:scale-110 active:scale-95 transition-all duration-300 z-30"
           >
             <Plus className="h-6 w-6" />
           </button>
@@ -429,13 +466,15 @@ export default function DailyTasksPage() {
 
         {/* edit modal */}
         {editingTask && (
-          <div className="fixed inset-0 bg-black/80 flex items-center justify-center p-4 z-50 backdrop-blur-sm">
-            <div className="bg-zinc-950 rounded-2xl border border-zinc-900 shadow-2xl max-w-md w-full p-6 animate-in fade-in zoom-in-95 duration-200">
+          <div className="fixed inset-0 bg-background/80 flex items-center justify-center p-4 z-50 backdrop-blur-sm">
+            <div className="bg-card rounded-2xl border border-border shadow-2xl max-w-md w-full p-6 animate-in fade-in zoom-in-95 duration-200">
               <div className="flex justify-between items-center mb-6">
-                <h3 className="text-xl font-bold text-white">Edit Tugas</h3>
+                <h3 className="text-xl font-bold text-foreground">
+                  Edit Tugas
+                </h3>
                 <button
                   onClick={() => setEditingTask(null)}
-                  className="text-zinc-500 hover:text-white transition-colors"
+                  className="text-muted-foreground hover:text-foreground transition-colors"
                 >
                   <X className="h-5 w-5" />
                 </button>
@@ -446,7 +485,7 @@ export default function DailyTasksPage() {
                   onChange={(e) =>
                     setEditingTask({ ...editingTask, title: e.target.value })
                   }
-                  className="w-full rounded-xl border border-zinc-800 bg-zinc-900 px-4 py-3 text-sm text-white placeholder:text-zinc-600 focus:outline-none focus:border-white/20 transition"
+                  className="w-full rounded-xl border border-input bg-muted/50 px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-ring transition"
                   placeholder="Judul"
                 />
                 <textarea
@@ -454,7 +493,7 @@ export default function DailyTasksPage() {
                   onChange={(e) =>
                     setEditingTask({ ...editingTask, desc: e.target.value })
                   }
-                  className="w-full rounded-xl border border-zinc-800 bg-zinc-900 px-4 py-3 text-sm text-white placeholder:text-zinc-600 focus:outline-none focus:border-white/20 transition resize-none h-24"
+                  className="w-full rounded-xl border border-input bg-muted/50 px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-ring transition resize-none h-24"
                   placeholder="Deskripsi"
                 />
                 <div className="grid grid-cols-2 gap-4">
@@ -466,7 +505,7 @@ export default function DailyTasksPage() {
                         category: e.target.value,
                       })
                     }
-                    className="w-full rounded-xl border border-zinc-800 bg-zinc-900 px-4 py-2.5 text-sm text-white"
+                    className="w-full rounded-xl border border-input bg-muted/50 px-4 py-2.5 text-sm text-foreground"
                     placeholder="Kategori"
                   />
                   <select
@@ -477,7 +516,7 @@ export default function DailyTasksPage() {
                         prioritas: e.target.value as 'high' | 'medium' | 'low',
                       })
                     }
-                    className="w-full rounded-xl border border-zinc-800 bg-zinc-900 px-4 py-2.5 text-sm text-white focus:outline-none"
+                    className="w-full rounded-xl border border-input bg-muted/50 px-4 py-2.5 text-sm text-foreground focus:outline-none"
                   >
                     <option value="high">High</option>
                     <option value="medium">Medium</option>
@@ -492,9 +531,9 @@ export default function DailyTasksPage() {
                   <PopoverTrigger asChild>
                     <button
                       type="button"
-                      className="w-full rounded-xl border border-zinc-800 bg-zinc-900 px-4 py-3 text-sm text-white flex items-center gap-3 hover:bg-zinc-800 transition-colors"
+                      className="w-full rounded-xl border border-input bg-muted/50 px-4 py-3 text-sm text-foreground flex items-center gap-3 hover:bg-muted transition-colors"
                     >
-                      <CalendarIcon className="h-4 w-4 text-zinc-400" />
+                      <CalendarIcon className="h-4 w-4 text-muted-foreground" />
                       {editingTask.deadline
                         ? new Date(editingTask.deadline).toLocaleDateString(
                             'id-ID',
@@ -504,7 +543,7 @@ export default function DailyTasksPage() {
                   </PopoverTrigger>
                   <PopoverContent
                     align="start"
-                    className="w-auto p-0 border-zinc-800 bg-zinc-950 shadow-xl"
+                    className="w-auto p-0 border-border bg-card shadow-xl"
                   >
                     <Calendar
                       mode="single"
@@ -521,7 +560,7 @@ export default function DailyTasksPage() {
                       disabled={(date) =>
                         date < new Date(new Date().setHours(0, 0, 0, 0))
                       }
-                      className="p-3 bg-zinc-950 text-white rounded-xl border border-zinc-900"
+                      className="p-3 bg-card text-foreground rounded-xl border border-border"
                     />
                   </PopoverContent>
                 </Popover>
@@ -533,14 +572,14 @@ export default function DailyTasksPage() {
                       status: e.target.value as 'Aktif' | 'Selesai',
                     })
                   }
-                  className="w-full rounded-xl border border-zinc-800 bg-zinc-900 px-4 py-3 text-sm text-white focus:outline-none"
+                  className="w-full rounded-xl border border-input bg-muted/50 px-4 py-3 text-sm text-foreground focus:outline-none"
                 >
                   <option value="Aktif">Aktif</option>
                   <option value="Selesai">Selesai</option>
                 </select>
                 <button
                   onClick={() => saveTask(editingTask)}
-                  className="mt-4 rounded-xl bg-white py-3 text-black font-bold hover:bg-zinc-200 transition-colors"
+                  className="mt-4 rounded-xl bg-foreground py-3 text-background font-bold hover:bg-muted-foreground transition-colors"
                 >
                   Simpan Perubahan
                 </button>
@@ -551,7 +590,7 @@ export default function DailyTasksPage() {
 
         {/* add modal */}
         {showAddModal && (
-          <div className="fixed inset-0 bg-black/80 flex items-center justify-center p-4 z-50 backdrop-blur-sm">
+          <div className="fixed inset-0 bg-background/80 flex items-center justify-center p-4 z-50 backdrop-blur-sm">
             <AddTaskForm
               onSave={addNewTask}
               onCancel={() => setShowAddModal(false)}
@@ -594,12 +633,12 @@ function AddTaskForm({
   }
 
   return (
-    <div className="bg-zinc-950 rounded-2xl border border-zinc-900 shadow-2xl max-w-md w-full p-6 animate-in fade-in zoom-in-95 duration-200">
+    <div className="bg-card rounded-2xl border border-border shadow-2xl max-w-md w-full p-6 animate-in fade-in zoom-in-95 duration-200">
       <div className="flex justify-between items-center mb-6">
-        <h3 className="text-xl font-bold text-white">Tambah Tugas Baru</h3>
+        <h3 className="text-xl font-bold text-foreground">Tambah Tugas Baru</h3>
         <button
           onClick={onCancel}
-          className="text-zinc-500 hover:text-white transition-colors"
+          className="text-muted-foreground hover:text-foreground transition-colors"
         >
           <X className="h-5 w-5" />
         </button>
@@ -609,27 +648,27 @@ function AddTaskForm({
           placeholder="Judul Tugas"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
-          className="w-full rounded-xl border border-zinc-800 bg-zinc-900 px-4 py-3 text-sm text-white placeholder:text-zinc-600 focus:outline-none focus:border-white/20 transition"
+          className="w-full rounded-xl border border-input bg-muted/50 px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-ring transition"
         />
         <textarea
           placeholder="Deskripsi singkat"
           value={desc}
           onChange={(e) => setDesc(e.target.value)}
-          className="w-full rounded-xl border border-zinc-800 bg-zinc-900 px-4 py-3 text-sm text-white placeholder:text-zinc-600 focus:outline-none focus:border-white/20 transition resize-none h-24"
+          className="w-full rounded-xl border border-input bg-muted/50 px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-ring transition resize-none h-24"
         />
         <div className="grid grid-cols-2 gap-4">
           <input
             placeholder="Kategori"
             value={category}
             onChange={(e) => setCategory(e.target.value)}
-            className="w-full rounded-xl border border-zinc-800 bg-zinc-900 px-4 py-2.5 text-sm text-white focus:outline-none focus:border-white/20"
+            className="w-full rounded-xl border border-input bg-muted/50 px-4 py-2.5 text-sm text-foreground focus:outline-none focus:border-ring"
           />
           <select
             value={prioritas}
             onChange={(e) =>
               setPrioritas(e.target.value as 'high' | 'medium' | 'low')
             }
-            className="w-full rounded-xl border border-zinc-800 bg-zinc-900 px-4 py-2.5 text-sm text-white focus:outline-none focus:border-white/20"
+            className="w-full rounded-xl border border-input bg-muted/50 px-4 py-2.5 text-sm text-foreground focus:outline-none focus:border-ring"
           >
             <option value="high">High</option>
             <option value="medium">Medium</option>
@@ -641,9 +680,9 @@ function AddTaskForm({
           <PopoverTrigger asChild>
             <button
               type="button"
-              className="w-full rounded-xl border border-zinc-800 bg-zinc-900 px-4 py-3 text-sm text-white flex items-center gap-3 hover:bg-zinc-800 transition-colors"
+              className="w-full rounded-xl border border-input bg-muted/50 px-4 py-3 text-sm text-foreground flex items-center gap-3 hover:bg-muted transition-colors"
             >
-              <CalendarIcon className="h-4 w-4 text-zinc-400" />
+              <CalendarIcon className="h-4 w-4 text-muted-foreground" />
               {deadline
                 ? new Date(deadline).toLocaleDateString('id-ID')
                 : 'Pilih deadline'}
@@ -651,7 +690,7 @@ function AddTaskForm({
           </PopoverTrigger>
           <PopoverContent
             align="start"
-            className="w-auto p-0 border-zinc-800 bg-zinc-950 shadow-xl"
+            className="w-auto p-0 border-border bg-card shadow-xl"
           >
             <Calendar
               mode="single"
@@ -665,13 +704,13 @@ function AddTaskForm({
               disabled={(date) =>
                 date < new Date(new Date().setHours(0, 0, 0, 0))
               }
-              className="p-3 bg-zinc-950 text-white rounded-xl border border-zinc-900"
+              className="p-3 bg-card text-foreground rounded-xl border border-border"
             />
           </PopoverContent>
         </Popover>
         <button
           onClick={handleSubmit}
-          className="mt-4 rounded-xl bg-white py-3 text-black font-bold hover:bg-zinc-200 transition-colors"
+          className="mt-4 rounded-xl bg-foreground py-3 text-background font-bold hover:bg-muted-foreground transition-colors"
         >
           Buat Tugas
         </button>

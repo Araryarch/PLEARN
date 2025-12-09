@@ -9,6 +9,7 @@ import { navigationItems } from '@/constants/navigation'
 import { useSession } from 'next-auth/react'
 import { ExtendedSession } from '@/lib/authOptions'
 import Image from 'next/image'
+import { ThemeToggle } from '@/components/ThemeToggle'
 
 interface LayoutsProps {
   children:
@@ -31,13 +32,16 @@ export default function Layouts({
   useEffect(() => setIsOpen(false), [pathname])
 
   const SidebarContent = () => (
-    <div className="flex flex-col h-full bg-zinc-950 border-r border-zinc-900 relative pt-safe">
+    <div className="flex flex-col h-full bg-card border-r border-border relative pt-safe">
       {/* Header */}
-      <div className="h-16 flex items-center px-6 border-b border-zinc-900">
-        <span className="font-bold text-lg text-white tracking-tight flex items-center gap-2">
-          <div className="w-5 h-5 bg-white rounded-full" />
+      <div className="h-16 flex items-center justify-between px-6 border-b border-border">
+        <span className="font-bold text-lg text-foreground tracking-tight flex items-center gap-2">
+          <div className="w-5 h-5 bg-foreground rounded-full" />
           PLEARN
         </span>
+        <div className="md:hidden">
+          <ThemeToggle />
+        </div>
       </div>
 
       {/* Nav */}
@@ -54,14 +58,14 @@ export default function Layouts({
                    group flex items-center px-3 py-2.5 rounded-lg transition-all duration-200
                    ${
                      active
-                       ? 'bg-zinc-900 text-white font-medium shadow-inner'
-                       : 'text-zinc-500 hover:bg-zinc-900/50 hover:text-zinc-200'
+                       ? 'bg-zinc-900 dark:bg-zinc-800 text-white font-medium shadow-inner'
+                       : 'text-muted-foreground hover:bg-zinc-100 dark:hover:bg-zinc-900 hover:text-foreground'
                    }
                  `}
             >
               <Icon
                 size={20}
-                className={`transition-colors flex-shrink-0 ${active ? 'text-white' : 'text-zinc-600 group-hover:text-zinc-300'}`}
+                className={`transition-colors flex-shrink-0 ${active ? 'text-white' : 'text-muted-foreground group-hover:text-foreground'}`}
               />
               <span className="ml-3 text-sm truncate">{item.label}</span>
             </Link>
@@ -70,28 +74,34 @@ export default function Layouts({
       </nav>
 
       {/* User / Footer */}
-      <div className="p-4 pb-safe border-t border-zinc-900 bg-zinc-950">
-        <div className="flex items-center gap-3 pb-2">
-          {extended?.user?.avatar ? (
-            <Image
-              src={extended.user.avatar}
-              alt={extended.user.username || 'User'}
-              width={36}
-              height={36}
-              className="w-9 h-9 rounded-full object-cover ring-2 ring-zinc-800 grayscale"
-            />
-          ) : (
-            <div className="w-9 h-9 rounded-full bg-zinc-900 flex items-center justify-center text-xs font-semibold text-zinc-300 border border-zinc-800">
-              {extended?.user?.username?.charAt(0).toUpperCase() || 'U'}
+      <div className="p-4 pb-safe border-t border-border bg-card">
+        <div className="flex items-center gap-3 pb-2 justify-between">
+          <div className="flex items-center gap-3 min-w-0">
+            {extended?.user?.avatar ? (
+              <Image
+                src={extended.user.avatar}
+                alt={extended.user.username || 'User'}
+                width={36}
+                height={36}
+                className="w-9 h-9 rounded-full object-cover ring-2 ring-border grayscale"
+              />
+            ) : (
+              <div className="w-9 h-9 rounded-full bg-muted flex items-center justify-center text-xs font-semibold text-muted-foreground border border-border">
+                {extended?.user?.username?.charAt(0).toUpperCase() || 'U'}
+              </div>
+            )}
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-medium text-foreground truncate">
+                {extended?.user?.username || 'User'}
+              </p>
+              <p className="text-xs text-muted-foreground truncate">
+                @{extended?.user?.tagName || 'user'}
+              </p>
             </div>
-          )}
-          <div className="flex-1 min-w-0">
-            <p className="text-sm font-medium text-zinc-200 truncate">
-              {extended?.user?.username || 'User'}
-            </p>
-            <p className="text-xs text-zinc-500 truncate">
-              @{extended?.user?.tagName || 'user'}
-            </p>
+          </div>
+
+          <div className="hidden md:block">
+            <ThemeToggle />
           </div>
         </div>
       </div>
@@ -99,9 +109,9 @@ export default function Layouts({
   )
 
   return (
-    <div className="min-h-screen bg-black text-zinc-50 flex font-sans selection:bg-zinc-800 selection:text-white">
+    <div className="min-h-screen bg-background text-foreground flex font-sans selection:bg-primary selection:text-primary-foreground">
       {/* Desktop Sidebar */}
-      <aside className="hidden md:block h-screen fixed left-0 top-0 z-40 bg-zinc-950 w-64 border-r border-zinc-900">
+      <aside className="hidden md:block h-screen fixed left-0 top-0 z-40 bg-card w-64 border-r border-border">
         <SidebarContent />
       </aside>
 
@@ -130,7 +140,7 @@ export default function Layouts({
                 <SidebarContent />
                 <button
                   onClick={() => setIsOpen(false)}
-                  className="absolute top-safe right-4 mt-4 p-1.5 rounded-md text-zinc-500 hover:bg-zinc-900 hover:text-white z-10"
+                  className="absolute top-safe right-4 mt-4 p-1.5 rounded-md text-muted-foreground hover:bg-zinc-100 dark:hover:bg-zinc-900 hover:text-foreground z-10"
                 >
                   <X size={20} />
                 </button>
@@ -141,10 +151,10 @@ export default function Layouts({
       </AnimatePresence>
 
       {/* Main Content */}
-      <div className="flex-1 flex flex-col h-[100dvh] md:ml-64 w-full bg-black overflow-hidden">
+      <div className="flex-1 flex flex-col h-[100dvh] md:ml-64 w-full bg-background overflow-hidden">
         {/* Mobile Header - hide if hideHeader is true */}
         {!hideHeader && (
-          <header className="md:hidden pt-safe-4 pb-3 bg-zinc-950 border-b border-zinc-900 flex items-center justify-between px-4 sticky top-0 z-30">
+          <header className="md:hidden pt-safe-4 pb-3 bg-card border-b border-border flex items-center justify-between px-4 sticky top-0 z-30">
             <div className="flex items-center gap-3">
               <button
                 onClick={openSidebar}

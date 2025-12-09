@@ -79,7 +79,7 @@ export default function RootLayout({
           type="image/x-icon"
         />
       </head>
-      <body className={cn(Inter.variable, JetBrainsMono.variable, 'dark')}>
+      <body className={cn(Inter.variable, JetBrainsMono.variable)}>
         <Providers>{children}</Providers>
         <Toaster
           position="top-center"

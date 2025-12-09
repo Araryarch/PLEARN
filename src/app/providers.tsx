@@ -5,6 +5,7 @@ import {
   QueryClientProvider,
   QueryOptions,
 } from '@tanstack/react-query'
+import { ThemeProvider } from 'next-themes'
 import { Toaster } from 'react-hot-toast'
 
 import api from '@/lib/api'
@@ -25,8 +26,12 @@ const queryClient = new QueryClient({
 export default function Providers({ children }: { children: React.ReactNode }) {
   return (
     <QueryClientProvider client={queryClient}>
-      <Toaster position="top-center" />
-      <SessionProvider>{children}</SessionProvider>
+      <SessionProvider>
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+          {children}
+          <Toaster position="top-center" />
+        </ThemeProvider>
+      </SessionProvider>
     </QueryClientProvider>
   )
 }

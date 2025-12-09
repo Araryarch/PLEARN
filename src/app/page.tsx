@@ -49,7 +49,7 @@ const CircularProgress = ({
           stroke="currentColor"
           strokeWidth={strokeWidth}
           fill="transparent"
-          className="text-zinc-800"
+          className="text-muted/20"
         />
         <circle
           cx={size / 2}
@@ -61,13 +61,23 @@ const CircularProgress = ({
           strokeDasharray={circumference}
           strokeDashoffset={dashoffset}
           strokeLinecap="round"
-          className="text-white transition-all duration-1000 ease-out"
+          className="text-primary transition-all duration-1000 ease-out"
         />
       </svg>
-      <div className="absolute flex flex-col items-center justify-center text-white">
-        <span className="text-3xl font-bold">
-          {Math.round(progress * 100)}%
-        </span>
+      <div className="absolute flex flex-col items-center justify-center text-foreground">
+        {progress === 1 ? (
+          <Image
+            src={'/images/raiden-chibi.png'}
+            alt="Complete"
+            width={size * 0.8}
+            height={size * 0.8}
+            className="object-contain"
+          />
+        ) : (
+          <span className="text-3xl font-bold">
+            {Math.round(progress * 100)}%
+          </span>
+        )}
       </div>
     </div>
   )
@@ -111,13 +121,13 @@ export default function Page() {
   const getPriorityColor = (prioritas: string) => {
     switch (prioritas) {
       case 'high':
-        return 'bg-zinc-800 text-white border border-zinc-700'
+        return 'bg-primary text-primary-foreground border border-primary'
       case 'medium':
-        return 'bg-zinc-900 text-zinc-300 border border-zinc-800'
+        return 'bg-secondary text-secondary-foreground border border-input'
       case 'low':
-        return 'bg-zinc-950 text-zinc-500 border border-zinc-900'
+        return 'bg-muted text-muted-foreground border border-input'
       default:
-        return 'bg-zinc-900 text-zinc-500'
+        return 'bg-muted text-muted-foreground'
     }
   }
 
@@ -136,33 +146,35 @@ export default function Page() {
 
   return (
     <Layouts>
-      <div className="h-full w-full bg-black p-6 flex flex-col gap-8 pb-32 overflow-y-auto">
+      <div className="h-full w-full bg-background p-4 md:p-6 flex flex-col gap-6 md:gap-8 pb-32 overflow-y-auto">
         <Typography
-          className="text-white text-3xl tracking-tight"
+          className="text-foreground text-2xl md:text-3xl tracking-tight"
           weight="bold"
         >
           {greeting}, <br />
-          <span className="text-zinc-400">{extended.user.username}</span>
+          <span className="text-muted-foreground">
+            {extended.user.username}
+          </span>
         </Typography>
 
-        <div className="w-full bg-zinc-950 border border-zinc-900 p-6 rounded-3xl flex items-center justify-between relative overflow-hidden shadow-lg">
+        <div className="w-full bg-card border border-border p-4 md:p-6 rounded-3xl flex items-center justify-between relative overflow-hidden shadow-lg">
           {/* Background Decoration */}
-          <div className="absolute top-0 right-0 w-32 h-32 bg-zinc-800/10 rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none"></div>
+          <div className="absolute top-0 right-0 w-32 h-32 bg-primary/10 rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none"></div>
 
           <div className="flex flex-col gap-1 z-10">
-            <Typography className="text-zinc-400 text-xs font-bold uppercase tracking-widest mb-2">
+            <Typography className="text-muted-foreground text-xs font-bold uppercase tracking-widest mb-2">
               Your Progress
             </Typography>
             <div className="flex flex-col gap-1">
               <div className="flex items-baseline gap-2">
-                <span className="text-4xl font-bold text-white">
+                <span className="text-4xl font-bold text-card-foreground">
                   {isLoading ? '-' : completedCount}
                 </span>
-                <span className="text-sm text-zinc-500">
+                <span className="text-sm text-muted-foreground">
                   / {isLoading ? '-' : totalCount} Selesai
                 </span>
               </div>
-              <span className="text-xs text-zinc-500 mt-1">
+              <span className="text-xs text-muted-foreground mt-1">
                 {isLoading ? '-' : activeCount} tugas tersisa
               </span>
             </div>
@@ -180,12 +192,12 @@ export default function Page() {
 
         <div className="flex flex-col gap-4">
           <div className="w-full flex justify-between items-end">
-            <Typography className="text-white text-xl font-bold tracking-tight">
+            <Typography className="text-foreground text-xl font-bold tracking-tight">
               Agenda
             </Typography>
             <Link
               href={'/todo'}
-              className="text-zinc-500 text-xs flex items-center gap-1 hover:text-white transition-colors pb-1"
+              className="text-muted-foreground text-xs flex items-center gap-1 hover:text-foreground transition-colors pb-1"
             >
               Lihat Semua <ArrowRight size={12} />
             </Link>
@@ -197,23 +209,25 @@ export default function Page() {
                 {[1, 2].map((i) => (
                   <div
                     key={i}
-                    className="h-24 bg-zinc-900 rounded-2xl animate-pulse"
+                    className="h-24 bg-muted rounded-2xl animate-pulse"
                   ></div>
                 ))}
               </div>
             ) : activeCount === 0 ? (
-              <div className="text-center bg-zinc-950 border border-zinc-900 border-dashed py-10 rounded-2xl flex flex-col items-center gap-3">
+              <div className="text-center bg-card border border-border border-dashed py-10 rounded-2xl flex flex-col items-center gap-3">
                 <span className="text-4xl">🎉</span>
                 <div className="flex flex-col gap-1">
-                  <p className="text-white font-medium">Semua tugas selesai!</p>
-                  <p className="text-xs text-zinc-500">
+                  <p className="text-card-foreground font-medium">
+                    Semua tugas selesai!
+                  </p>
+                  <p className="text-xs text-muted-foreground">
                     Nikmati waktu istirahatmu.
                   </p>
                 </div>
                 <Button
                   variant="outline"
                   size="sm"
-                  className="mt-2 text-xs border-zinc-800 bg-zinc-900 text-zinc-300 hover:bg-zinc-800 hover:text-white"
+                  className="mt-2 text-xs border-border bg-card text-muted-foreground hover:bg-muted hover:text-foreground"
                   onClick={() => router.push('/todo')}
                 >
                   Buat tugas baru
@@ -223,17 +237,17 @@ export default function Page() {
               activeTasks.slice(0, 3).map((task) => (
                 <div
                   key={task.id}
-                  className="rounded-2xl border bg-zinc-950 p-5 shadow-sm transition-all active:scale-[0.99] border-zinc-900 relative overflow-hidden group"
+                  className="rounded-2xl border bg-card p-4 md:p-5 shadow-sm transition-all active:scale-[0.99] border-border relative overflow-hidden group"
                 >
                   <div className="flex items-start gap-4 z-10 relative">
                     <div className="mt-1">
-                      <Circle className="w-5 h-5 text-zinc-600" />
+                      <Circle className="w-5 h-5 text-muted-foreground" />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <h3 className="font-semibold text-zinc-100 mb-1 group-hover:text-white transition-colors">
+                      <h3 className="font-semibold text-card-foreground mb-1 group-hover:text-primary transition-colors">
                         {task.title}
                       </h3>
-                      <p className="text-xs text-zinc-500 mb-3 line-clamp-1">
+                      <p className="text-xs text-muted-foreground mb-3 line-clamp-1">
                         {task.desc}
                       </p>
                       <div className="flex flex-wrap items-center gap-2 text-[10px] uppercase tracking-wide font-medium">
@@ -242,10 +256,10 @@ export default function Page() {
                         >
                           {getPriorityLabel(task.prioritas)}
                         </span>
-                        <span className="flex items-center gap-1 text-zinc-500">
+                        <span className="flex items-center gap-1 text-muted-foreground">
                           <Tag className="w-3 h-3" /> {task.category}
                         </span>
-                        <span className="flex items-center gap-1 text-zinc-500">
+                        <span className="flex items-center gap-1 text-muted-foreground">
                           <Clock className="w-3 h-3" />{' '}
                           {parseISOToString(task.deadline)}
                         </span>
@@ -259,17 +273,17 @@ export default function Page() {
         </div>
 
         {activeCount === 0 && !isLoading && (
-          <div className="w-full bg-zinc-950 border border-zinc-900 rounded-3xl p-6 flex items-center justify-between shadow-sm mt-2">
+          <div className="w-full bg-card border border-border rounded-3xl p-6 flex items-center justify-between shadow-sm mt-2">
             <div className="flex flex-col gap-2">
               <Typography
                 weight="bold"
-                className="text-white text-lg leading-tight"
+                className="text-card-foreground text-lg leading-tight"
               >
                 Mulai Rencanakan <br /> Hari Esok
               </Typography>
               <Button
                 size="sm"
-                className="w-fit bg-white hover:bg-zinc-200 text-black font-semibold rounded-full px-5 text-xs mt-1"
+                className="w-fit bg-foreground hover:bg-muted-foreground text-background font-semibold rounded-full px-5 text-xs mt-1"
                 onClick={() => router.push('/todo')}
               >
                 Catat Sekarang

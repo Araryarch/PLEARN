@@ -145,17 +145,19 @@ export default function QuizPage() {
 
   return (
     <Layouts>
-      <div className="flex h-full w-full bg-black text-zinc-50">
+      <div className="flex h-full w-full bg-background text-foreground">
         {/* Main Content */}
         <div className="flex-1 flex flex-col p-4 md:p-6 pb-24 overflow-y-auto">
           <div className="max-w-3xl mx-auto w-full flex-1 flex flex-col">
             {/* Header */}
             <div className="mb-6 md:mb-8">
-              <h1 className="text-2xl md:text-3xl font-bold mb-2 flex items-center gap-3 text-white">
-                <BrainCircuit className="text-white" size={28} />
+              <h1 className="text-2xl md:text-3xl font-bold mb-2 flex items-center gap-3 text-foreground">
+                <BrainCircuit className="text-foreground" size={28} />
                 AI Quiz
               </h1>
-              <p className="text-zinc-400 text-sm">Test your knowledge</p>
+              <p className="text-muted-foreground text-sm">
+                Test your knowledge
+              </p>
             </div>
 
             {/* IDLE / EMPTY STATE */}
@@ -165,16 +167,16 @@ export default function QuizPage() {
                 animate={{ opacity: 1, y: 0 }}
                 className="text-center space-y-4"
               >
-                <Card className="bg-zinc-950 border-zinc-900 py-8 shadow-sm">
+                <Card className="bg-card border-border py-8 shadow-sm">
                   <CardContent className="flex flex-col items-center gap-4">
-                    <div className="w-16 h-16 rounded-full bg-zinc-900 flex items-center justify-center border border-zinc-800">
-                      <BrainCircuit size={32} className="text-white" />
+                    <div className="w-16 h-16 rounded-full bg-muted flex items-center justify-center border border-border">
+                      <BrainCircuit size={32} className="text-foreground" />
                     </div>
                     <div>
-                      <h3 className="text-xl font-bold mb-2 text-white">
+                      <h3 className="text-xl font-bold mb-2 text-foreground">
                         Belum ada Quiz Aktif
                       </h3>
-                      <p className="text-zinc-500 text-sm">
+                      <p className="text-muted-foreground text-sm">
                         Silakan minta chatbot untuk membuatkan quiz tentang
                         topik tertentu.
                       </p>
@@ -183,7 +185,7 @@ export default function QuizPage() {
                       onClick={() =>
                         (window.location.href = '/chatbot?mode=quiz')
                       }
-                      className="w-full bg-white text-black hover:bg-zinc-200 gap-2 font-bold"
+                      className="w-full bg-foreground text-background hover:bg-muted-foreground gap-2 font-bold"
                     >
                       Buka Chatbot
                     </Button>
@@ -207,30 +209,30 @@ export default function QuizPage() {
                     <Button
                       onClick={handleFinishQuiz}
                       variant="outline"
-                      className="gap-2 border-zinc-800 bg-zinc-900 text-white hover:bg-zinc-800"
+                      className="gap-2 border-border bg-card text-foreground hover:bg-muted"
                     >
                       <SkipForward size={16} />
                       Selesaikan Quiz
                     </Button>
                   </div>
 
-                  <Card className="bg-zinc-950 border-zinc-900 shadow-sm">
+                  <Card className="bg-card border-border shadow-sm">
                     <CardContent className="pt-6">
                       <div className="mb-6">
                         <div className="flex justify-between items-center mb-2">
-                          <span className="text-sm font-medium text-zinc-500">
+                          <span className="text-sm font-medium text-muted-foreground">
                             Question {currentQIndex + 1} of {questions.length}
                           </span>
-                          <span className="text-sm font-medium text-zinc-500">
+                          <span className="text-sm font-medium text-muted-foreground">
                             {Math.round(
                               ((currentQIndex + 1) / questions.length) * 100,
                             )}
                             % Complete
                           </span>
                         </div>
-                        <div className="bg-zinc-900 h-2 rounded-full overflow-hidden">
+                        <div className="bg-muted h-2 rounded-full overflow-hidden">
                           <div
-                            className="bg-white h-full transition-all duration-300"
+                            className="bg-foreground h-full transition-all duration-300"
                             style={{
                               width: `${((currentQIndex + 1) / questions.length) * 100}%`,
                             }}
@@ -238,7 +240,7 @@ export default function QuizPage() {
                         </div>
                       </div>
 
-                      <h3 className="text-xl md:text-2xl font-semibold mb-6 md:mb-8 leading-relaxed text-white">
+                      <h3 className="text-xl md:text-2xl font-semibold mb-6 md:mb-8 leading-relaxed text-foreground">
                         {questions[currentQIndex].question}
                       </h3>
 
@@ -249,7 +251,7 @@ export default function QuizPage() {
                             questions[currentQIndex].correctAnswer === idx
 
                           let btnClass =
-                            'w-full justify-start text-left p-4 md:p-5 h-auto text-sm md:text-base border-zinc-800 bg-zinc-900 hover:bg-zinc-800 text-zinc-300 transition-all'
+                            'w-full justify-start text-left p-4 md:p-5 h-auto text-sm md:text-base border-border bg-card hover:bg-muted text-muted-foreground transition-all'
 
                           if (isAnswered) {
                             if (isCorrect)
@@ -268,7 +270,7 @@ export default function QuizPage() {
                               onClick={() => handleAnswer(idx)}
                               disabled={isAnswered}
                             >
-                              <span className="mr-3 font-bold text-zinc-500">
+                              <span className="mr-3 font-bold text-muted-foreground">
                                 {String.fromCharCode(65 + idx)}.
                               </span>
                               {opt}
@@ -291,14 +293,14 @@ export default function QuizPage() {
 
                       {/* Mark as Uncertain Button */}
                       {!isAnswered && (
-                        <div className="mt-6 pt-6 border-t border-zinc-800">
+                        <div className="mt-6 pt-6 border-t border-border">
                           <Button
                             onClick={toggleUncertain}
                             variant="outline"
                             className={`w-full gap-2 ${
                               uncertainAnswers.has(currentQIndex)
-                                ? 'bg-zinc-800 text-white border-zinc-700'
-                                : 'border-zinc-800 bg-zinc-900 text-zinc-400 hover:bg-zinc-800 hover:text-white'
+                                ? 'bg-muted text-foreground border-border'
+                                : 'border-border bg-card text-muted-foreground hover:bg-muted hover:text-foreground'
                             }`}
                           >
                             <Flag size={16} />
@@ -321,32 +323,32 @@ export default function QuizPage() {
                 animate={{ scale: 1, opacity: 1 }}
                 className="text-center"
               >
-                <Card className="bg-zinc-950 border-zinc-900 py-8 shadow-sm">
+                <Card className="bg-card border-border py-8 shadow-sm">
                   <CardContent className="flex flex-col items-center">
-                    <Trophy className="text-white mb-4" size={64} />
-                    <h2 className="text-2xl font-bold mb-2 text-white">
+                    <Trophy className="text-foreground mb-4" size={64} />
+                    <h2 className="text-2xl font-bold mb-2 text-foreground">
                       Quiz Completed!
                     </h2>
 
-                    <div className="text-6xl font-black text-white mb-2">
+                    <div className="text-6xl font-black text-foreground mb-2">
                       {Math.round((score / questions.length) * 100)}%
                     </div>
-                    <p className="text-sm text-zinc-500 mb-2">
+                    <p className="text-sm text-muted-foreground mb-2">
                       Benar {score} dari {questions.length} soal
                     </p>
                     {uncertainCount > 0 && (
-                      <p className="text-xs text-zinc-600 mb-4">
+                      <p className="text-xs text-muted-foreground mb-4">
                         {uncertainCount} soal ditandai ragu-ragu
                       </p>
                     )}
-                    <p className="text-xs text-zinc-600 mb-8">
+                    <p className="text-xs text-muted-foreground mb-8">
                       Waktu: {formatTime(timeElapsed)}
                     </p>
 
                     <div className="flex flex-col sm:flex-row gap-3 w-full max-w-sm">
                       <Button
                         onClick={handleResetQuiz}
-                        className="flex-1 gap-2 bg-zinc-800 text-white hover:bg-zinc-700 font-bold border border-zinc-700"
+                        className="flex-1 gap-2 bg-muted text-foreground hover:bg-muted/80 font-bold border border-border"
                       >
                         Selesai
                       </Button>
@@ -354,7 +356,7 @@ export default function QuizPage() {
                         onClick={() =>
                           (window.location.href = '/chatbot?mode=quiz')
                         }
-                        className="flex-1 gap-2 bg-white text-black hover:bg-zinc-200 font-bold"
+                        className="flex-1 gap-2 bg-foreground text-background hover:bg-muted-foreground font-bold"
                       >
                         <RefreshCcw size={18} />
                         Topik Lain
@@ -369,64 +371,66 @@ export default function QuizPage() {
 
         {/* Desktop Right Sidebar */}
         {status === 'quiz' && questions.length > 0 && (
-          <div className="hidden lg:flex w-80 border-l border-zinc-900 bg-zinc-950 flex-col overflow-y-auto">
+          <div className="hidden lg:flex w-80 border-l border-border bg-card flex-col overflow-y-auto">
             <div className="p-6 space-y-6">
               {/* Stats Cards */}
               <div className="space-y-3">
-                <div className="bg-zinc-900 rounded-xl p-4 border border-zinc-800">
+                <div className="bg-muted/30 rounded-xl p-4 border border-border">
                   <div className="flex items-center gap-3 mb-2">
-                    <div className="w-8 h-8 rounded-lg bg-zinc-800 flex items-center justify-center">
-                      <Clock className="text-zinc-400" size={16} />
+                    <div className="w-8 h-8 rounded-lg bg-muted flex items-center justify-center">
+                      <Clock className="text-muted-foreground" size={16} />
                     </div>
-                    <span className="text-xs font-medium text-zinc-500 uppercase tracking-wider">
+                    <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
                       Time
                     </span>
                   </div>
-                  <div className="text-2xl font-bold text-white">
+                  <div className="text-2xl font-bold text-foreground">
                     {formatTime(timeElapsed)}
                   </div>
                 </div>
 
-                <div className="bg-zinc-900 rounded-xl p-4 border border-zinc-800">
+                <div className="bg-muted/30 rounded-xl p-4 border border-border">
                   <div className="flex items-center gap-3 mb-2">
-                    <div className="w-8 h-8 rounded-lg bg-zinc-800 flex items-center justify-center">
-                      <Target className="text-zinc-400" size={16} />
+                    <div className="w-8 h-8 rounded-lg bg-muted flex items-center justify-center">
+                      <Target className="text-muted-foreground" size={16} />
                     </div>
-                    <span className="text-xs font-medium text-zinc-500 uppercase tracking-wider">
+                    <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
                       Score
                     </span>
                   </div>
-                  <div className="text-2xl font-bold text-white">{score}</div>
-                  <div className="text-xs text-zinc-600 mt-1">
+                  <div className="text-2xl font-bold text-foreground">
+                    {score}
+                  </div>
+                  <div className="text-xs text-muted-foreground mt-1">
                     {Math.round((score / (currentQIndex + 1)) * 100)}% Accuracy
                   </div>
                 </div>
 
-                <div className="bg-zinc-900 rounded-xl p-4 border border-zinc-800">
+                <div className="bg-muted/30 rounded-xl p-4 border border-border">
                   <div className="flex items-center gap-3 mb-2">
-                    <div className="w-8 h-8 rounded-lg bg-zinc-800 flex items-center justify-center">
-                      <Award className="text-zinc-400" size={16} />
+                    <div className="w-8 h-8 rounded-lg bg-muted flex items-center justify-center">
+                      <Award className="text-muted-foreground" size={16} />
                     </div>
-                    <span className="text-xs font-medium text-zinc-500 uppercase tracking-wider">
+                    <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
                       Progress
                     </span>
                   </div>
-                  <div className="text-2xl font-bold text-white">
+                  <div className="text-2xl font-bold text-foreground">
                     {currentQIndex + 1}/{questions.length}
                   </div>
                 </div>
 
                 {uncertainCount > 0 && (
-                  <div className="bg-zinc-900 rounded-xl p-4 border border-zinc-800">
+                  <div className="bg-muted/30 rounded-xl p-4 border border-border">
                     <div className="flex items-center gap-3 mb-2">
-                      <div className="w-8 h-8 rounded-lg bg-zinc-800 flex items-center justify-center">
-                        <Flag className="text-zinc-400" size={16} />
+                      <div className="w-8 h-8 rounded-lg bg-muted flex items-center justify-center">
+                        <Flag className="text-muted-foreground" size={16} />
                       </div>
-                      <span className="text-xs font-medium text-zinc-500 uppercase tracking-wider">
+                      <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
                         Uncertain
                       </span>
                     </div>
-                    <div className="text-2xl font-bold text-white">
+                    <div className="text-2xl font-bold text-foreground">
                       {uncertainCount}
                     </div>
                   </div>
@@ -435,7 +439,7 @@ export default function QuizPage() {
 
               {/* Question Navigator */}
               <div>
-                <h3 className="text-xs font-bold text-zinc-500 uppercase tracking-wider mb-3">
+                <h3 className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-3">
                   Questions
                 </h3>
                 <div className="grid grid-cols-5 gap-2">
@@ -456,18 +460,18 @@ export default function QuizPage() {
                           aspect-square rounded-lg flex items-center justify-center text-sm font-bold transition-all relative
                           ${
                             isCurrent
-                              ? 'bg-white text-black ring-2 ring-white ring-offset-2 ring-offset-zinc-950'
+                              ? 'bg-foreground text-background ring-2 ring-foreground ring-offset-2 ring-offset-background'
                               : isAnswered
                                 ? isCorrect
-                                  ? 'bg-zinc-800 text-white border border-zinc-700'
-                                  : 'bg-zinc-900 text-zinc-600 border border-zinc-800'
-                                : 'bg-zinc-900 text-zinc-500 border border-zinc-800 hover:bg-zinc-800 hover:text-white'
+                                  ? 'bg-muted text-foreground border border-border'
+                                  : 'bg-destructive/10 text-destructive border border-destructive/20'
+                                : 'bg-card text-muted-foreground border border-border hover:bg-muted hover:text-foreground'
                           }
                         `}
                       >
                         {idx + 1}
                         {isUncertain && !isAnswered && (
-                          <div className="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-zinc-400"></div>
+                          <div className="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-muted-foreground"></div>
                         )}
                       </button>
                     )
@@ -476,28 +480,28 @@ export default function QuizPage() {
               </div>
 
               {/* Legend */}
-              <div className="pt-4 border-t border-zinc-800">
-                <h3 className="text-xs font-bold text-zinc-500 uppercase tracking-wider mb-3">
+              <div className="pt-4 border-t border-border">
+                <h3 className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-3">
                   Legend
                 </h3>
                 <div className="space-y-2 text-xs">
                   <div className="flex items-center gap-2">
-                    <div className="w-6 h-6 rounded bg-white"></div>
-                    <span className="text-zinc-400">Current</span>
+                    <div className="w-6 h-6 rounded bg-foreground"></div>
+                    <span className="text-muted-foreground">Current</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <div className="w-6 h-6 rounded bg-zinc-800 border border-zinc-700"></div>
-                    <span className="text-zinc-400">Correct</span>
+                    <div className="w-6 h-6 rounded bg-muted border border-border"></div>
+                    <span className="text-muted-foreground">Correct</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <div className="w-6 h-6 rounded bg-zinc-900 border border-zinc-800"></div>
-                    <span className="text-zinc-400">Wrong</span>
+                    <div className="w-6 h-6 rounded bg-destructive/10 border border-destructive/20"></div>
+                    <span className="text-muted-foreground">Wrong</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <div className="w-6 h-6 rounded bg-zinc-900 border border-zinc-800 relative">
-                      <div className="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-zinc-400"></div>
+                    <div className="w-6 h-6 rounded bg-card border border-border relative">
+                      <div className="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-muted-foreground"></div>
                     </div>
-                    <span className="text-zinc-400">Uncertain</span>
+                    <span className="text-muted-foreground">Uncertain</span>
                   </div>
                 </div>
               </div>
@@ -511,18 +515,18 @@ export default function QuizPage() {
             {/* Toggle Button */}
             <button
               onClick={() => setShowMobileStats(!showMobileStats)}
-              className="w-full bg-zinc-900 border-t border-zinc-800 px-4 py-3 flex items-center justify-between text-white"
+              className="w-full bg-card border-t border-border px-4 py-3 flex items-center justify-between text-foreground"
             >
               <div className="flex items-center gap-3">
-                <Clock size={16} className="text-zinc-400" />
+                <Clock size={16} className="text-muted-foreground" />
                 <span className="text-sm font-medium">
                   {formatTime(timeElapsed)}
                 </span>
-                <span className="text-zinc-600">•</span>
-                <Target size={16} className="text-zinc-400" />
+                <span className="text-muted-foreground">•</span>
+                <Target size={16} className="text-muted-foreground" />
                 <span className="text-sm font-medium">{score}</span>
-                <span className="text-zinc-600">•</span>
-                <span className="text-sm text-zinc-500">
+                <span className="text-muted-foreground">•</span>
+                <span className="text-sm text-muted-foreground">
                   {currentQIndex + 1}/{questions.length}
                 </span>
               </div>
@@ -541,12 +545,12 @@ export default function QuizPage() {
                   animate={{ height: 'auto', opacity: 1 }}
                   exit={{ height: 0, opacity: 0 }}
                   transition={{ duration: 0.2 }}
-                  className="bg-zinc-950 border-t border-zinc-800 overflow-hidden"
+                  className="bg-card border-t border-border overflow-hidden"
                 >
                   <div className="p-4 space-y-4 max-h-[60vh] overflow-y-auto">
                     {/* Question Navigator */}
                     <div>
-                      <h3 className="text-xs font-bold text-zinc-500 uppercase tracking-wider mb-3">
+                      <h3 className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-3">
                         Questions
                       </h3>
                       <div className="grid grid-cols-6 gap-2">
@@ -570,18 +574,18 @@ export default function QuizPage() {
                                 aspect-square rounded-lg flex items-center justify-center text-sm font-bold transition-all relative
                                 ${
                                   isCurrent
-                                    ? 'bg-white text-black ring-2 ring-white ring-offset-2 ring-offset-zinc-950'
+                                    ? 'bg-foreground text-background ring-2 ring-foreground ring-offset-2 ring-offset-background'
                                     : isAnswered
                                       ? isCorrect
-                                        ? 'bg-zinc-800 text-white border border-zinc-700'
-                                        : 'bg-zinc-900 text-zinc-600 border border-zinc-800'
-                                      : 'bg-zinc-900 text-zinc-500 border border-zinc-800'
+                                        ? 'bg-muted text-foreground border border-border'
+                                        : 'bg-destructive/10 text-destructive border border-destructive/20'
+                                      : 'bg-card text-muted-foreground border border-border'
                                 }
                               `}
                             >
                               {idx + 1}
                               {isUncertain && !isAnswered && (
-                                <div className="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-zinc-400"></div>
+                                <div className="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-muted-foreground"></div>
                               )}
                             </button>
                           )
