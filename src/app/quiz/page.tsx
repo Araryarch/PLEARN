@@ -17,6 +17,8 @@ import {
   Award,
   ChevronUp,
   ChevronDown,
+  Flag,
+  SkipForward,
 } from 'lucide-react'
 
 export default function QuizPage() {
@@ -27,6 +29,9 @@ export default function QuizPage() {
   const [selectedOption, setSelectedOption] = useState<number | null>(null)
   const [isAnswered, setIsAnswered] = useState(false)
   const [answers, setAnswers] = useState<(number | null)[]>([])
+  const [uncertainAnswers, setUncertainAnswers] = useState<Set<number>>(
+    new Set(),
+  )
   const [timeElapsed, setTimeElapsed] = useState(0)
   const [showMobileStats, setShowMobileStats] = useState(false)
 
@@ -87,6 +92,43 @@ export default function QuizPage() {
     }, 1500)
   }
 
+  const toggleUncertain = () => {
+    const newUncertain = new Set(uncertainAnswers)
+    if (newUncertain.has(currentQIndex)) {
+      newUncertain.delete(currentQIndex)
+    } else {
+      newUncertain.add(currentQIndex)
+    }
+    setUncertainAnswers(newUncertain)
+  }
+
+  const handleFinishQuiz = () => {
+    // Mark all unanswered questions as wrong
+    for (let i = currentQIndex; i < questions.length; i++) {
+      if (answers[i] === null) {
+        const newAnswers = [...answers]
+        newAnswers[i] = -1 // Invalid answer
+        setAnswers(newAnswers)
+      }
+    }
+
+    localStorage.removeItem('activeQuiz')
+    setStatus('result')
+  }
+
+  const handleResetQuiz = () => {
+    // Reset all state
+    setStatus('idle')
+    setQuestions([])
+    setCurrentQIndex(0)
+    setScore(0)
+    setSelectedOption(null)
+    setIsAnswered(false)
+    setAnswers([])
+    setUncertainAnswers(new Set())
+    setTimeElapsed(0)
+  }
+
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60)
     const secs = seconds % 60
@@ -99,17 +141,7 @@ export default function QuizPage() {
     setSelectedOption(null)
   }
 
-  const handleFinishQuiz = () => {
-    // Reset all state
-    setStatus('idle')
-    setQuestions([])
-    setCurrentQIndex(0)
-    setScore(0)
-    setSelectedOption(null)
-    setIsAnswered(false)
-    setAnswers([])
-    setTimeElapsed(0)
-  }
+  const uncertainCount = uncertainAnswers.size
 
   return (
     <Layouts>
@@ -168,8 +200,20 @@ export default function QuizPage() {
                   initial={{ opacity: 0, x: 20 }}
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: -20 }}
-                  className="w-full flex-1"
+                  className="w-full flex-1 space-y-4"
                 >
+                  {/* Finish Quiz Button */}
+                  <div className="flex justify-end">
+                    <Button
+                      onClick={handleFinishQuiz}
+                      variant="outline"
+                      className="gap-2 border-zinc-800 bg-zinc-900 text-white hover:bg-zinc-800"
+                    >
+                      <SkipForward size={16} />
+                      Selesaikan Quiz
+                    </Button>
+                  </div>
+
                   <Card className="bg-zinc-950 border-zinc-900 shadow-sm">
                     <CardContent className="pt-6">
                       <div className="mb-6">
@@ -244,6 +288,26 @@ export default function QuizPage() {
                           )
                         })}
                       </div>
+
+                      {/* Mark as Uncertain Button */}
+                      {!isAnswered && (
+                        <div className="mt-6 pt-6 border-t border-zinc-800">
+                          <Button
+                            onClick={toggleUncertain}
+                            variant="outline"
+                            className={`w-full gap-2 ${
+                              uncertainAnswers.has(currentQIndex)
+                                ? 'bg-zinc-800 text-white border-zinc-700'
+                                : 'border-zinc-800 bg-zinc-900 text-zinc-400 hover:bg-zinc-800 hover:text-white'
+                            }`}
+                          >
+                            <Flag size={16} />
+                            {uncertainAnswers.has(currentQIndex)
+                              ? 'Ditandai Ragu-ragu'
+                              : 'Tandai Ragu-ragu'}
+                          </Button>
+                        </div>
+                      )}
                     </CardContent>
                   </Card>
                 </motion.div>
@@ -267,16 +331,21 @@ export default function QuizPage() {
                     <div className="text-6xl font-black text-white mb-2">
                       {Math.round((score / questions.length) * 100)}%
                     </div>
-                    <p className="text-sm text-zinc-500 mb-4">
+                    <p className="text-sm text-zinc-500 mb-2">
                       Benar {score} dari {questions.length} soal
                     </p>
+                    {uncertainCount > 0 && (
+                      <p className="text-xs text-zinc-600 mb-4">
+                        {uncertainCount} soal ditandai ragu-ragu
+                      </p>
+                    )}
                     <p className="text-xs text-zinc-600 mb-8">
                       Waktu: {formatTime(timeElapsed)}
                     </p>
 
                     <div className="flex flex-col sm:flex-row gap-3 w-full max-w-sm">
                       <Button
-                        onClick={handleFinishQuiz}
+                        onClick={handleResetQuiz}
                         className="flex-1 gap-2 bg-zinc-800 text-white hover:bg-zinc-700 font-bold border border-zinc-700"
                       >
                         Selesai
@@ -346,6 +415,22 @@ export default function QuizPage() {
                     {currentQIndex + 1}/{questions.length}
                   </div>
                 </div>
+
+                {uncertainCount > 0 && (
+                  <div className="bg-zinc-900 rounded-xl p-4 border border-zinc-800">
+                    <div className="flex items-center gap-3 mb-2">
+                      <div className="w-8 h-8 rounded-lg bg-zinc-800 flex items-center justify-center">
+                        <Flag className="text-zinc-400" size={16} />
+                      </div>
+                      <span className="text-xs font-medium text-zinc-500 uppercase tracking-wider">
+                        Uncertain
+                      </span>
+                    </div>
+                    <div className="text-2xl font-bold text-white">
+                      {uncertainCount}
+                    </div>
+                  </div>
+                )}
               </div>
 
               {/* Question Navigator */}
@@ -357,6 +442,7 @@ export default function QuizPage() {
                   {questions.map((_, idx) => {
                     const isAnswered = answers[idx] !== null
                     const isCurrent = idx === currentQIndex
+                    const isUncertain = uncertainAnswers.has(idx)
                     const isCorrect =
                       isAnswered &&
                       answers[idx] === questions[idx].correctAnswer
@@ -367,7 +453,7 @@ export default function QuizPage() {
                         onClick={() => goToQuestion(idx)}
                         disabled={isAnswered}
                         className={`
-                          aspect-square rounded-lg flex items-center justify-center text-sm font-bold transition-all
+                          aspect-square rounded-lg flex items-center justify-center text-sm font-bold transition-all relative
                           ${
                             isCurrent
                               ? 'bg-white text-black ring-2 ring-white ring-offset-2 ring-offset-zinc-950'
@@ -380,6 +466,9 @@ export default function QuizPage() {
                         `}
                       >
                         {idx + 1}
+                        {isUncertain && !isAnswered && (
+                          <div className="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-zinc-400"></div>
+                        )}
                       </button>
                     )
                   })}
@@ -403,6 +492,12 @@ export default function QuizPage() {
                   <div className="flex items-center gap-2">
                     <div className="w-6 h-6 rounded bg-zinc-900 border border-zinc-800"></div>
                     <span className="text-zinc-400">Wrong</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="w-6 h-6 rounded bg-zinc-900 border border-zinc-800 relative">
+                      <div className="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-zinc-400"></div>
+                    </div>
+                    <span className="text-zinc-400">Uncertain</span>
                   </div>
                 </div>
               </div>
@@ -458,6 +553,7 @@ export default function QuizPage() {
                         {questions.map((_, idx) => {
                           const isAnswered = answers[idx] !== null
                           const isCurrent = idx === currentQIndex
+                          const isUncertain = uncertainAnswers.has(idx)
                           const isCorrect =
                             isAnswered &&
                             answers[idx] === questions[idx].correctAnswer
@@ -471,7 +567,7 @@ export default function QuizPage() {
                               }}
                               disabled={isAnswered}
                               className={`
-                                aspect-square rounded-lg flex items-center justify-center text-sm font-bold transition-all
+                                aspect-square rounded-lg flex items-center justify-center text-sm font-bold transition-all relative
                                 ${
                                   isCurrent
                                     ? 'bg-white text-black ring-2 ring-white ring-offset-2 ring-offset-zinc-950'
@@ -484,6 +580,9 @@ export default function QuizPage() {
                               `}
                             >
                               {idx + 1}
+                              {isUncertain && !isAnswered && (
+                                <div className="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-zinc-400"></div>
+                              )}
                             </button>
                           )
                         })}

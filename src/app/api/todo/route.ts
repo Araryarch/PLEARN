@@ -54,3 +54,34 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'Gagal menambah todo' }, { status: 500 })
   }
 }
+
+export async function PATCH(req: Request) {
+  try {
+    const { userId } = await req.json()
+
+    if (!userId) {
+      return NextResponse.json(
+        { error: 'userId wajib disertakan' },
+        { status: 400 },
+      )
+    }
+
+    // Mark all active todos as completed
+    await prisma.todo.updateMany({
+      where: {
+        userId: userId,
+        status: 'Aktif',
+      },
+      data: {
+        status: 'Selesai',
+      },
+    })
+
+    return NextResponse.json({ message: 'All tasks marked as done' })
+  } catch {
+    return NextResponse.json(
+      { error: 'Failed to mark all as done' },
+      { status: 500 },
+    )
+  }
+}

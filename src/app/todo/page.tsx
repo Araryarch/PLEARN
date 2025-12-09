@@ -165,6 +165,27 @@ export default function DailyTasksPage() {
       console.error(err)
     }
   }
+
+  const markAllAsDone = async () => {
+    if (!extended?.user?.id) return
+    try {
+      const res = await fetch('/api/todo', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId: extended.user.id }),
+      })
+      if (!res.ok) throw new Error('Gagal mark all as done')
+
+      // Update local state
+      setTasks((prev) =>
+        prev.map((t) =>
+          t.status === 'Aktif' ? { ...t, status: 'Selesai' } : t,
+        ),
+      )
+    } catch (err) {
+      console.error(err)
+    }
+  }
   const filteredTasks = tasks.filter((task) => {
     const matchesSearch =
       task.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -217,11 +238,24 @@ export default function DailyTasksPage() {
     <Layouts>
       <div className="h-full w-full bg-black text-zinc-50">
         <div className="mx-auto max-w-2xl p-4 pb-24">
-          <div className="mb-8">
-            <h1 className="text-3xl font-bold mb-2 text-white">Tugas Harian</h1>
-            <p className="text-sm text-zinc-400">
-              Kelola tugas harianmu dengan mudah & efisien
-            </p>
+          <div className="mb-8 flex items-start justify-between">
+            <div>
+              <h1 className="text-3xl font-bold mb-2 text-white">
+                Tugas Harian
+              </h1>
+              <p className="text-sm text-zinc-400">
+                Kelola tugas harianmu dengan mudah & efisien
+              </p>
+            </div>
+            {tasks.filter((t) => t.status === 'Aktif').length > 0 && (
+              <button
+                onClick={markAllAsDone}
+                className="flex items-center gap-2 px-4 py-2 rounded-xl bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 hover:border-zinc-700 text-white text-sm font-medium transition-all"
+              >
+                <CheckCircle2 size={16} />
+                Done All
+              </button>
+            )}
           </div>
 
           {/* summary bar */}
