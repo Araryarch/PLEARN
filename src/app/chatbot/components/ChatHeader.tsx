@@ -23,7 +23,7 @@ export const ChatHeader = ({
 
   return (
     <div
-      className="border-b px-4 md:px-6 md:pr-72 py-3 md:py-4 pt-[calc(env(safe-area-inset-top)_+_0.75rem)] md:pt-[calc(env(safe-area-inset-top)_+_1rem)] fixed top-0 w-full z-50 flex items-center justify-between shadow-sm"
+      className="border-b px-4 md:px-6 md:pr-72 py-3 md:py-4 pt-[calc(env(safe-area-inset-top)+0.75rem)] sticky top-0 z-50 flex items-center justify-between shadow-sm flex-none w-full"
       style={{
         borderColor: catppuccin.surface1,
         backgroundColor: catppuccin.surface0,

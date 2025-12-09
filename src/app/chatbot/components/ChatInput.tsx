@@ -36,7 +36,7 @@ export const ChatInput = ({
   useEffect(() => {
     if (textareaRef.current) {
       textareaRef.current.style.height = 'auto'
-      textareaRef.current.style.height = `${Math.min(textareaRef.current.scrollHeight, 200)}px`
+      textareaRef.current.style.height = `${Math.min(textareaRef.current.scrollHeight, 160)}px`
     }
   }, [input])
 
@@ -49,41 +49,35 @@ export const ChatInput = ({
   }
 
   return (
-    <div
-      className="w-full border-t p-4 pb-6"
-      style={{
-        borderColor: catppuccin.overlay,
-        backgroundColor: catppuccin.base,
-      }}
-    >
+    <div className="w-full px-4 pb-4 pt-2 bg-transparent">
       {selectedImage && (
-        <div className="relative inline-block mb-3 ml-1">
+        <div className="relative inline-block mb-3 ml-2">
           <Image
             src={selectedImage}
             alt="Selected"
-            width={80}
-            height={80}
-            className="h-20 w-auto rounded-lg border border-gray-600 object-cover"
+            width={72}
+            height={72}
+            className="h-[72px] w-auto rounded-xl border border-white/10 object-cover shadow-lg"
           />
           <button
             onClick={onClearImage}
-            className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 shadow-md hover:bg-red-600 transition"
+            className="absolute -top-2 -right-2 bg-gray-800 text-white rounded-full p-1 border border-white/10 shadow-md hover:bg-gray-700 transition"
           >
             <X size={12} />
           </button>
         </div>
       )}
 
-      {/* Input Container */}
+      {/* Input Capsule */}
       <div
-        className="flex items-end gap-2 rounded-3xl p-2 border transition-colors focus-within:border-opacity-100"
+        className="flex items-end gap-2 rounded-[26px] p-1.5 pl-2 border shadow-lg transition-all focus-within:shadow-xl focus-within:border-opacity-100 backdrop-blur-md"
         style={{
-          backgroundColor: catppuccin.surface1,
-          borderColor: catppuccin.overlay,
+          backgroundColor: `${catppuccin.surface0}E6`,
+          borderColor: catppuccin.surface1,
         }}
       >
         <label
-          className="cursor-pointer p-2 rounded-full hover:bg-white/10 transition flex items-center justify-center shrink-0 mb-1"
+          className="cursor-pointer w-10 h-10 rounded-full hover:bg-white/5 transition flex items-center justify-center shrink-0 mb-[1px]"
           title="Upload Image"
         >
           <input
@@ -93,9 +87,11 @@ export const ChatInput = ({
             onChange={onImageSelect}
           />
           <ImageIcon
-            size={20}
+            size={22}
+            strokeWidth={2}
             style={{
-              color: selectedImage ? catppuccin.green : catppuccin.subtext,
+              color: selectedImage ? catppuccin.green : catppuccin.text,
+              opacity: 0.7,
             }}
           />
         </label>
@@ -108,13 +104,14 @@ export const ChatInput = ({
           onFocus={onFocus}
           onBlur={onBlur}
           placeholder={
-            selectedImage ? 'Describe the image...' : 'Type a message...'
+            selectedImage ? 'Describe this image...' : 'Message Senopati...'
           }
           rows={1}
-          className="flex-1 bg-transparent py-3 px-2 focus:outline-none resize-none max-h-[200px] overflow-y-auto w-full custom-scrollbar"
+          className="flex-1 bg-transparent py-2.5 px-2 focus:outline-none resize-none max-h-[160px] overflow-y-auto w-full custom-scrollbar text-[16px]"
           style={{
             color: catppuccin.text,
-            minHeight: '44px',
+            minHeight: '24px',
+            lineHeight: '24px',
           }}
         />
 
@@ -122,14 +119,18 @@ export const ChatInput = ({
           onClick={onSend}
           disabled={!canSend}
           size="icon"
-          className="shrink-0 mb-1 rounded-full w-10 h-10 transition-all active:scale-95"
+          className="shrink-0 rounded-full w-10 h-10 transition-all shadow-sm mb-[1px]"
           style={{
             backgroundColor: canSend ? catppuccin.text : 'transparent',
             color: canSend ? catppuccin.base : catppuccin.subtext,
-            opacity: canSend ? 1 : 0.5,
+            opacity: canSend ? 1 : 0.3,
           }}
         >
-          <Send size={18} />
+          <Send
+            size={18}
+            strokeWidth={2.5}
+            className={canSend ? 'ml-0.5' : ''}
+          />
         </Button>
       </div>
     </div>

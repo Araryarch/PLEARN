@@ -93,12 +93,9 @@ export default function Chatbot() {
   )
 
   return (
-    <Layouts
-      isInputFocused={isInputFocused}
-      topBotBar={hasMessages ? chatInput : undefined}
-    >
+    <Layouts isInputFocused={isInputFocused}>
       <div
-        className="h-screen w-full flex flex-col"
+        className="flex flex-col h-[100dvh] w-full relative"
         style={{ backgroundColor: catppuccin.base, color: catppuccin.text }}
       >
         <ChatHeader
@@ -110,12 +107,14 @@ export default function Chatbot() {
           buttonRef={triggerRef}
         />
 
-        <div className="flex-1 flex flex-col overflow-y-auto">
-          <ScrollArea className="flex-1 w-full pt-[73px] pb-2">
-            {!hasMessages ? (
+        <div className="flex-1 flex flex-col overflow-hidden w-full">
+          {!hasMessages ? (
+            <div className="flex-1 overflow-y-auto">
               <EmptyState setInput={setInput}>{chatInput}</EmptyState>
-            ) : (
-              <div className="px-4 py-6 space-y-6 pb-6 container mx-auto max-w-4xl">
+            </div>
+          ) : (
+            <ScrollArea className="flex-1 w-full h-full">
+              <div className="px-4 py-6 space-y-6 pb-4 container mx-auto max-w-4xl">
                 {messages.map((msg) => (
                   <MessageBubble
                     key={msg.id}
@@ -136,11 +135,17 @@ export default function Chatbot() {
 
                 {isTyping && <ChatSkeleton />}
 
-                <div ref={messagesEndRef} className="h-4" />
+                <div ref={messagesEndRef} className="h-2" />
               </div>
-            )}
-          </ScrollArea>
+            </ScrollArea>
+          )}
         </div>
+
+        {hasMessages && (
+          <div className="flex-none w-full bg-[#1e1e2e] z-20 pb-[env(safe-area-inset-bottom)]">
+            {chatInput}
+          </div>
+        )}
       </div>
     </Layouts>
   )

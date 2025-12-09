@@ -1,4 +1,5 @@
 import { Button } from '@/components/ui/button'
+import { motion } from 'framer-motion'
 import { Input } from '@/components/ui/input'
 import {
   Copy,
@@ -50,8 +51,11 @@ export const MessageBubble = ({
   const isCopied = copiedId === message.id
 
   return (
-    <div
-      className={`flex ${isUser ? 'justify-end' : 'justify-start'} group animate-in slide-in-from-bottom-2 duration-300`}
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3 }}
+      className={`flex ${isUser ? 'justify-end' : 'justify-start'} group`}
     >
       <div
         className={`flex gap-2 md:gap-3 max-w-[90%] md:max-w-[85%] lg:max-w-2xl items-start ${isUser ? 'flex-row-reverse' : ''}`}
@@ -241,6 +245,6 @@ export const MessageBubble = ({
           </div>
         </div>
       </div>
-    </div>
+    </motion.div>
   )
 }
