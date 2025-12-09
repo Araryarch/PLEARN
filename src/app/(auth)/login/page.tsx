@@ -19,14 +19,14 @@ export default function Page() {
   if (status === 'loading') return <p></p>
   if (!session)
     return (
-      <div className="grid min-h-svh lg:grid-cols-2">
+      <div className="grid min-h-svh lg:grid-cols-2 bg-black">
         <div className="flex flex-col gap-4 p-6 md:p-10">
           <div className="flex justify-center gap-2 md:justify-start">
             <a
               href="#"
               className="flex items-center gap-2 font-medium text-white"
             >
-              <div className="bg-primary text-primary-foreground flex size-6 items-center justify-center rounded-md">
+              <div className="bg-white text-black flex size-6 items-center justify-center rounded-md">
                 <GalleryVerticalEnd className="size-4" />
               </div>
               PLEARN
@@ -38,12 +38,12 @@ export default function Page() {
             </div>
           </div>
         </div>
-        <div className="bg-muted relative hidden lg:block">
+        <div className="bg-zinc-900 relative hidden lg:block">
           <Image
             src="/placeholder.svg"
             alt="Image"
             fill
-            className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
+            className="absolute inset-0 h-full w-full object-cover opacity-50 grayscale"
           />
         </div>
       </div>

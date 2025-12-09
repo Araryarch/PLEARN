@@ -40,30 +40,30 @@ export function LoginForm({
 
   return (
     <form
-      className={cn('flex flex-col gap-6 rounded-lg bg-[#1e1e2e]', className)}
+      className={cn('flex flex-col gap-6', className)}
       onSubmit={handleSubmit}
       {...props}
     >
       <div className="flex flex-col items-center gap-2 text-center">
-        <h1 className="text-2xl font-bold text-[#cdd6f4]">
-          Login to your account
+        <h1 className="text-2xl font-bold tracking-tight text-white">
+          Welcome back
         </h1>
-        <p className="text-sm text-[#6c7086]">
-          Enter your email below to login to your account
+        <p className="text-sm text-zinc-400">
+          Enter your email to sign in to your account
         </p>
       </div>
 
       <div className="grid gap-6">
         <div className="grid gap-3">
-          <Label htmlFor="email" className="text-[#cdd6f4]">
+          <Label htmlFor="email" className="text-zinc-200">
             Email
           </Label>
           <Input
             id="email"
             type="email"
-            placeholder="Enter Your Email"
+            placeholder="m@example.com"
             required
-            className="bg-[#1e1e2e] text-[#cdd6f4] border-[#313244]"
+            className="bg-zinc-900 border-zinc-800 text-zinc-100 placeholder:text-zinc-500 focus-visible:ring-zinc-700"
             value={form.email}
             onChange={handleChange}
           />
@@ -71,39 +71,45 @@ export function LoginForm({
 
         <div className="grid gap-3">
           <div className="flex items-center">
-            <Label htmlFor="password" className="text-[#cdd6f4]">
+            <Label htmlFor="password" className="text-zinc-200">
               Password
             </Label>
             <a
               href="#"
-              className="ml-auto text-sm underline-offset-4 hover:underline text-[#f5c2e7]"
+              className="ml-auto text-sm text-zinc-400 underline-offset-4 hover:text-white transition-colors"
             >
-              Forgot your password?
+              Forgot password?
             </a>
           </div>
           <Input
             id="password"
             type="password"
             required
-            placeholder="Enter Your Password"
-            className="bg-[#1e1e2e] text-[#cdd6f4] border-[#313244]"
+            placeholder="••••••••"
+            className="bg-zinc-900 border-zinc-800 text-zinc-100 placeholder:text-zinc-500 focus-visible:ring-zinc-700"
             value={form.password}
             onChange={handleChange}
           />
         </div>
 
         {message && (
-          <p className="text-sm text-[#f5c2e7] text-center">{message}</p>
+          <p className="text-sm text-red-500 text-center">{message}</p>
         )}
 
-        <Button type="submit" className="w-full bg-[#f5c2e7] text-[#1e1e2e]">
-          Login
+        <Button
+          type="submit"
+          className="w-full bg-white text-black hover:bg-zinc-200 transition-colors"
+        >
+          Sign In
         </Button>
       </div>
 
-      <div className="text-center text-sm text-[#6c7086]">
+      <div className="text-center text-sm text-zinc-400">
         Don&apos;t have an account?{' '}
-        <Link href="/register" className="text-[#f5c2e7] underline">
+        <Link
+          href="/register"
+          className="font-medium text-white hover:underline underline-offset-4"
+        >
           Sign up
         </Link>
       </div>

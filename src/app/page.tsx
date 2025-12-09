@@ -4,13 +4,14 @@ import Typography from '@/components/Typography'
 import { Button } from '@/components/ui/button'
 import Layouts from '@/Layouts/Layouts'
 import { ExtendedSession } from '@/lib/authOptions'
-import { Tag, Clock, ArrowRight } from 'lucide-react'
+import { Tag, Clock, ArrowRight, Circle } from 'lucide-react'
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import Image from 'next/image'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect } from 'react'
 import Link from 'next/link'
 import { parseISOToString } from '@/lib/dateParser'
+import { useQuery } from '@tanstack/react-query'
 
 interface Task {
   id: number
@@ -22,12 +23,59 @@ interface Task {
   status: 'Aktif' | 'Selesai'
 }
 
+const CircularProgress = ({
+  value,
+  max,
+  size = 120,
+  strokeWidth = 10,
+}: {
+  value: number
+  max: number
+  size?: number
+  strokeWidth?: number
+}) => {
+  const radius = (size - strokeWidth) / 2
+  const circumference = radius * 2 * Math.PI
+  const progress = max > 0 ? value / max : 0
+  const dashoffset = circumference - progress * circumference
+
+  return (
+    <div className="relative flex items-center justify-center">
+      <svg width={size} height={size} className="transform -rotate-90">
+        <circle
+          cx={size / 2}
+          cy={size / 2}
+          r={radius}
+          stroke="currentColor"
+          strokeWidth={strokeWidth}
+          fill="transparent"
+          className="text-zinc-800"
+        />
+        <circle
+          cx={size / 2}
+          cy={size / 2}
+          r={radius}
+          stroke="currentColor"
+          strokeWidth={strokeWidth}
+          fill="transparent"
+          strokeDasharray={circumference}
+          strokeDashoffset={dashoffset}
+          strokeLinecap="round"
+          className="text-white transition-all duration-1000 ease-out"
+        />
+      </svg>
+      <div className="absolute flex flex-col items-center justify-center text-white">
+        <span className="text-3xl font-bold">
+          {Math.round(progress * 100)}%
+        </span>
+      </div>
+    </div>
+  )
+}
+
 export default function Page() {
   const { data: session, status } = useSession()
   const router = useRouter()
-  const [tasks, setTasks] = useState<Task[]>([])
-  const [loading, setLoading] = useState(true)
-
   const extended = session as ExtendedSession
 
   useEffect(() => {
@@ -35,31 +83,72 @@ export default function Page() {
     if (!session) router.push('/login')
   }, [session, status, router])
 
-  useEffect(() => {
-    if (!extended?.user?.id) return
-    const fetchTasks = async () => {
-      try {
-        const res = await fetch(`/api/todo?userId=${extended.user.id}`)
-        if (!res.ok) throw new Error('Gagal fetch tugas')
-        const data: Task[] = await res.json()
-        setTasks(data)
-      } catch (err) {
-        console.error(err)
-      } finally {
-        setLoading(false)
-      }
-    }
-    fetchTasks()
-  }, [extended?.user?.id])
+  const { data: tasks = [], isLoading } = useQuery({
+    queryKey: ['tasks', extended?.user?.id],
+    queryFn: async () => {
+      if (!extended?.user?.id) return []
+      const res = await fetch(`/api/todo?userId=${extended.user.id}`)
+      if (!res.ok) throw new Error('Gagal fetch tugas')
+      return res.json() as Promise<Task[]>
+    },
+    enabled: !!extended?.user?.id,
+    staleTime: 1000 * 60 * 5, // Cache for 5 minutes
+  })
+
+  // Skeleton Loading Component
+  const SkeletonHome = () => (
+    <div className="min-h-screen h-screen w-full bg-black p-6 flex flex-col gap-6 overflow-y-auto">
+      <div className="h-8 bg-zinc-900 rounded animate-pulse w-48 mb-2"></div>
+
+      {/* Progress Skeleton */}
+      <div className="w-full h-48 bg-zinc-900 rounded-2xl animate-pulse"></div>
+
+      <div className="flex justify-between items-center mt-2">
+        <div className="h-6 bg-zinc-900 rounded animate-pulse w-24"></div>
+        <div className="h-4 bg-zinc-900 rounded animate-pulse w-20"></div>
+      </div>
+
+      {/* Tasks Skeleton */}
+      <div className="flex flex-col gap-4">
+        {[1, 2, 3].map((i) => (
+          <div
+            key={i}
+            className="w-full h-24 bg-zinc-900 rounded-xl animate-pulse"
+          ></div>
+        ))}
+      </div>
+    </div>
+  )
+
+  if (status === 'loading') {
+    return (
+      <Layouts>
+        <SkeletonHome />
+      </Layouts>
+    )
+  }
+
+  if (!session) return null
+
+  const activeTasks = tasks.filter((t) => t.status !== 'Selesai')
+  const activeCount = activeTasks.length
+  const completedCount = tasks.filter((t) => t.status === 'Selesai').length
+  const totalCount = tasks.length
+
+  const hour = new Date().getHours()
+  let greeting = 'Selamat Malam'
+  if (hour >= 4 && hour < 11) greeting = 'Selamat Pagi'
+  else if (hour >= 11 && hour < 15) greeting = 'Selamat Siang'
+  else if (hour >= 15 && hour < 18) greeting = 'Selamat Sore'
 
   const getPriorityColor = (prioritas: string) => {
     switch (prioritas) {
       case 'high':
-        return 'bg-white/10 text-white border border-white/20'
+        return 'bg-zinc-800 text-white border border-zinc-700'
       case 'medium':
-        return 'bg-zinc-800/50 text-zinc-300 border border-zinc-700/50'
+        return 'bg-zinc-900 text-zinc-300 border border-zinc-800'
       case 'low':
-        return 'bg-zinc-900/50 text-zinc-500 border border-zinc-800/50'
+        return 'bg-zinc-950 text-zinc-500 border border-zinc-900'
       default:
         return 'bg-zinc-900 text-zinc-500'
     }
@@ -78,160 +167,123 @@ export default function Page() {
     }
   }
 
-  // Skeleton Loading Component
-  const SkeletonLoading = () => (
-    <div className="min-h-screen h-screen w-full bg-black p-6 flex flex-col gap-6 overflow-y-auto">
-      {/* Greeting Skeleton */}
-      <div className="h-6 bg-zinc-900 rounded animate-pulse w-48"></div>
-
-      {/* Main Card Skeleton */}
-      <div className="w-full h-fit bg-zinc-950 border border-zinc-900 py-5 rounded-xl flex flex-col gap-2 relative shadow-lg">
-        <div className="h-20 bg-zinc-900 rounded animate-pulse absolute bottom-0 right-0 w-20"></div>
-        <div className="h-1/2 w-full flex justify-start items-center px-5">
-          <div className="h-4 bg-zinc-900 rounded animate-pulse w-3/4"></div>
-        </div>
-        <div className="h-1/2 w-fit flex px-5 gap-10 justify-between items-center">
-          <div className="flex flex-col items-center gap-2">
-            <div className="h-8 w-12 bg-zinc-900 rounded animate-pulse"></div>
-            <div className="h-3 w-8 bg-zinc-900 rounded animate-pulse"></div>
-          </div>
-        </div>
-      </div>
-
-      {/* Agenda Header Skeleton */}
-      <div className="w-full h-fit flex justify-between">
-        <div className="h-4 bg-zinc-900 rounded animate-pulse w-20"></div>
-        <div className="h-4 bg-zinc-900 rounded animate-pulse w-24"></div>
-      </div>
-
-      {/* Tasks List Skeleton */}
-      <div className="w-full flex flex-col gap-3">
-        {Array.from({ length: 3 }).map((_, index) => (
-          <div
-            key={index}
-            className="rounded-xl border bg-zinc-950 p-4 shadow-sm border-zinc-900 animate-pulse"
-          >
-            <div className="flex items-start gap-3">
-              <div className="flex-1 min-w-0">
-                <div className="h-5 bg-zinc-900 rounded mb-2 w-3/4"></div>
-                <div className="h-3 bg-zinc-900 rounded mb-2 w-full"></div>
-                <div className="flex flex-wrap items-center gap-2">
-                  <div className="h-6 w-16 bg-zinc-900 rounded"></div>
-                  <div className="h-6 w-20 bg-zinc-900 rounded"></div>
-                  <div className="h-6 w-24 bg-zinc-900 rounded"></div>
-                </div>
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  )
-
-  if (status === 'loading' || loading)
-    return (
-      <Layouts>
-        <SkeletonLoading />
-      </Layouts>
-    )
-  if (!session) return null
-
-  const activeTasks = tasks.filter((t) => t.status !== 'Selesai')
-  const activeCount = activeTasks.length
-
-  const hour = new Date().getHours()
-  let greeting = 'Selamat Malam'
-  if (hour >= 4 && hour < 11) greeting = 'Selamat Pagi'
-  else if (hour >= 11 && hour < 15) greeting = 'Selamat Siang'
-  else if (hour >= 15 && hour < 18) greeting = 'Selamat Sore'
-
   return (
     <Layouts>
-      <div className="min-h-screen h-screen w-full bg-black p-6 flex flex-col gap-8 overflow-y-auto">
+      <div className="min-h-screen w-full bg-black p-6 flex flex-col gap-8 pb-32 overflow-y-auto">
         <Typography
-          className="text-white text-2xl tracking-tight"
+          className="text-white text-3xl tracking-tight"
           weight="bold"
         >
-          {greeting}, {extended.user.username}!
+          {greeting}, <br />
+          <span className="text-zinc-400">{extended.user.username}</span>
         </Typography>
 
-        <div className="w-full h-fit bg-zinc-950 border border-zinc-900 py-6 rounded-2xl flex flex-col gap-4 relative shadow-sm hover:border-zinc-800 transition-colors">
-          <Image
-            src={'/images/raiden-chibi.png'}
-            alt="raiden"
-            width={100}
-            height={100}
-            className="absolute bottom-0 right-4 opacity-50 grayscale hover:grayscale-0 transition-all duration-500"
-          />
-          <div className="w-full flex justify-start items-center px-6">
-            <Typography className="text-zinc-400 text-sm font-medium uppercase tracking-wider">
-              YOUR PROGRESS
-            </Typography>
-          </div>
-          <div className="w-fit flex px-6 gap-10 justify-between items-center z-10">
-            <div className="flex flex-col items-start gap-1">
-              <div className="flex items-baseline gap-2">
-                <Typography className="text-4xl text-white" weight="bold">
-                  {activeCount}
-                </Typography>
-                <Typography className="text-sm text-zinc-500">
-                  /{tasks.length}
-                </Typography>
-              </div>
-              <Typography className="text-sm text-zinc-400">
-                Tugas aktif tersisa
+        {isLoading ? (
+          <div className="w-full h-48 bg-zinc-900 rounded-2xl animate-pulse"></div>
+        ) : (
+          <div className="w-full bg-zinc-950 border border-zinc-900 p-6 rounded-3xl flex items-center justify-between relative overflow-hidden shadow-lg">
+            {/* Background Decoration */}
+            <div className="absolute top-0 right-0 w-32 h-32 bg-zinc-800/10 rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none"></div>
+
+            <div className="flex flex-col gap-1 z-10">
+              <Typography className="text-zinc-400 text-xs font-bold uppercase tracking-widest mb-2">
+                Your Progress
               </Typography>
+              <div className="flex flex-col gap-1">
+                <div className="flex items-baseline gap-2">
+                  <span className="text-4xl font-bold text-white">
+                    {completedCount}
+                  </span>
+                  <span className="text-sm text-zinc-500">
+                    / {totalCount} Selesai
+                  </span>
+                </div>
+                <span className="text-xs text-zinc-500 mt-1">
+                  {activeCount} tugas tersisa
+                </span>
+              </div>
+            </div>
+
+            <div className="z-10 relative">
+              <CircularProgress
+                value={completedCount}
+                max={totalCount}
+                size={90}
+                strokeWidth={8}
+              />
             </div>
           </div>
-        </div>
+        )}
 
         <div className="flex flex-col gap-4">
-          <div className="w-full h-fit flex justify-between items-center">
-            <Typography className="text-white font-semibold">Agenda</Typography>
+          <div className="w-full flex justify-between items-end">
+            <Typography className="text-white text-xl font-bold tracking-tight">
+              Agenda
+            </Typography>
             <Link
               href={'/todo'}
-              className="text-zinc-500 flex items-center gap-2 text-xs hover:text-white transition-colors"
+              className="text-zinc-500 text-xs flex items-center gap-1 hover:text-white transition-colors pb-1"
             >
-              Lihat Semua <ArrowRight size={14} />
+              Lihat Semua <ArrowRight size={12} />
             </Link>
           </div>
 
-          <div className="w-full flex flex-col gap-3">
-            {activeCount === 0 ? (
-              <div className="text-center bg-zinc-950 border border-zinc-900 border-dashed py-8 rounded-xl flex flex-col items-center gap-2">
-                <span className="text-2xl">🎉</span>
-                <p className="text-zinc-300 font-medium">Tidak ada tugas</p>
-                <p className="text-xs text-zinc-600">
-                  Semua tugas sudah selesai. Great job!
-                </p>
+          <div className="flex flex-col gap-3">
+            {isLoading ? (
+              <div className="flex flex-col gap-3">
+                {[1, 2].map((i) => (
+                  <div
+                    key={i}
+                    className="h-24 bg-zinc-900 rounded-2xl animate-pulse"
+                  ></div>
+                ))}
+              </div>
+            ) : activeCount === 0 ? (
+              <div className="text-center bg-zinc-950 border border-zinc-900 border-dashed py-10 rounded-2xl flex flex-col items-center gap-3">
+                <span className="text-4xl">🎉</span>
+                <div className="flex flex-col gap-1">
+                  <p className="text-white font-medium">Semua tugas selesai!</p>
+                  <p className="text-xs text-zinc-500">
+                    Nikmati waktu istirahatmu.
+                  </p>
+                </div>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="mt-2 text-xs border-zinc-800 bg-zinc-900 text-zinc-300 hover:bg-zinc-800 hover:text-white"
+                  onClick={() => router.push('/todo')}
+                >
+                  Buat tugas baru
+                </Button>
               </div>
             ) : (
               activeTasks.slice(0, 3).map((task) => (
                 <div
                   key={task.id}
-                  className="rounded-xl border bg-zinc-950 p-5 shadow-sm transition-all hover:bg-zinc-900/50 border-zinc-900 group"
+                  className="rounded-2xl border bg-zinc-950 p-5 shadow-sm transition-all active:scale-[0.99] border-zinc-900 relative overflow-hidden group"
                 >
-                  <div className="flex items-start gap-4">
+                  <div className="flex items-start gap-4 z-10 relative">
+                    <div className="mt-1">
+                      <Circle className="w-5 h-5 text-zinc-600" />
+                    </div>
                     <div className="flex-1 min-w-0">
-                      <h3 className="font-medium mb-1 text-zinc-200 group-hover:text-white transition-colors">
+                      <h3 className="font-semibold text-zinc-100 mb-1 group-hover:text-white transition-colors">
                         {task.title}
                       </h3>
-                      <p className="text-xs text-zinc-500 mb-3 line-clamp-2">
+                      <p className="text-xs text-zinc-500 mb-3 line-clamp-1">
                         {task.desc}
                       </p>
-                      <div className="flex flex-wrap items-center gap-2 text-[10px] uppercase tracking-wide">
+                      <div className="flex flex-wrap items-center gap-2 text-[10px] uppercase tracking-wide font-medium">
                         <span
-                          className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 font-semibold ${getPriorityColor(
-                            task.prioritas,
-                          )}`}
+                          className={`px-2 py-0.5 rounded-md ${getPriorityColor(task.prioritas)}`}
                         >
                           {getPriorityLabel(task.prioritas)}
                         </span>
-                        <span className="inline-flex items-center gap-1.5 text-zinc-500 bg-zinc-900/50 px-2 py-1 rounded-full">
-                          <Tag className="h-3 w-3" /> {task.category}
+                        <span className="flex items-center gap-1 text-zinc-500">
+                          <Tag className="w-3 h-3" /> {task.category}
                         </span>
-                        <span className="inline-flex items-center gap-1.5 text-zinc-500 bg-zinc-900/50 px-2 py-1 rounded-full">
-                          <Clock className="h-3 w-3" />{' '}
+                        <span className="flex items-center gap-1 text-zinc-500">
+                          <Clock className="w-3 h-3" />{' '}
                           {parseISOToString(task.deadline)}
                         </span>
                       </div>
@@ -243,36 +295,32 @@ export default function Page() {
           </div>
         </div>
 
-        {activeCount === 0 && (
-          <div className="w-full h-fit py-6 bg-zinc-950 border border-zinc-900 rounded-xl flex flex-col gap-4 relative shadow-sm">
-            <Image
-              src={'/images/raiden-chibi.png'}
-              alt="raiden"
-              width={80}
-              height={80}
-              className="absolute right-4 bottom-0 opacity-30 grayscale"
-            />
-            <div className="w-full flex gap-2 px-6">
-              <div className="flex flex-col items-start justify-center h-full w-full gap-1">
-                <Typography weight="bold" className="text-white text-lg">
-                  Bagaimana Hari Ini?
-                </Typography>
-                <Typography className="text-sm text-zinc-500">
-                  Catat kegiatanmu dan rencanakan hari esok.
-                </Typography>
-              </div>
-            </div>
-            <div className="w-full flex justify-start items-center px-6 z-10">
+        {activeCount === 0 && !isLoading && (
+          <div className="w-full bg-zinc-950 border border-zinc-900 rounded-3xl p-6 flex items-center justify-between shadow-sm mt-2">
+            <div className="flex flex-col gap-2">
+              <Typography
+                weight="bold"
+                className="text-white text-lg leading-tight"
+              >
+                Mulai Rencanakan <br /> Hari Esok
+              </Typography>
               <Button
-                className="bg-white hover:bg-zinc-200 text-black font-semibold rounded-lg px-6"
+                size="sm"
+                className="w-fit bg-white hover:bg-zinc-200 text-black font-semibold rounded-full px-5 text-xs mt-1"
                 onClick={() => router.push('/todo')}
               >
                 Catat Sekarang
               </Button>
             </div>
+            <Image
+              src={'/images/raiden-chibi.png'} // Fallback or keep if exists
+              alt="character"
+              width={80}
+              height={80}
+              className="opacity-50 grayscale"
+            />
           </div>
         )}
-        <div className="py-12"></div>
       </div>
     </Layouts>
   )
