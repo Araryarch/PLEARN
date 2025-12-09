@@ -254,10 +254,10 @@ export default function QuizPage() {
                           if (isAnswered) {
                             if (isCorrect)
                               btnClass =
-                                'w-full justify-start text-left p-4 md:p-5 h-auto bg-white text-black border-white font-medium'
+                                'w-full justify-start text-left p-4 md:p-5 h-auto bg-green-500 text-white border-green-500 font-medium'
                             else if (isSelected && !isCorrect)
                               btnClass =
-                                'w-full justify-start text-left p-4 md:p-5 h-auto bg-zinc-900 text-zinc-500 border-zinc-800 opacity-50'
+                                'w-full justify-start text-left p-4 md:p-5 h-auto bg-red-500 text-white border-red-500 font-medium'
                           }
 
                           return (
@@ -274,13 +274,13 @@ export default function QuizPage() {
                               {opt}
                               {isAnswered && isCorrect && (
                                 <CheckCircle2
-                                  className="ml-auto text-black"
+                                  className="ml-auto text-white"
                                   size={20}
                                 />
                               )}
                               {isAnswered && isSelected && !isCorrect && (
                                 <XCircle
-                                  className="ml-auto text-zinc-500"
+                                  className="ml-auto text-white"
                                   size={20}
                                 />
                               )}
