@@ -5,6 +5,7 @@ import { QuizQuestion } from './types'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import Layouts from '@/Layouts/Layouts'
 import { App } from '@capacitor/app'
+import { Suspense } from 'react'
 
 import { useChatbot } from './hooks/useChatbot'
 import { useDropdown } from './hooks/useDropdown'
@@ -14,7 +15,7 @@ import { EmptyState } from './components/EmptyState'
 import { MessageBubble } from './components/MessageBubble'
 import { ChatSkeleton } from './components/ChatSkeleton'
 
-export default function Chatbot() {
+function ChatbotContent() {
   const router = useRouter()
   const {
     messages,
@@ -98,60 +99,68 @@ export default function Chatbot() {
   )
 
   return (
-    <Layouts>
-      <div className="flex flex-col h-full w-full relative bg-[#1e1e2e]">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-blue-900/20 via-[#1e1e2e] to-[#1e1e2e] pointer-events-none" />
+    <div className="flex flex-col h-full w-full relative bg-[#1e1e2e]">
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-blue-900/20 via-[#1e1e2e] to-[#1e1e2e] pointer-events-none" />
 
-        <ChatHeader
-          aiMode={aiMode}
-          setAiMode={setAiMode}
-          dropdownOpen={dropdownOpen}
-          toggleDropdown={toggleDropdown}
-          dropdownRef={dropdownRef}
-          buttonRef={triggerRef}
-        />
+      <ChatHeader
+        aiMode={aiMode}
+        setAiMode={setAiMode}
+        dropdownOpen={dropdownOpen}
+        toggleDropdown={toggleDropdown}
+        dropdownRef={dropdownRef}
+        buttonRef={triggerRef}
+      />
 
-        <div className="flex-1 flex flex-col overflow-hidden w-full">
-          {!hasMessages ? (
-            <div className="flex-1 overflow-y-auto">
-              <EmptyState setInput={setInput}>{chatInput}</EmptyState>
-            </div>
-          ) : (
-            <ScrollArea className="flex-1 w-full h-full">
-              <div className="px-4 py-6 space-y-6 pb-4 container mx-auto max-w-4xl">
-                {messages.map((msg) => (
-                  <MessageBubble
-                    key={msg.id}
-                    message={msg}
-                    userAvatar={extended?.user?.avatar || '/default-avatar.png'}
-                    copiedId={copiedId}
-                    onCopy={handleCopy}
-                    onSpeak={handleTextToSpeech}
-                    onEdit={handleStartEdit}
-                    onSaveEdit={handleEditMessage}
-                    onCancelEdit={handleCancelEdit}
-                    onDelete={handleDeleteMessage}
-                    onRetry={handleRetry}
-                    onAddToDatabase={handleAddToDatabase}
-                    onEditTextChange={handleEditTextChange}
-                    onStartQuiz={handleStartQuiz}
-                  />
-                ))}
-
-                {isTyping && <ChatSkeleton />}
-
-                <div ref={messagesEndRef} className="h-4" />
-              </div>
-            </ScrollArea>
-          )}
-        </div>
-
-        {hasMessages && (
-          <div className="flex-none w-full z-20 bg-gradient-to-t from-[#1e1e2e] via-[#1e1e2e] to-transparent pt-10 pb-2">
-            {chatInput}
+      <div className="flex-1 flex flex-col overflow-hidden w-full">
+        {!hasMessages ? (
+          <div className="flex-1 overflow-y-auto">
+            <EmptyState setInput={setInput}>{chatInput}</EmptyState>
           </div>
+        ) : (
+          <ScrollArea className="flex-1 w-full h-full">
+            <div className="px-4 py-6 space-y-6 pb-4 container mx-auto max-w-4xl">
+              {messages.map((msg) => (
+                <MessageBubble
+                  key={msg.id}
+                  message={msg}
+                  userAvatar={extended?.user?.avatar || '/default-avatar.png'}
+                  copiedId={copiedId}
+                  onCopy={handleCopy}
+                  onSpeak={handleTextToSpeech}
+                  onEdit={handleStartEdit}
+                  onSaveEdit={handleEditMessage}
+                  onCancelEdit={handleCancelEdit}
+                  onDelete={handleDeleteMessage}
+                  onRetry={handleRetry}
+                  onAddToDatabase={handleAddToDatabase}
+                  onEditTextChange={handleEditTextChange}
+                  onStartQuiz={handleStartQuiz}
+                />
+              ))}
+
+              {isTyping && <ChatSkeleton />}
+
+              <div ref={messagesEndRef} className="h-4" />
+            </div>
+          </ScrollArea>
         )}
       </div>
+
+      {hasMessages && (
+        <div className="flex-none w-full z-20 bg-gradient-to-t from-[#1e1e2e] via-[#1e1e2e] to-transparent pt-10 pb-2">
+          {chatInput}
+        </div>
+      )}
+    </div>
+  )
+}
+
+export default function Chatbot() {
+  return (
+    <Layouts>
+      <Suspense fallback={<div className="h-full w-full bg-[#1e1e2e]" />}>
+        <ChatbotContent />
+      </Suspense>
     </Layouts>
   )
 }
