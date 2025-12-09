@@ -25,12 +25,14 @@ interface LayoutsProps {
   children: React.ReactNode
   topBotBar?: React.ReactNode
   isInputFocused?: boolean
+  hideBottomNav?: boolean
 }
 
 export default function Layouts({
   children,
   topBotBar,
   isInputFocused,
+  hideBottomNav = false,
 }: LayoutsProps) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false)
@@ -134,11 +136,15 @@ export default function Layouts({
       {/* Mobile Navigation */}
       <>
         <div
-          className={`md:hidden fixed bottom-0 left-0 right-0 z-50 ${isInputFocused ? 'pb-0' : 'pb-[env(safe-area-inset-bottom)] bg-[#1e1e2e]'} `}
+          className={`md:hidden fixed bottom-0 left-0 right-0 z-50 ${
+            isInputFocused || hideBottomNav
+              ? 'pb-0 pointer-events-none'
+              : 'pb-[env(safe-area-inset-bottom)] bg-[#1e1e2e]'
+          } `}
         >
           {topBotBar}
-          {!isInputFocused && (
-            <div className="bg-[#1e1e2e] border-t border-b border-[#313244] px-2 py-2">
+          {!isInputFocused && !hideBottomNav && (
+            <div className="bg-[#1e1e2e] border-t border-b border-[#313244] px-2 py-2 pointer-events-auto">
               <div className="flex justify-around items-center max-w-md mx-auto">
                 {navigationItems.map((item) => {
                   const Icon = item.icon
@@ -175,7 +181,9 @@ export default function Layouts({
       {isMobileMenuOpen && (
         <div className="md:hidden fixed inset-0 z-50 bg-black/40 backdrop-blur-sm">
           <div
-            className={`fixed bottom-0 left-0 right-0 bg-[#1e1e2e] rounded-t-3xl border-t border-[#313244] p-6 ${isInputFocused ? 'pb-0' : 'pb-[env(safe-area-inset-bottom)]'} `}
+            className={`fixed bottom-0 left-0 right-0 bg-[#1e1e2e] rounded-t-3xl border-t border-[#313244] p-6 ${
+              isInputFocused ? 'pb-0' : 'pb-[env(safe-area-inset-bottom)]'
+            } `}
           >
             <div className="flex items-center justify-between mb-6">
               <h3 className="text-lg font-semibold text-[#cdd6f4]">Menu</h3>
@@ -214,9 +222,11 @@ export default function Layouts({
 
       {/* Main Content */}
       <div
-        className={`${
-          isSidebarCollapsed ? 'md:pl-20' : 'md:pl-64'
-        } ${isInputFocused ? 'pb-0!' : 'pb-[env(safe-area-inset-bottom)]!'} pt-[env(safe-area-inset-top)]! transition-all duration-300 bg-[#1e1e2e] min-h-screen h-screen text-[#cdd6f4] relative safe-area`}
+        className={`${isSidebarCollapsed ? 'md:pl-20' : 'md:pl-64'} ${
+          isInputFocused || hideBottomNav
+            ? 'pb-0!'
+            : 'pb-[env(safe-area-inset-bottom)]!'
+        } pt-[env(safe-area-inset-top)]! transition-all duration-300 bg-[#1e1e2e] min-h-screen h-screen text-[#cdd6f4] relative safe-area`}
       >
         {children}
       </div>
