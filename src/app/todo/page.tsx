@@ -25,6 +25,7 @@ import {
 } from '@/components/ui/popover'
 import { Calendar } from '@/components/ui/calendar'
 import { parseISOToString } from '@/lib/dateParser'
+import { ScrollArea } from '@/components/ui/scroll-area'
 
 interface Task {
   id: number
@@ -323,98 +324,102 @@ export default function DailyTasksPage() {
           </div>
 
           {/* tasks */}
-          <div className="space-y-4 max-h-full overflow-y-auto pb-32">
-            {filteredTasks.length > 0 ? (
-              filteredTasks.map((task) => (
-                <div
-                  key={task.id}
-                  className={`group rounded-2xl border bg-zinc-950 p-5 shadow-sm transition-all hover:border-zinc-700 ${task.status === 'Selesai' ? 'border-zinc-900 opacity-50 bg-black' : 'border-zinc-900'}`}
-                >
-                  <div className="flex items-start gap-4">
-                    <button
-                      onClick={() => toggleTaskCompletion(task.id)}
-                      className="mt-1 text-zinc-600 hover:text-white transition-colors"
-                    >
-                      {task.status === 'Selesai' ? (
-                        <CheckCircle2 className="h-6 w-6 text-zinc-400" />
-                      ) : (
-                        <Circle className="h-6 w-6" />
-                      )}
-                    </button>
-                    <div className="flex-1 min-w-0">
-                      <h3
-                        className={`font-medium mb-1.5 text-base ${task.status === 'Selesai' ? 'text-zinc-500 line-through' : 'text-zinc-100'}`}
+          <ScrollArea className="h-[calc(100vh-400px)] pr-4">
+            <div className="space-y-4 pb-8">
+              {filteredTasks.length > 0 ? (
+                filteredTasks.map((task) => (
+                  <div
+                    key={task.id}
+                    className={`group rounded-2xl border bg-zinc-950 p-5 shadow-sm transition-all hover:border-zinc-700 ${task.status === 'Selesai' ? 'border-zinc-900 opacity-50 bg-black' : 'border-zinc-900'}`}
+                  >
+                    <div className="flex items-start gap-4">
+                      <button
+                        onClick={() => toggleTaskCompletion(task.id)}
+                        className="mt-1 text-zinc-600 hover:text-white transition-colors"
                       >
-                        {task.title}
-                      </h3>
-                      <p className="text-sm text-zinc-500 mb-3">{task.desc}</p>
-                      <div className="flex flex-wrap items-center gap-2 text-xs">
-                        <span
-                          className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 font-medium ${getPriorityColor(task.prioritas)}`}
+                        {task.status === 'Selesai' ? (
+                          <CheckCircle2 className="h-6 w-6 text-zinc-400" />
+                        ) : (
+                          <Circle className="h-6 w-6" />
+                        )}
+                      </button>
+                      <div className="flex-1 min-w-0">
+                        <h3
+                          className={`font-medium mb-1.5 text-base ${task.status === 'Selesai' ? 'text-zinc-500 line-through' : 'text-zinc-100'}`}
                         >
-                          {getPriorityLabel(task.prioritas)}
-                        </span>
-                        <span className="inline-flex items-center gap-1.5 text-zinc-500 bg-zinc-900/50 px-2.5 py-1 rounded-full border border-zinc-800">
-                          <Tag className="h-3 w-3" /> {task.category}
-                        </span>
-                        <span className="inline-flex items-center gap-1.5 text-zinc-500 bg-zinc-900/50 px-2.5 py-1 rounded-full border border-zinc-800">
-                          <Clock className="h-3 w-3" />{' '}
-                          {parseISOToString(task.deadline)}
-                        </span>
+                          {task.title}
+                        </h3>
+                        <p className="text-sm text-zinc-500 mb-3">
+                          {task.desc}
+                        </p>
+                        <div className="flex flex-wrap items-center gap-2 text-xs">
+                          <span
+                            className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 font-medium ${getPriorityColor(task.prioritas)}`}
+                          >
+                            {getPriorityLabel(task.prioritas)}
+                          </span>
+                          <span className="inline-flex items-center gap-1.5 text-zinc-500 bg-zinc-900/50 px-2.5 py-1 rounded-full border border-zinc-800">
+                            <Tag className="h-3 w-3" /> {task.category}
+                          </span>
+                          <span className="inline-flex items-center gap-1.5 text-zinc-500 bg-zinc-900/50 px-2.5 py-1 rounded-full border border-zinc-800">
+                            <Clock className="h-3 w-3" />{' '}
+                            {parseISOToString(task.deadline)}
+                          </span>
+                        </div>
+                      </div>
+                      <div className="relative">
+                        <button
+                          onClick={() =>
+                            setShowTaskMenu(
+                              showTaskMenu === task.id ? null : task.id,
+                            )
+                          }
+                          className="p-2 -mr-2 text-zinc-600 hover:text-white hover:bg-zinc-900 rounded-md transition-colors opacity-0 group-hover:opacity-100"
+                        >
+                          <MoreVertical className="h-5 w-5" />
+                        </button>
+                        {showTaskMenu === task.id && (
+                          <div className="absolute right-0 mt-2 w-32 rounded-lg border border-zinc-800 bg-zinc-950 shadow-xl z-20 overflow-hidden">
+                            {task.status !== 'Selesai' && (
+                              <button
+                                onClick={() => {
+                                  setEditingTask(task)
+                                  setShowTaskMenu(null)
+                                }}
+                                className="w-full flex items-center gap-2 px-4 py-2.5 text-sm text-zinc-300 hover:bg-zinc-900 hover:text-white transition-colors"
+                              >
+                                <Edit2 className="h-3.5 w-3.5" /> Edit
+                              </button>
+                            )}
+                            <button
+                              onClick={() => deleteTask(task.id)}
+                              className="w-full flex items-center gap-2 px-4 py-2.5 text-sm text-red-400 hover:bg-red-500/10 transition-colors"
+                            >
+                              <Trash2 className="h-3.5 w-3.5" /> Hapus
+                            </button>
+                          </div>
+                        )}
                       </div>
                     </div>
-                    <div className="relative">
-                      <button
-                        onClick={() =>
-                          setShowTaskMenu(
-                            showTaskMenu === task.id ? null : task.id,
-                          )
-                        }
-                        className="p-2 -mr-2 text-zinc-600 hover:text-white hover:bg-zinc-900 rounded-md transition-colors opacity-0 group-hover:opacity-100"
-                      >
-                        <MoreVertical className="h-5 w-5" />
-                      </button>
-                      {showTaskMenu === task.id && (
-                        <div className="absolute right-0 mt-2 w-32 rounded-lg border border-zinc-800 bg-zinc-950 shadow-xl z-20 overflow-hidden">
-                          {task.status !== 'Selesai' && (
-                            <button
-                              onClick={() => {
-                                setEditingTask(task)
-                                setShowTaskMenu(null)
-                              }}
-                              className="w-full flex items-center gap-2 px-4 py-2.5 text-sm text-zinc-300 hover:bg-zinc-900 hover:text-white transition-colors"
-                            >
-                              <Edit2 className="h-3.5 w-3.5" /> Edit
-                            </button>
-                          )}
-                          <button
-                            onClick={() => deleteTask(task.id)}
-                            className="w-full flex items-center gap-2 px-4 py-2.5 text-sm text-red-400 hover:bg-red-500/10 transition-colors"
-                          >
-                            <Trash2 className="h-3.5 w-3.5" /> Hapus
-                          </button>
-                        </div>
-                      )}
-                    </div>
                   </div>
+                ))
+              ) : (
+                <div className="py-20 text-center">
+                  <div className="mb-4 text-5xl opacity-20 filter grayscale">
+                    ✨
+                  </div>
+                  <h3 className="text-lg font-medium text-white mb-2">
+                    Tidak ada tugas
+                  </h3>
+                  <p className="text-sm text-zinc-500">
+                    {searchQuery
+                      ? 'Tidak ada tugas yang cocok dengan pencarian'
+                      : 'Semua beres! Nikmati harimu.'}
+                  </p>
                 </div>
-              ))
-            ) : (
-              <div className="py-20 text-center">
-                <div className="mb-4 text-5xl opacity-20 filter grayscale">
-                  ✨
-                </div>
-                <h3 className="text-lg font-medium text-white mb-2">
-                  Tidak ada tugas
-                </h3>
-                <p className="text-sm text-zinc-500">
-                  {searchQuery
-                    ? 'Tidak ada tugas yang cocok dengan pencarian'
-                    : 'Semua beres! Nikmati harimu.'}
-                </p>
-              </div>
-            )}
-          </div>
+              )}
+            </div>
+          </ScrollArea>
 
           {/* add task button */}
           <button
