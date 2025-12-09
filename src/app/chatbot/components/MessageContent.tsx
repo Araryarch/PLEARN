@@ -30,10 +30,10 @@ export const MessageContent = memo(
         [&>ul]:list-disc [&>ul]:pl-4 
         [&>ol]:list-decimal [&>ol]:pl-4
         [&_table]:w-full [&_table]:my-4 [&_table]:border-collapse [&_table]:overflow-hidden [&_table]:rounded-lg
-        [&_thead]:bg-zinc-900
-        [&_th]:px-4 [&_th]:py-3 [&_th]:text-left [&_th]:text-xs [&_th]:font-semibold [&_th]:text-white [&_th]:uppercase [&_th]:tracking-wider [&_th]:border-b-2 [&_th]:border-zinc-800
-        [&_tbody_tr]:border-b [&_tbody_tr]:border-zinc-900 [&_tbody_tr]:hover:bg-zinc-900/50 [&_tbody_tr]:transition-colors
-        [&_td]:px-4 [&_td]:py-3 [&_td]:text-sm [&_td]:text-zinc-400"
+        [&_thead]:bg-muted
+        [&_th]:px-4 [&_th]:py-3 [&_th]:text-left [&_th]:text-xs [&_th]:font-semibold [&_th]:text-foreground [&_th]:uppercase [&_th]:tracking-wider [&_th]:border-b-2 [&_th]:border-border
+        [&_tbody_tr]:border-b [&_tbody_tr]:border-border [&_tbody_tr]:hover:bg-muted/50 [&_tbody_tr]:transition-colors
+        [&_td]:px-4 [&_td]:py-3 [&_td]:text-sm [&_td]:text-muted-foreground"
       >
         <ReactMarkdown
           remarkPlugins={[remarkGfm, remarkMath]}
@@ -42,7 +42,7 @@ export const MessageContent = memo(
             a: ({ ...props }) => (
               <a
                 {...props}
-                className="text-white underline decoration-zinc-500 underline-offset-4 hover:decoration-white transition-all font-medium"
+                className="text-primary underline decoration-muted-foreground underline-offset-4 hover:decoration-primary transition-all font-medium"
                 target="_blank"
                 rel="noopener noreferrer"
               />
@@ -50,8 +50,8 @@ export const MessageContent = memo(
             code({ inline, className, children, ...props }: CodeProps) {
               const match = /language-(\w+)/.exec(className || '')
               return !inline && match ? (
-                <div className="relative rounded-lg overflow-hidden my-3 max-w-full overflow-x-auto ring-1 ring-zinc-800">
-                  <div className="absolute right-2 top-2 z-10 text-xs text-zinc-400 bg-black/50 px-2 py-1 rounded select-none backdrop-blur-sm border border-white/10">
+                <div className="relative rounded-lg overflow-hidden my-3 max-w-full overflow-x-auto ring-1 ring-border">
+                  <div className="absolute right-2 top-2 z-10 text-xs text-muted-foreground bg-muted/80 px-2 py-1 rounded select-none backdrop-blur-sm border border-border">
                     {match[1]}
                   </div>
                   <SyntaxHighlighter
@@ -78,7 +78,7 @@ export const MessageContent = memo(
                 </div>
               ) : (
                 <code
-                  className={`${className} bg-zinc-800 text-zinc-200 rounded px-1.5 py-0.5 font-mono text-sm border border-zinc-700`}
+                  className={`${className} bg-muted text-foreground rounded px-1.5 py-0.5 font-mono text-sm border border-border`}
                   {...props}
                 >
                   {children}

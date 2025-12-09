@@ -33,10 +33,10 @@ export const EmptyState = ({ setInput, children }: EmptyStateProps) => {
     <div className="flex flex-col items-center justify-center min-h-[85vh] w-full max-w-4xl mx-auto px-4">
       {/* Hero Section */}
       <div className="mb-8 text-center space-y-2 animate-in fade-in slide-in-from-bottom-4 duration-700">
-        <h2 className="text-4xl md:text-6xl font-black tracking-tight text-white pb-2">
+        <h2 className="text-4xl md:text-6xl font-black tracking-tight text-foreground pb-2">
           PLEARN
         </h2>
-        <p className="text-lg text-zinc-400 font-medium">
+        <p className="text-lg text-muted-foreground font-medium">
           Your personal learning companion.
         </p>
       </div>
@@ -50,14 +50,14 @@ export const EmptyState = ({ setInput, children }: EmptyStateProps) => {
           <button
             key={idx}
             onClick={() => setInput(item.prompt)}
-            className="flex items-center gap-3 p-3 rounded-lg text-left transition-all hover:bg-zinc-900 border border-transparent hover:border-zinc-800 group"
+            className="glass-card glass-shine flex items-center gap-3 p-3 rounded-lg text-left transition-all hover:bg-muted/50 border border-transparent hover:border-border group"
           >
             <div
-              className={`p-1.5 rounded-md transition-colors bg-zinc-800 text-zinc-300`}
+              className={`p-1.5 rounded-md transition-colors bg-muted text-foreground`}
             >
               {item.icon}
             </div>
-            <span className="text-sm font-medium text-white opacity-70 group-hover:opacity-100 truncate">
+            <span className="text-sm font-medium text-foreground opacity-70 group-hover:opacity-100 truncate">
               {item.text}
             </span>
           </button>

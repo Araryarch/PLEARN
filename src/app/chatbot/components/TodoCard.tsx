@@ -8,9 +8,9 @@ interface TodoCardProps {
 
 export const TodoCard = ({ item }: TodoCardProps) => {
   return (
-    <div className="p-4 rounded-xl bg-zinc-950 border border-zinc-900 hover:border-zinc-800 transition-colors">
+    <div className="glass-card glass-shine p-4 rounded-xl hover:border-primary/50 transition-colors group">
       <div className="flex items-start justify-between gap-3 mb-3">
-        <h3 className="font-bold text-base flex-1 text-white leading-tight">
+        <h3 className="font-bold text-base flex-1 text-foreground leading-tight">
           {item.title}
         </h3>
         <span
@@ -23,12 +23,12 @@ export const TodoCard = ({ item }: TodoCardProps) => {
         </span>
       </div>
 
-      <p className="text-sm mb-4 text-zinc-400 line-clamp-2 leading-relaxed">
+      <p className="text-sm mb-4 text-muted-foreground line-clamp-2 leading-relaxed">
         {item.description}
       </p>
 
       <div className="flex items-center justify-between gap-4 text-xs font-medium">
-        <div className="flex items-center gap-4 text-zinc-500">
+        <div className="flex items-center gap-4 text-muted-foreground">
           <div className="flex items-center gap-1.5">
             <Flag
               size={14}
@@ -41,7 +41,7 @@ export const TodoCard = ({ item }: TodoCardProps) => {
           </div>
 
           <div className="flex items-center gap-1.5">
-            <Calendar size={14} className="text-zinc-600" />
+            <Calendar size={14} className="text-muted-foreground" />
             <span>{formatDate(item.deadline)}</span>
           </div>
         </div>

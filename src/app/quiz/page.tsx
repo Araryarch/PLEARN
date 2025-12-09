@@ -256,10 +256,10 @@ export default function QuizPage() {
                           if (isAnswered) {
                             if (isCorrect)
                               btnClass =
-                                'w-full justify-start text-left p-4 md:p-5 h-auto bg-green-500 text-white border-green-500 font-medium'
+                                'w-full justify-start text-left p-4 md:p-5 h-auto bg-green-500/10 text-green-500 border-green-500 font-medium border-2'
                             else if (isSelected && !isCorrect)
                               btnClass =
-                                'w-full justify-start text-left p-4 md:p-5 h-auto bg-red-500 text-white border-red-500 font-medium'
+                                'w-full justify-start text-left p-4 md:p-5 h-auto bg-red-500/10 text-red-500 border-red-500 font-medium border-2'
                           }
 
                           return (
@@ -276,13 +276,13 @@ export default function QuizPage() {
                               {opt}
                               {isAnswered && isCorrect && (
                                 <CheckCircle2
-                                  className="ml-auto text-white"
+                                  className="ml-auto text-green-500"
                                   size={20}
                                 />
                               )}
                               {isAnswered && isSelected && !isCorrect && (
                                 <XCircle
-                                  className="ml-auto text-white"
+                                  className="ml-auto text-red-500"
                                   size={20}
                                 />
                               )}
@@ -463,8 +463,8 @@ export default function QuizPage() {
                               ? 'bg-foreground text-background ring-2 ring-foreground ring-offset-2 ring-offset-background'
                               : isAnswered
                                 ? isCorrect
-                                  ? 'bg-muted text-foreground border border-border'
-                                  : 'bg-destructive/10 text-destructive border border-destructive/20'
+                                  ? 'bg-green-500/10 text-green-500 border-green-500'
+                                  : 'bg-red-500/10 text-red-500 border-red-500'
                                 : 'bg-card text-muted-foreground border border-border hover:bg-muted hover:text-foreground'
                           }
                         `}
@@ -490,11 +490,11 @@ export default function QuizPage() {
                     <span className="text-muted-foreground">Current</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <div className="w-6 h-6 rounded bg-muted border border-border"></div>
+                    <div className="w-6 h-6 rounded bg-green-500/10 border border-green-500"></div>
                     <span className="text-muted-foreground">Correct</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <div className="w-6 h-6 rounded bg-destructive/10 border border-destructive/20"></div>
+                    <div className="w-6 h-6 rounded bg-red-500/10 border border-red-500"></div>
                     <span className="text-muted-foreground">Wrong</span>
                   </div>
                   <div className="flex items-center gap-2">
@@ -577,8 +577,8 @@ export default function QuizPage() {
                                     ? 'bg-foreground text-background ring-2 ring-foreground ring-offset-2 ring-offset-background'
                                     : isAnswered
                                       ? isCorrect
-                                        ? 'bg-muted text-foreground border border-border'
-                                        : 'bg-destructive/10 text-destructive border border-destructive/20'
+                                        ? 'bg-green-500/10 text-green-500 border-green-500'
+                                        : 'bg-red-500/10 text-red-500 border-red-500'
                                       : 'bg-card text-muted-foreground border border-border'
                                 }
                               `}

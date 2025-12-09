@@ -17,7 +17,7 @@ export const ChatSkeleton = () => {
       {/* Bot Avatar Placeholder */}
       <div
         className={`w-8 h-8 rounded-full flex-shrink-0 ${
-          isLongWait ? 'bg-zinc-700' : 'bg-zinc-900'
+          isLongWait ? 'bg-muted-foreground/40' : 'bg-muted'
         }`}
       />
 
@@ -27,7 +27,9 @@ export const ChatSkeleton = () => {
           <div className="h-4 rounded mb-1 bg-opacity-50 transition-colors duration-500 flex items-center w-fit">
             <span
               className={`text-xs font-medium ${
-                isLongWait ? 'text-zinc-400' : 'text-zinc-600'
+                isLongWait
+                  ? 'text-muted-foreground'
+                  : 'text-muted-foreground/70'
               }`}
             >
               Thinking... ({seconds}s)
@@ -39,17 +41,17 @@ export const ChatSkeleton = () => {
           {/* Varied width lines for natural look */}
           <div
             className={`h-4 w-[92%] rounded-md transition-colors duration-500 ${
-              isLongWait ? 'bg-zinc-800' : 'bg-zinc-950'
+              isLongWait ? 'bg-muted' : 'bg-muted/50'
             }`}
           />
           <div
             className={`h-4 w-[78%] rounded-md transition-colors duration-500 ${
-              isLongWait ? 'bg-zinc-800' : 'bg-zinc-950'
+              isLongWait ? 'bg-muted' : 'bg-muted/50'
             }`}
           />
           <div
             className={`h-4 w-[85%] rounded-md transition-colors duration-500 ${
-              isLongWait ? 'bg-zinc-800' : 'bg-zinc-950'
+              isLongWait ? 'bg-muted' : 'bg-muted/50'
             }`}
           />
         </div>
