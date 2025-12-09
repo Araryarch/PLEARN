@@ -70,7 +70,7 @@ export default function Layouts({ children }: LayoutsProps) {
               alt={extended.user.username || 'User'}
               width={36}
               height={36}
-              className="w-9 h-9 rounded-full object-cover ring-2 ring-zinc-800 grayscale hover:grayscale-0 transition-all"
+              className="w-9 h-9 rounded-full object-cover ring-2 ring-zinc-800 grayscale"
             />
           ) : (
             <div className="w-9 h-9 rounded-full bg-zinc-900 flex items-center justify-center text-xs font-semibold text-zinc-300 border border-zinc-800">

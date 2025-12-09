@@ -165,7 +165,7 @@ export default function Page() {
               alt="profile"
               width={500}
               height={500}
-              className="object-cover"
+              className="object-cover grayscale"
             />
             <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-[1px]">
               <Typography className="text-white text-xs font-semibold uppercase tracking-wider">

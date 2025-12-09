@@ -33,7 +33,7 @@ export const EmptyState = ({ setInput, children }: EmptyStateProps) => {
     <div className="flex flex-col items-center justify-center min-h-[85vh] w-full max-w-4xl mx-auto px-4">
       {/* Hero Section */}
       <div className="mb-8 text-center space-y-2 animate-in fade-in slide-in-from-bottom-4 duration-700">
-        <h2 className="text-4xl md:text-6xl font-black tracking-tight bg-gradient-to-b from-white to-white/40 bg-clip-text text-transparent pb-2">
+        <h2 className="text-4xl md:text-6xl font-black tracking-tight text-white pb-2">
           PLEARN
         </h2>
         <p className="text-lg text-zinc-400 font-medium">
