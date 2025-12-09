@@ -99,8 +99,8 @@ function ChatbotContent() {
   )
 
   return (
-    <div className="flex flex-col h-full w-full relative bg-[#1e1e2e]">
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-blue-900/20 via-[#1e1e2e] to-[#1e1e2e] pointer-events-none" />
+    <div className="flex flex-col h-full w-full relative bg-black">
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-zinc-900/20 via-black to-black pointer-events-none" />
 
       <ChatHeader
         aiMode={aiMode}
@@ -147,7 +147,7 @@ function ChatbotContent() {
       </div>
 
       {hasMessages && (
-        <div className="flex-none w-full z-20 bg-gradient-to-t from-[#1e1e2e] via-[#1e1e2e] to-transparent pt-10 pb-2">
+        <div className="flex-none w-full z-20 bg-gradient-to-t from-black via-black to-transparent pt-10 pb-2">
           {chatInput}
         </div>
       )}
