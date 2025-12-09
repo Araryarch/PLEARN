@@ -274,7 +274,7 @@
 /* Glassmorphism & Effects */
 @layer utilities {
   .glass-card {
-    @apply bg-background/60 backdrop-blur-xl border border-white/10 shadow-lg;
+    @apply bg-background/60 backdrop-blur-xl border border-border/50 shadow-lg;
   }
   
   .glass-shine {

@@ -103,7 +103,7 @@ function ChatbotContent({ openSidebar }: ChatbotContentProps) {
   )
 
   return (
-    <div className="flex flex-col h-full w-full relative bg-black">
+    <div className="flex flex-col h-full w-full relative bg-background">
       <ChatHeader
         aiMode={aiMode}
         setAiMode={setAiMode}
@@ -164,7 +164,7 @@ interface ChatbotWrapperProps {
 
 function ChatbotWrapper({ openSidebar }: ChatbotWrapperProps) {
   return (
-    <Suspense fallback={<div className="h-full w-full bg-black" />}>
+    <Suspense fallback={<div className="h-full w-full bg-background" />}>
       <ChatbotContent openSidebar={openSidebar} />
     </Suspense>
   )

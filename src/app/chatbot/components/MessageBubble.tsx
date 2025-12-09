@@ -75,7 +75,7 @@ export const MessageBubble = ({
                 width={32}
                 height={32}
                 alt="You"
-                className="w-8 h-8 rounded-full object-cover shadow-sm ring-2 ring-white/5 grayscale"
+                className="w-8 h-8 rounded-full object-cover shadow-sm ring-2 ring-border grayscale"
               />
             ) : (
               <div className="w-8 h-8 flex items-center justify-center text-muted-foreground bg-muted rounded-lg">

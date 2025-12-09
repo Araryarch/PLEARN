@@ -39,9 +39,6 @@ export default function Layouts({
           <div className="w-5 h-5 bg-foreground rounded-full" />
           PLEARN
         </span>
-        <div className="md:hidden">
-          <ThemeToggle />
-        </div>
       </div>
 
       {/* Nav */}
@@ -100,7 +97,7 @@ export default function Layouts({
             </div>
           </div>
 
-          <div className="hidden md:block">
+          <div>
             <ThemeToggle />
           </div>
         </div>

@@ -81,7 +81,7 @@ export const ChatInput = ({
             alt="Selected"
             width={80}
             height={80}
-            className="h-20 w-auto rounded-xl border border-white/10 object-cover shadow-2xl ring-1 ring-white/5"
+            className="h-20 w-auto rounded-xl border border-border object-cover shadow-2xl ring-1 ring-border"
           />
           <button
             onClick={onClearImage}
