@@ -1,9 +1,6 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 
-// Enable edge runtime for faster cold starts
-export const runtime = 'edge'
-
 export async function PUT(
   req: Request,
   { params }: { params: Promise<{ id: string }> },

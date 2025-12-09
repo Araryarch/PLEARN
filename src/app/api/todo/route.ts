@@ -1,8 +1,6 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 
-// Enable edge runtime for faster cold starts
-export const runtime = 'edge'
 export const dynamic = 'force-dynamic'
 
 export async function GET(req: Request) {

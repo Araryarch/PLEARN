@@ -191,11 +191,15 @@
 }
 
 .min-h-screen-safe {
-  min-height: calc(100dvh - env(safe-area-inset-top) - env(safe-area-inset-bottom));
+  min-height: calc(
+    100dvh - env(safe-area-inset-top) - env(safe-area-inset-bottom)
+  );
 }
 
 .max-h-screen-safe {
-  max-height: calc(100dvh - env(safe-area-inset-top) - env(safe-area-inset-bottom));
+  max-height: calc(
+    100dvh - env(safe-area-inset-top) - env(safe-area-inset-bottom)
+  );
 }
 
 /* Full Screen Container with Safe Area */
@@ -213,10 +217,56 @@
   bottom: env(safe-area-inset-bottom);
 }
 
+.top-safe {
+  top: env(safe-area-inset-top);
+}
+
+.left-safe {
+  left: env(safe-area-inset-left);
+}
+
+.right-safe {
+  right: env(safe-area-inset-right);
+}
+
+/* Margin Safe Area */
 .mb-safe {
   margin-bottom: env(safe-area-inset-bottom);
 }
 
 .mt-safe {
   margin-top: env(safe-area-inset-top);
+}
+
+.ml-safe {
+  margin-left: env(safe-area-inset-left);
+}
+
+.mr-safe {
+  margin-right: env(safe-area-inset-right);
+}
+
+/* Safe Area with Extra Padding (for comfort) */
+.pt-safe-4 {
+  padding-top: calc(env(safe-area-inset-top) + 1rem);
+}
+
+.pb-safe-4 {
+  padding-bottom: calc(env(safe-area-inset-bottom) + 1rem);
+}
+
+.pt-safe-6 {
+  padding-top: calc(env(safe-area-inset-top) + 1.5rem);
+}
+
+.pb-safe-6 {
+  padding-bottom: calc(env(safe-area-inset-bottom) + 1.5rem);
+}
+
+.pt-safe-8 {
+  padding-top: calc(env(safe-area-inset-top) + 2rem);
+}
+
+.pb-safe-8 {
+  padding-bottom: calc(env(safe-area-inset-bottom) + 2rem);
 }

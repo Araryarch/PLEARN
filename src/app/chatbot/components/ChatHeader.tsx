@@ -25,7 +25,7 @@ export const ChatHeader = ({
   const currentMode = aiModes.find((m) => m.value === aiMode)
 
   return (
-    <div className="px-4 md:px-6 py-3 pt-safe sticky top-0 z-50 flex items-center justify-between flex-none w-full backdrop-blur-xl border-b border-zinc-800 bg-black/80">
+    <div className="px-4 md:px-6 py-3 pt-safe-4 sticky top-0 z-50 flex items-center justify-between flex-none w-full backdrop-blur-xl border-b border-zinc-800 bg-black/80">
       <div className="flex items-center gap-2">
         {/* Mobile Menu Button */}
         {onMenuClick && (

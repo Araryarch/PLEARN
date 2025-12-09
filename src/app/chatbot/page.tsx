@@ -150,7 +150,7 @@ function ChatbotContent({ openSidebar }: ChatbotContentProps) {
       </div>
 
       {hasMessages && (
-        <div className="flex-none w-full z-20 bg-black pt-10 pb-safe">
+        <div className="flex-none w-full z-20 bg-black pt-6 pb-safe-4">
           {chatInput}
         </div>
       )}

@@ -31,7 +31,7 @@ export default function Layouts({
   useEffect(() => setIsOpen(false), [pathname])
 
   const SidebarContent = () => (
-    <div className="flex flex-col h-full bg-zinc-950 border-r border-zinc-900 relative">
+    <div className="flex flex-col h-full bg-zinc-950 border-r border-zinc-900 relative pt-safe">
       {/* Header */}
       <div className="h-16 flex items-center px-6 border-b border-zinc-900">
         <span className="font-bold text-lg text-white tracking-tight flex items-center gap-2">
@@ -70,8 +70,8 @@ export default function Layouts({
       </nav>
 
       {/* User / Footer */}
-      <div className="p-4 border-t border-zinc-900 bg-zinc-950">
-        <div className="flex items-center gap-3">
+      <div className="p-4 pb-safe border-t border-zinc-900 bg-zinc-950">
+        <div className="flex items-center gap-3 pb-2">
           {extended?.user?.avatar ? (
             <Image
               src={extended.user.avatar}
@@ -130,7 +130,7 @@ export default function Layouts({
                 <SidebarContent />
                 <button
                   onClick={() => setIsOpen(false)}
-                  className="absolute top-4 right-4 p-1 rounded-md text-zinc-500 hover:bg-zinc-900 hover:text-white"
+                  className="absolute top-safe right-4 mt-4 p-1.5 rounded-md text-zinc-500 hover:bg-zinc-900 hover:text-white z-10"
                 >
                   <X size={20} />
                 </button>
@@ -144,7 +144,7 @@ export default function Layouts({
       <div className="flex-1 flex flex-col h-[100dvh] md:ml-64 w-full bg-black overflow-hidden">
         {/* Mobile Header - hide if hideHeader is true */}
         {!hideHeader && (
-          <header className="md:hidden h-14 pt-safe bg-zinc-950 border-b border-zinc-900 flex items-center justify-between px-4 sticky top-0 z-30">
+          <header className="md:hidden pt-safe-4 pb-3 bg-zinc-950 border-b border-zinc-900 flex items-center justify-between px-4 sticky top-0 z-30">
             <div className="flex items-center gap-3">
               <button
                 onClick={openSidebar}
@@ -159,7 +159,7 @@ export default function Layouts({
           </header>
         )}
 
-        <main className="flex-1 w-full relative overflow-auto pb-safe">
+        <main className="flex-1 w-full relative overflow-auto pb-safe-4">
           {typeof children === 'function'
             ? children({ openSidebar })
             : children}
