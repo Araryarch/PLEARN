@@ -44,6 +44,7 @@ export const ChatInput = ({
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault()
       onSend()
+      return // Stop here, do not call onKeyPress
     }
     onKeyPress(e)
   }
