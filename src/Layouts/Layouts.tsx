@@ -26,14 +26,9 @@ export default function Layouts({ children }: LayoutsProps) {
     <div className="flex flex-col h-full bg-[#181825] border-r border-[#313244]">
       {/* Header */}
       <div className="h-16 flex items-center px-6 border-b border-[#313244]/50">
-        <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-lg bg-blue-500/20 flex items-center justify-center text-blue-400 font-bold">
-            P
-          </div>
-          <span className="font-bold text-lg text-[#cdd6f4] tracking-tight">
-            PLEARN
-          </span>
-        </div>
+        <span className="font-bold text-lg text-[#cdd6f4] tracking-tight">
+          PLEARN
+        </span>
       </div>
 
       {/* Nav */}

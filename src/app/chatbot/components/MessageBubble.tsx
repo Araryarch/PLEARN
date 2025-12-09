@@ -108,15 +108,17 @@ export const MessageBubble = ({
 
           {/* Bubble */}
           <div
-            className={`px-3 md:px-5 py-2.5 md:py-3.5 rounded-2xl shadow-sm ${isUser ? 'rounded-tr-none' : 'rounded-tl-none'}`}
+            className={`px-3 md:px-5 py-2.5 md:py-3.5 rounded-2xl shadow-sm overflow-hidden break-words ${isUser ? 'rounded-tr-none' : 'rounded-tl-none'}`}
             style={{
               backgroundColor: isUser
                 ? catppuccin.surface1
                 : message.error
                   ? 'rgba(243, 139, 168, 0.1)'
-                  : catppuccin.surface1,
+                  : 'transparent',
               border: message.error ? `1px solid ${catppuccin.red}` : 'none',
               color: catppuccin.text,
+              overflowWrap: 'break-word',
+              wordBreak: 'break-word',
             }}
           >
             {message.image && (

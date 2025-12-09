@@ -4,6 +4,7 @@
 @custom-variant dark (&:is(.dark *));
 @theme {
   --font-Inter: var(--font-Inter);
+  --font-jetbrains-mono: var(--font-jetbrains-mono);
 }
 
 /* ==========
