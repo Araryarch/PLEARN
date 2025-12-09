@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import Layouts from '@/Layouts/Layouts'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
@@ -12,6 +12,9 @@ import {
   XCircle,
   Trophy,
   RefreshCcw,
+  Clock,
+  Target,
+  Award,
 } from 'lucide-react'
 
 export default function QuizPage() {
@@ -21,16 +24,28 @@ export default function QuizPage() {
   const [score, setScore] = useState(0)
   const [selectedOption, setSelectedOption] = useState<number | null>(null)
   const [isAnswered, setIsAnswered] = useState(false)
+  const [answers, setAnswers] = useState<(number | null)[]>([])
+  const [timeElapsed, setTimeElapsed] = useState(0)
+
+  // Timer
+  useEffect(() => {
+    if (status === 'quiz') {
+      const interval = setInterval(() => {
+        setTimeElapsed((t) => t + 1)
+      }, 1000)
+      return () => clearInterval(interval)
+    }
+  }, [status])
 
   // Load quiz from storage on mount
   useEffect(() => {
-    // Add useEffect import
     const stored = localStorage.getItem('activeQuiz')
     if (stored) {
       try {
         const parsed = JSON.parse(stored)
         if (Array.isArray(parsed) && parsed.length > 0) {
           setQuestions(parsed)
+          setAnswers(new Array(parsed.length).fill(null))
           setStatus('quiz')
         }
       } catch (e) {
@@ -50,6 +65,11 @@ export default function QuizPage() {
       setScore((s) => s + 1)
     }
 
+    // Save answer
+    const newAnswers = [...answers]
+    newAnswers[currentQIndex] = index
+    setAnswers(newAnswers)
+
     // Auto next after delay
     setTimeout(() => {
       if (currentQIndex < questions.length - 1) {
@@ -62,169 +82,308 @@ export default function QuizPage() {
     }, 1500)
   }
 
+  const formatTime = (seconds: number) => {
+    const mins = Math.floor(seconds / 60)
+    const secs = seconds % 60
+    return `${mins}:${secs.toString().padStart(2, '0')}`
+  }
+
+  const goToQuestion = (index: number) => {
+    if (isAnswered) return
+    setCurrentQIndex(index)
+    setSelectedOption(null)
+  }
+
   return (
     <Layouts>
-      <div className="flex flex-col h-full w-full min-h-screen relative p-4 pb-24 bg-black text-zinc-50">
-        <div className="max-w-md mx-auto w-full flex-1 flex flex-col justify-center">
-          {/* Header */}
-          <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold mb-2 flex items-center justify-center gap-3 text-white">
-              <BrainCircuit className="text-white" size={32} />
-              AI Quiz
-            </h1>
-            <p className="text-zinc-400">Test your knowledge</p>
-          </div>
+      <div className="flex h-full w-full min-h-screen bg-black text-zinc-50">
+        {/* Main Content */}
+        <div className="flex-1 flex flex-col p-6 pb-24 overflow-y-auto">
+          <div className="max-w-3xl mx-auto w-full flex-1 flex flex-col">
+            {/* Header */}
+            <div className="mb-8">
+              <h1 className="text-3xl font-bold mb-2 flex items-center gap-3 text-white">
+                <BrainCircuit className="text-white" size={32} />
+                AI Quiz
+              </h1>
+              <p className="text-zinc-400">Test your knowledge</p>
+            </div>
 
-          {/* IDLE / EMPTY STATE */}
-          {status === 'idle' && (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="text-center space-y-4"
-            >
-              <Card className="bg-zinc-950 border-zinc-900 py-8 shadow-sm">
-                <CardContent className="flex flex-col items-center gap-4">
-                  <div className="w-16 h-16 rounded-full bg-zinc-900 flex items-center justify-center border border-zinc-800">
-                    <BrainCircuit size={32} className="text-white" />
-                  </div>
-                  <div>
-                    <h3 className="text-xl font-bold mb-2 text-white">
-                      Belum ada Quiz Aktif
-                    </h3>
-                    <p className="text-zinc-500 text-sm">
-                      Silakan minta chatbot untuk membuatkan quiz tentang topik
-                      tertentu.
-                    </p>
-                  </div>
-                  <Button
-                    onClick={() =>
-                      (window.location.href = '/chatbot?mode=quiz')
-                    }
-                    className="w-full bg-white text-black hover:bg-zinc-200 gap-2 font-bold"
-                  >
-                    Buka Chatbot
-                  </Button>
-                </CardContent>
-              </Card>
-            </motion.div>
-          )}
-
-          {/* QUIZ STATE */}
-          {status === 'quiz' && questions.length > 0 && (
-            <motion.div
-              key={currentQIndex}
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -20 }}
-              className="w-full"
-            >
-              <div className="flex justify-between mb-4 text-sm font-medium text-zinc-500">
-                <span>
-                  Question {currentQIndex + 1}/{questions.length}
-                </span>
-                <span>Score: {score}</span>
-              </div>
-
-              <div className="mb-6 bg-zinc-900 h-2 rounded-full overflow-hidden">
-                <div
-                  className="bg-white h-full transition-all duration-300"
-                  style={{
-                    width: `${((currentQIndex + 1) / questions.length) * 100}%`,
-                  }}
-                />
-              </div>
-
-              <Card className="bg-zinc-950 border-zinc-900 mb-6 shadow-sm">
-                <CardContent className="pt-6">
-                  <h3 className="text-xl font-semibold mb-6 leading-relaxed text-zinc-100">
-                    {questions[currentQIndex].question}
-                  </h3>
-                  <div className="space-y-3">
-                    {questions[currentQIndex].options.map((opt, idx) => {
-                      const isSelected = selectedOption === idx
-                      const isCorrect =
-                        questions[currentQIndex].correctAnswer === idx
-
-                      let btnClass =
-                        'w-full justify-start text-left p-4 h-auto text-sm md:text-base border-zinc-800 bg-zinc-900 hover:bg-zinc-800 text-zinc-300'
-
-                      if (isAnswered) {
-                        if (isCorrect)
-                          btnClass =
-                            'w-full justify-start text-left p-4 h-auto bg-zinc-800 text-white border-white'
-                        else if (isSelected && !isCorrect)
-                          btnClass =
-                            'w-full justify-start text-left p-4 h-auto bg-zinc-900 text-zinc-500 border-zinc-800 opacity-50'
+            {/* IDLE / EMPTY STATE */}
+            {status === 'idle' && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="text-center space-y-4"
+              >
+                <Card className="bg-zinc-950 border-zinc-900 py-8 shadow-sm">
+                  <CardContent className="flex flex-col items-center gap-4">
+                    <div className="w-16 h-16 rounded-full bg-zinc-900 flex items-center justify-center border border-zinc-800">
+                      <BrainCircuit size={32} className="text-white" />
+                    </div>
+                    <div>
+                      <h3 className="text-xl font-bold mb-2 text-white">
+                        Belum ada Quiz Aktif
+                      </h3>
+                      <p className="text-zinc-500 text-sm">
+                        Silakan minta chatbot untuk membuatkan quiz tentang
+                        topik tertentu.
+                      </p>
+                    </div>
+                    <Button
+                      onClick={() =>
+                        (window.location.href = '/chatbot?mode=quiz')
                       }
+                      className="w-full bg-white text-black hover:bg-zinc-200 gap-2 font-bold"
+                    >
+                      Buka Chatbot
+                    </Button>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            )}
 
-                      return (
-                        <Button
-                          key={idx}
-                          variant="outline"
-                          className={btnClass}
-                          onClick={() => handleAnswer(idx)}
-                          disabled={isAnswered}
-                        >
-                          <span className="mr-3 font-bold opacity-50">
-                            {String.fromCharCode(65 + idx)}.
+            {/* QUIZ STATE */}
+            {status === 'quiz' && questions.length > 0 && (
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={currentQIndex}
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -20 }}
+                  className="w-full flex-1"
+                >
+                  <Card className="bg-zinc-950 border-zinc-900 shadow-sm">
+                    <CardContent className="pt-6">
+                      <div className="mb-6">
+                        <div className="flex justify-between items-center mb-2">
+                          <span className="text-sm font-medium text-zinc-500">
+                            Question {currentQIndex + 1} of {questions.length}
                           </span>
-                          {opt}
-                          {isAnswered && isCorrect && (
-                            <CheckCircle2
-                              className="ml-auto text-white"
-                              size={20}
-                            />
-                          )}
-                          {isAnswered && isSelected && !isCorrect && (
-                            <XCircle
-                              className="ml-auto text-zinc-500"
-                              size={20}
-                            />
-                          )}
-                        </Button>
-                      )
-                    })}
-                  </div>
-                </CardContent>
-              </Card>
-            </motion.div>
-          )}
+                          <span className="text-sm font-medium text-zinc-500">
+                            {Math.round(
+                              ((currentQIndex + 1) / questions.length) * 100,
+                            )}
+                            % Complete
+                          </span>
+                        </div>
+                        <div className="bg-zinc-900 h-2 rounded-full overflow-hidden">
+                          <div
+                            className="bg-white h-full transition-all duration-300"
+                            style={{
+                              width: `${((currentQIndex + 1) / questions.length) * 100}%`,
+                            }}
+                          />
+                        </div>
+                      </div>
 
-          {/* RESULT STATE */}
-          {status === 'result' && (
-            <motion.div
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              className="text-center"
-            >
-              <Card className="bg-zinc-950 border-zinc-900 py-8 shadow-sm">
-                <CardContent className="flex flex-col items-center">
-                  <Trophy className="text-white mb-4" size={64} />
-                  <h2 className="text-2xl font-bold mb-2 text-white">
-                    Quiz Completed!
-                  </h2>
+                      <h3 className="text-2xl font-semibold mb-8 leading-relaxed text-white">
+                        {questions[currentQIndex].question}
+                      </h3>
 
-                  <div className="text-6xl font-black text-white mb-2">
-                    {Math.round((score / questions.length) * 100)}
-                  </div>
-                  <p className="text-sm text-zinc-500 mb-8">
-                    Benar {score} dari {questions.length} soal
-                  </p>
+                      <div className="space-y-3">
+                        {questions[currentQIndex].options.map((opt, idx) => {
+                          const isSelected = selectedOption === idx
+                          const isCorrect =
+                            questions[currentQIndex].correctAnswer === idx
 
-                  <Button
-                    onClick={() =>
-                      (window.location.href = '/chatbot?mode=quiz')
-                    }
-                    className="gap-2 bg-white text-black hover:bg-zinc-200 font-bold"
-                  >
-                    <RefreshCcw size={18} />
-                    Coba Topik Lain
-                  </Button>
-                </CardContent>
-              </Card>
-            </motion.div>
-          )}
+                          let btnClass =
+                            'w-full justify-start text-left p-5 h-auto text-base border-zinc-800 bg-zinc-900 hover:bg-zinc-800 text-zinc-300 transition-all'
+
+                          if (isAnswered) {
+                            if (isCorrect)
+                              btnClass =
+                                'w-full justify-start text-left p-5 h-auto bg-white text-black border-white font-medium'
+                            else if (isSelected && !isCorrect)
+                              btnClass =
+                                'w-full justify-start text-left p-5 h-auto bg-zinc-900 text-zinc-500 border-zinc-800 opacity-50'
+                          }
+
+                          return (
+                            <Button
+                              key={idx}
+                              variant="outline"
+                              className={btnClass}
+                              onClick={() => handleAnswer(idx)}
+                              disabled={isAnswered}
+                            >
+                              <span className="mr-3 font-bold text-zinc-500">
+                                {String.fromCharCode(65 + idx)}.
+                              </span>
+                              {opt}
+                              {isAnswered && isCorrect && (
+                                <CheckCircle2
+                                  className="ml-auto text-black"
+                                  size={20}
+                                />
+                              )}
+                              {isAnswered && isSelected && !isCorrect && (
+                                <XCircle
+                                  className="ml-auto text-zinc-500"
+                                  size={20}
+                                />
+                              )}
+                            </Button>
+                          )
+                        })}
+                      </div>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              </AnimatePresence>
+            )}
+
+            {/* RESULT STATE */}
+            {status === 'result' && (
+              <motion.div
+                initial={{ scale: 0.9, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                className="text-center"
+              >
+                <Card className="bg-zinc-950 border-zinc-900 py-8 shadow-sm">
+                  <CardContent className="flex flex-col items-center">
+                    <Trophy className="text-white mb-4" size={64} />
+                    <h2 className="text-2xl font-bold mb-2 text-white">
+                      Quiz Completed!
+                    </h2>
+
+                    <div className="text-6xl font-black text-white mb-2">
+                      {Math.round((score / questions.length) * 100)}%
+                    </div>
+                    <p className="text-sm text-zinc-500 mb-4">
+                      Benar {score} dari {questions.length} soal
+                    </p>
+                    <p className="text-xs text-zinc-600 mb-8">
+                      Waktu: {formatTime(timeElapsed)}
+                    </p>
+
+                    <Button
+                      onClick={() =>
+                        (window.location.href = '/chatbot?mode=quiz')
+                      }
+                      className="gap-2 bg-white text-black hover:bg-zinc-200 font-bold"
+                    >
+                      <RefreshCcw size={18} />
+                      Coba Topik Lain
+                    </Button>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            )}
+          </div>
         </div>
+
+        {/* Right Sidebar - Only show during quiz */}
+        {status === 'quiz' && questions.length > 0 && (
+          <div className="hidden lg:flex w-80 border-l border-zinc-900 bg-zinc-950 flex-col overflow-y-auto">
+            <div className="p-6 space-y-6">
+              {/* Stats Cards */}
+              <div className="space-y-3">
+                <div className="bg-zinc-900 rounded-xl p-4 border border-zinc-800">
+                  <div className="flex items-center gap-3 mb-2">
+                    <div className="w-8 h-8 rounded-lg bg-zinc-800 flex items-center justify-center">
+                      <Clock className="text-zinc-400" size={16} />
+                    </div>
+                    <span className="text-xs font-medium text-zinc-500 uppercase tracking-wider">
+                      Time
+                    </span>
+                  </div>
+                  <div className="text-2xl font-bold text-white">
+                    {formatTime(timeElapsed)}
+                  </div>
+                </div>
+
+                <div className="bg-zinc-900 rounded-xl p-4 border border-zinc-800">
+                  <div className="flex items-center gap-3 mb-2">
+                    <div className="w-8 h-8 rounded-lg bg-zinc-800 flex items-center justify-center">
+                      <Target className="text-zinc-400" size={16} />
+                    </div>
+                    <span className="text-xs font-medium text-zinc-500 uppercase tracking-wider">
+                      Score
+                    </span>
+                  </div>
+                  <div className="text-2xl font-bold text-white">{score}</div>
+                  <div className="text-xs text-zinc-600 mt-1">
+                    {Math.round((score / (currentQIndex + 1)) * 100)}% Accuracy
+                  </div>
+                </div>
+
+                <div className="bg-zinc-900 rounded-xl p-4 border border-zinc-800">
+                  <div className="flex items-center gap-3 mb-2">
+                    <div className="w-8 h-8 rounded-lg bg-zinc-800 flex items-center justify-center">
+                      <Award className="text-zinc-400" size={16} />
+                    </div>
+                    <span className="text-xs font-medium text-zinc-500 uppercase tracking-wider">
+                      Progress
+                    </span>
+                  </div>
+                  <div className="text-2xl font-bold text-white">
+                    {currentQIndex + 1}/{questions.length}
+                  </div>
+                </div>
+              </div>
+
+              {/* Question Navigator */}
+              <div>
+                <h3 className="text-xs font-bold text-zinc-500 uppercase tracking-wider mb-3">
+                  Questions
+                </h3>
+                <div className="grid grid-cols-5 gap-2">
+                  {questions.map((_, idx) => {
+                    const isAnswered = answers[idx] !== null
+                    const isCurrent = idx === currentQIndex
+                    const isCorrect =
+                      isAnswered &&
+                      answers[idx] === questions[idx].correctAnswer
+
+                    return (
+                      <button
+                        key={idx}
+                        onClick={() => goToQuestion(idx)}
+                        disabled={isAnswered}
+                        className={`
+                          aspect-square rounded-lg flex items-center justify-center text-sm font-bold transition-all
+                          ${
+                            isCurrent
+                              ? 'bg-white text-black ring-2 ring-white ring-offset-2 ring-offset-zinc-950'
+                              : isAnswered
+                                ? isCorrect
+                                  ? 'bg-zinc-800 text-white border border-zinc-700'
+                                  : 'bg-zinc-900 text-zinc-600 border border-zinc-800'
+                                : 'bg-zinc-900 text-zinc-500 border border-zinc-800 hover:bg-zinc-800 hover:text-white'
+                          }
+                        `}
+                      >
+                        {idx + 1}
+                      </button>
+                    )
+                  })}
+                </div>
+              </div>
+
+              {/* Legend */}
+              <div className="pt-4 border-t border-zinc-800">
+                <h3 className="text-xs font-bold text-zinc-500 uppercase tracking-wider mb-3">
+                  Legend
+                </h3>
+                <div className="space-y-2 text-xs">
+                  <div className="flex items-center gap-2">
+                    <div className="w-6 h-6 rounded bg-white"></div>
+                    <span className="text-zinc-400">Current</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="w-6 h-6 rounded bg-zinc-800 border border-zinc-700"></div>
+                    <span className="text-zinc-400">Correct</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="w-6 h-6 rounded bg-zinc-900 border border-zinc-800"></div>
+                    <span className="text-zinc-400">Wrong</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </Layouts>
   )
