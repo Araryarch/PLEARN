@@ -53,6 +53,7 @@ export default function DailyTasksPage() {
     ? new Date(editingTask.deadline)
     : undefined
   const [editCalendarOpen, setEditCalendarOpen] = useState(false)
+  const [isLoading, setIsLoading] = useState(true)
 
   const extended = session as ExtendedSession
   useEffect(() => {
@@ -65,6 +66,8 @@ export default function DailyTasksPage() {
         setTasks(data)
       } catch (err) {
         console.error(err)
+      } finally {
+        setIsLoading(false)
       }
     }
     fetchTasks()
@@ -227,10 +230,10 @@ export default function DailyTasksPage() {
                 </p>
                 <div className="flex items-baseline gap-2">
                   <p className="text-3xl font-bold text-white">
-                    {completedCount}
+                    {isLoading ? '-' : completedCount}
                   </p>
                   <p className="text-lg text-zinc-500 font-medium">
-                    / {totalCount} Selesai
+                    / {isLoading ? '-' : totalCount} Selesai
                   </p>
                 </div>
               </div>

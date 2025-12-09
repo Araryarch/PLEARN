@@ -156,14 +156,14 @@ export default function Page() {
             <div className="flex flex-col gap-1">
               <div className="flex items-baseline gap-2">
                 <span className="text-4xl font-bold text-white">
-                  {completedCount}
+                  {isLoading ? '-' : completedCount}
                 </span>
                 <span className="text-sm text-zinc-500">
-                  / {totalCount} Selesai
+                  / {isLoading ? '-' : totalCount} Selesai
                 </span>
               </div>
               <span className="text-xs text-zinc-500 mt-1">
-                {activeCount} tugas tersisa
+                {isLoading ? '-' : activeCount} tugas tersisa
               </span>
             </div>
           </div>

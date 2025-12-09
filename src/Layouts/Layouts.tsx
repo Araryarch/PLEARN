@@ -9,6 +9,7 @@ import { navigationItems } from '@/constants/navigation'
 import { useSession } from 'next-auth/react'
 import { ExtendedSession } from '@/lib/authOptions'
 import Image from 'next/image'
+import { useSafeArea } from '@/hooks/useSafeArea'
 
 interface LayoutsProps {
   children: React.ReactNode
@@ -19,6 +20,7 @@ export default function Layouts({ children }: LayoutsProps) {
   const pathname = usePathname()
   const { data: session } = useSession()
   const extended = session as ExtendedSession
+  const safeArea = useSafeArea()
 
   useEffect(() => setIsOpen(false), [pathname])
 
@@ -135,7 +137,10 @@ export default function Layouts({ children }: LayoutsProps) {
       {/* Main Content */}
       <div className="flex-1 flex flex-col min-h-screen md:ml-64 w-full bg-black">
         {/* Mobile Header */}
-        <header className="md:hidden h-14 bg-zinc-950 border-b border-zinc-900 flex items-center justify-between px-4 sticky top-0 z-30">
+        <header
+          className="md:hidden h-14 bg-zinc-950 border-b border-zinc-900 flex items-center justify-between px-4 sticky top-0 z-30"
+          style={{ paddingTop: `${safeArea.top}px` }}
+        >
           <div className="flex items-center gap-3">
             <button
               onClick={() => setIsOpen(true)}
@@ -147,7 +152,14 @@ export default function Layouts({ children }: LayoutsProps) {
           </div>
         </header>
 
-        <main className="flex-1 w-full relative">{children}</main>
+        <main
+          className="flex-1 w-full relative"
+          style={{
+            paddingBottom: `${safeArea.bottom}px`,
+          }}
+        >
+          {children}
+        </main>
       </div>
     </div>
   )
