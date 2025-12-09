@@ -23,14 +23,14 @@ export const ChatHeader = ({
 
   return (
     <div
-      className="border-b px-6 md:pr-72 py-4 pt-[calc(env(safe-area-inset-top)_+_1rem)] fixed top-0 w-full z-50 flex items-center justify-between shadow-sm"
+      className="border-b px-4 md:px-6 md:pr-72 py-3 md:py-4 pt-[calc(env(safe-area-inset-top)_+_0.75rem)] md:pt-[calc(env(safe-area-inset-top)_+_1rem)] fixed top-0 w-full z-50 flex items-center justify-between shadow-sm"
       style={{
         borderColor: catppuccin.surface1,
         backgroundColor: catppuccin.surface0,
       }}
     >
       <h1
-        className="text-xl font-bold tracking-tight"
+        className="text-lg md:text-xl font-bold tracking-tight"
         style={{ color: catppuccin.text }}
       >
         SENOPATI
@@ -41,14 +41,16 @@ export const ChatHeader = ({
           ref={buttonRef}
           onClick={toggleDropdown}
           variant="outline"
-          className="gap-2 border-opacity-50 hover:bg-opacity-10"
+          className="gap-2 border-opacity-50 hover:bg-opacity-10 text-xs md:text-sm py-1.5 md:py-2 px-2.5 md:px-4"
           style={{
             borderColor: catppuccin.overlay,
             color: catppuccin.text,
             backgroundColor: catppuccin.surface0,
           }}
         >
-          <span className="text-sm font-medium">{currentMode?.label}</span>
+          <span className="text-xs md:text-sm font-medium">
+            {currentMode?.label}
+          </span>
         </Button>
 
         {dropdownOpen && (

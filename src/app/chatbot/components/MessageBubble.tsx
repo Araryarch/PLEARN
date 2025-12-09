@@ -54,7 +54,7 @@ export const MessageBubble = ({
       className={`flex ${isUser ? 'justify-end' : 'justify-start'} group animate-in slide-in-from-bottom-2 duration-300`}
     >
       <div
-        className={`flex gap-3 max-w-[85%] lg:max-w-2xl items-start ${isUser ? 'flex-row-reverse' : ''}`}
+        className={`flex gap-2 md:gap-3 max-w-[90%] md:max-w-[85%] lg:max-w-2xl items-start ${isUser ? 'flex-row-reverse' : ''}`}
       >
         {/* Avatar */}
         <div className="flex-shrink-0 mt-1">
@@ -64,12 +64,12 @@ export const MessageBubble = ({
               width={32}
               height={32}
               alt="You"
-              className="w-8 h-8 rounded-full object-cover border border-opacity-20 shadow-sm"
+              className="w-7 h-7 md:w-8 md:h-8 rounded-full object-cover border border-opacity-20 shadow-sm"
               style={{ borderColor: catppuccin.overlay }}
             />
           ) : (
             <div
-              className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold shadow-sm"
+              className="w-7 h-7 md:w-8 md:h-8 rounded-full flex items-center justify-center text-[10px] md:text-xs font-bold shadow-sm"
               style={{
                 backgroundColor: catppuccin.mauve,
                 color: catppuccin.base,
@@ -85,21 +85,24 @@ export const MessageBubble = ({
           className={`flex flex-col gap-1 ${isUser ? 'items-end' : 'items-start'}`}
         >
           {/* Name & Time */}
-          <div className="flex items-center gap-2 px-1">
+          <div className="flex items-center gap-1.5 md:gap-2 px-1">
             <span
-              className="text-xs font-semibold"
+              className="text-[10px] md:text-xs font-semibold"
               style={{ color: catppuccin.subtext }}
             >
               {isUser ? 'You' : 'Senopati AI'}
             </span>
-            <span className="text-[10px]" style={{ color: catppuccin.overlay }}>
+            <span
+              className="text-[9px] md:text-[10px]"
+              style={{ color: catppuccin.overlay }}
+            >
               {formatTime(message.timestamp)}
             </span>
           </div>
 
           {/* Bubble */}
           <div
-            className={`px-5 py-3.5 rounded-2xl shadow-sm ${isUser ? 'rounded-tr-none' : 'rounded-tl-none'}`}
+            className={`px-3 md:px-5 py-2.5 md:py-3.5 rounded-2xl shadow-sm ${isUser ? 'rounded-tr-none' : 'rounded-tl-none'}`}
             style={{
               backgroundColor: isUser
                 ? catppuccin.surface1

@@ -106,8 +106,8 @@ export default function Chatbot() {
         />
 
         <div className="flex-1 flex flex-col overflow-y-auto">
-          <ScrollArea className="flex-1 w-full pt-[73px]">
-            <div className="p-6 space-y-6">
+          <ScrollArea className="flex-1 w-full pt-[73px] pb-2">
+            <div className="px-4 py-6 space-y-6 pb-6">
               {messages.length === 0 && !isTyping && (
                 <EmptyState aiMode={aiMode} />
               )}
@@ -129,7 +129,7 @@ export default function Chatbot() {
                   onEditTextChange={handleEditTextChange}
                 />
               ))}
-              <div ref={messagesEndRef} />
+              <div ref={messagesEndRef} className="h-4" />
             </div>
           </ScrollArea>
         </div>
