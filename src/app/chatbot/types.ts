@@ -18,7 +18,13 @@ export interface QuizQuestion {
 /**
  * AI mode types for different conversation styles
  */
-export type AIMode = 'fluent' | 'creative' | 'precise' | 'balanced' | 'list'
+export type AIMode =
+  | 'fluent'
+  | 'creative'
+  | 'precise'
+  | 'balanced'
+  | 'list'
+  | 'quiz'
 
 /**
  * Chat message structure

@@ -50,4 +50,9 @@ export const aiModes: AIModeConfig[] = [
     label: 'List Generator',
     description: 'Generate Your List Automatic with AI',
   },
+  {
+    value: 'quiz',
+    label: 'Quiz Generator',
+    description: 'Generate quiz questions on any topic',
+  },
 ] as const

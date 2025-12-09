@@ -104,8 +104,8 @@ export const useChatbot = () => {
     try {
       let enhancedPrompt = prompt
 
-      // Inject Quiz instruction if detected
-      if (prompt.toLowerCase().includes('quiz')) {
+      // Handle different AI modes
+      if (aiMode === 'quiz') {
         enhancedPrompt += `\n\nGenerate 5 multiple choice questions about "${prompt}" in Bahasa Indonesia. Output JSON Array format: [{ "question": "...", "options": ["A", "B", "C", "D"], "correctAnswer": 0 (0-3 index) }]. Return ONLY raw JSON.`
       } else if (aiMode === 'list') {
         enhancedPrompt = generateListPrompt(prompt)
@@ -143,11 +143,13 @@ export const useChatbot = () => {
         }
       }
 
-      // Try parsing quiz
-      const parsedQuiz = parseQuiz(reply)
-      if (parsedQuiz && parsedQuiz.length > 0) {
-        quizData = parsedQuiz
-        reply = 'Quiz telah siap! Klik tombol di bawah untuk mengerjakan.'
+      // Try parsing quiz (auto-parse for quiz mode or when quiz detected)
+      if (aiMode === 'quiz' || reply.toLowerCase().includes('quiz')) {
+        const parsedQuiz = parseQuiz(reply)
+        if (parsedQuiz && parsedQuiz.length > 0) {
+          quizData = parsedQuiz
+          reply = 'Quiz telah siap! Klik tombol di bawah untuk mengerjakan.'
+        }
       }
 
       setMessages((prev) => [
